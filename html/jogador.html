@@ -1,0 +1,25 @@
+        <div class="col coluna-retrato">
+            <form id="form-jogador" enctype="multipart/form-data">
+                <label for="escolher-foto-jogador" class="label-retrato">
+                    <div class="circulo-interno">
+                        <img id="foto-jogador" class="imagem-exibida" src="assets/imgs/fundoCinza.jpg" alt="clique para alterar a imagem">
+                        <span class="texto-hover">Trocar Imagem</span>
+                    </div>
+                </label>
+                <input type="file" id="escolher-foto-jogador" accept="image/*" style="display: none;">
+                <div class="campos-texto-container">
+                    <div class="grupo-campo">
+                        <label for="nome-jogador" class="label-campo">Nome:</label>
+                        <input type="text" id="nome-jogador" name="nome-jogador" placeholder="Seu nome aqui.">
+                    </div>
+                    <div class="grupo-campo">
+                        <label for="apelido-jogador" class="label-campo">Apelido:</label>
+                        <input type="text" id="apelido-jogador" name="apelido-jogador" placeholder="Seu apelido aqui.">
+                    </div>
+                    <div class="grupo-campo">
+                        <label for="bio-jogador" class="label-campo">Sobre Você:</label>
+                        <textarea id="bio-jogador" name="bio-jogador" rows="9" placeholder="Fale sobre você."></textarea>
+                    </div>
+                </div>
+            </form>    
+        </div>

@@ -1,0 +1,17 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body{
+    font-family: 'Rye', serif;
+    background-color: #f4eccf;
+    color: #3d2314;
+    margin: 0;
+    padding-left: var(--largura-sidebar);
+    overflow-x: auto; 
+}
+

@@ -1,0 +1,200 @@
+#form-jogador {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+
+
+/*RETRATO JOGADOR*/
+
+.label-retrato {
+  position: relative;     
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;        
+  width: 100%;
+  aspect-ratio: 1/1;
+  margin: 0 auto 15px auto;
+  
+  /* Imagem de fundo definida separadamente para cada seção abaixo. */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.circulo-interno {
+  position: relative;
+  width: 42%;             
+  height: auto;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 42%;
+  border-radius: 50%;       
+  overflow: hidden;
+  border: 3px solid #f4eccf;  
+}
+
+.imagem-exibida {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.texto-hover {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(61, 35, 20, 0.75); 
+  color: #f4eccf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0;                           
+  transition: opacity 0.3s ease;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.circulo-interno:hover .texto-hover {
+  opacity: 1;
+}
+
+.circulo-interno:hover .imagem-exibida {
+  opacity: 0.8;
+}
+
+
+
+/*TEXT TEXT-AREA FONT*/
+
+.rye{
+    font-family: "Rye", serif;
+    font-style: normal;
+}
+
+.smokum {
+  font-family: "Smokum", serif;
+  font-style: normal;
+  letter-spacing: 1px;         
+  font-size: 19px;           
+  color: #2b180d;  
+}
+
+.label-campo {
+  font-family: 'Rye', serif; 
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.campos-texto-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.grupo-campo input[type="text"],
+.grupo-campo textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #3d2314;
+  background-color: #fcf8f2;
+  font-family: 'Rye', serif;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;   
+}
+
+.grupo-campo textarea{
+    resize: vertical;
+    min-height: 80px;
+}
+
+.grupo-campo input[type="text"]:focus,
+.grupo-campo textarea:focus {
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(61, 35, 20, 0.3);
+}
+
+
+
+
+
+/* Aparência compartilhada; imagens de fundo independentes. */
+#jogador .label-retrato, #personagem .label-retrato {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 15px;
+    flex-shrink: 0;
+}
+#jogador .label-retrato { background-image: url('../assets/imgs/imagemJogadorPlaceholder.png'); }
+#personagem .label-retrato { background-image: url('../assets/imgs/imagemPersonagemPlaceholder.png'); }
+#jogador .circulo-interno, #personagem .circulo-interno { width: 42%; height: auto; aspect-ratio: 1 / 1; }
+/* Elementos de formulário não ultrapassam suas colunas. */
+#jogador input, #personagem input, #personagem textarea { max-width: 100%; }
+
+/* Retrato do personagem: pôster preservado como moldura, fotografia retangular.
+   As regras são exclusivas de Personagem; Jogador mantém seu retrato circular. */
+#personagem .label-retrato {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: url('../assets/imgs/imagemPersonagemPlaceholder.png') center / 100% 100% no-repeat;
+    overflow: hidden;
+}
+#personagem .circulo-interno {
+    position: absolute;
+    top: 28%;
+    left: 11%;
+    width: 78%;
+    height: 65%;
+    aspect-ratio: auto;
+    flex: none;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+#personagem .imagem-exibida {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0;
+}
+/* Não duplicar o cartaz dentro da área reservada à fotografia. */
+#personagem .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.png"] {
+    opacity: 0;
+}
+#personagem .texto-hover {
+    border-radius: 0;
+}
+
+/* Jogador: retrato circular com proporção constante, independente da foto. */
+#jogador .circulo-interno {
+    width: 42%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    flex: 0 0 42%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+#jogador .imagem-exibida {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}

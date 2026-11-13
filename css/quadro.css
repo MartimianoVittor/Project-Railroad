@@ -1,0 +1,153 @@
+/*Quadro de Notas*/
+
+.quadro-tatico-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 5px;
+}
+
+.barra-ferramentas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  background-color: #e6d8b5;
+  padding: 10px;
+  border: 2px solid #3d2314;
+  border-radius: 4px;
+}
+
+.btn-oeste {
+  background-color: #3d2314;
+  color: #f4eccf;
+  border: 1px solid #2b180d;
+  padding: 6px 12px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.btn-oeste:hover {
+  background-color: #5c3620;
+}
+
+.btn-oeste.ativo {
+  background-color: #a64b2a;
+  border-color: #3d2314;
+}
+
+.btn-perigo {
+  background-color: #7a1c1c;
+  margin-left: auto;
+}
+
+#seletor-cor {
+  width: 35px;
+  height: 32px;
+  border: 2px solid #3d2314;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dica-quadro {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+  color: #5c3620;
+  padding-top: 1vw;
+  padding-bottom: 1vw;
+}
+
+.area-canvas {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  border: 3px dashed #3d2314;
+  background-color: #fcf8f2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#quadro-rpg {
+  display: block;
+  cursor: crosshair;
+}
+
+.item-movel {
+  position: absolute;
+  user-select: none; 
+  z-index: 10;
+  pointer-events: none;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+
+
+.texto-conteudo {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 4px 8px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.imagem-conteudo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  border: 2px solid #3d2314;
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+}
+
+.alca-redimensionar {
+  display: none;
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  background-color: #a64b2a;
+  border: 2px solid #f4eccf;
+  border-radius: 50%;
+  cursor: nwse-resize;
+  z-index: 20;
+}
+
+.area-canvas.modo-mover-ativo .item-movel {
+  pointer-events: auto; 
+  cursor: grab;
+  outline: 1px dashed #a64b2a;
+}
+
+.area-canvas.modo-mover-ativo .item-movel.selecionado {
+  outline: 2px solid #a64b2a;
+  box-shadow: 0 0 10px rgba(166, 75, 42, 0.5);
+  z-index: 15; /* Traz o item selecionado para frente dos outros */
+}
+
+.area-canvas.modo-mover-ativo .item-movel:active {
+  cursor: grabbing;
+}
+
+.area-canvas.modo-mover-ativo .alca-redimensionar {
+  display: block; 
+}
+
+
+/* O quadro respeita a altura da seção, sem forçar crescimento da página. */
+#jogador .col:has(.area-canvas) {
+    display: flex;
+    flex-direction: column;
+}
+#jogador .area-canvas { flex: 1 1 auto; min-height: 0; }
+#jogador .dica-quadro { padding-block: 8px; }

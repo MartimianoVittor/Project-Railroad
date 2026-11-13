@@ -1,0 +1,9 @@
+/* Estilos compartilhados e componentes. Responsividade por último. */
+@import url("./base.css");
+@import url("./layout.css");
+@import url("./formularios.css");
+@import url("./sidebar.css");
+@import url("./quadro.css");
+@import url("./personagem.css");
+@import url("./inventario.css");
+@import url("./mobile.css");

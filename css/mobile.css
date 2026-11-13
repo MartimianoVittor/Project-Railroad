@@ -1,0 +1,226 @@
+/* Railroad: estilos responsivos (único arquivo mobile).
+   Base + navegação por abas + cartões de itens.
+   Desktop permanece nos estilos principais. */
+
+/* Navegação e layout móvel. No desktop, a navegação móvel fica oculta. */
+.navegacao-mobile, .acoes-mobile, .fundo-acoes-mobile { display: none; }
+[hidden] { display: none !important; }
+@media (max-width: 768px) {
+ :root { --largura-sidebar: 0px; --espaco-coluna: 12px; }
+ html { scroll-padding-top: 10px; }
+ html, body { width: 100%; max-width: 100%; overflow-x: clip; }
+ body { padding-left: 0; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+ .barra-lateral { display: none !important; }
+ #jogador, #personagem, #inventario {
+   display: flex; flex-direction: column;
+   width: 100%; min-width: 0 !important; max-width: 100%;
+   height: auto; min-height: 0; overflow: visible;
+   padding: 0; align-items: stretch;
+ }
+ #jogador > .col, #personagem > .col, #inventario > .col {
+   flex: 0 0 auto; width: 100%; max-width: 100%;
+   height: auto; min-height: 0; overflow: visible;
+   padding: 14px 16px;
+   scrollbar-gutter: auto;
+ }
+ #jogador > .col + .col, #personagem > .col + .col, #inventario > .col + .col {
+   border-top: 1px solid rgba(61,35,20,.25);
+ }
+ /* Canvas utilizável com toque sem esmagar o restante da ficha. */
+ #jogador .col:has(.area-canvas) { min-height: 440px; }
+ #jogador .quadro-tatico-container { height: 430px; min-height: 430px; }
+ #jogador .area-canvas { min-height: 260px; touch-action: none; }
+ #jogador .barra-ferramentas { gap: 6px; padding: 8px; }
+ #jogador .barra-ferramentas button { min-height: 38px; }
+ #jogador .dica-quadro { font-size: 16px; }
+ /* Retrato e formulário adaptados à largura disponível. */
+ #jogador form, #personagem form, #jogador .campos-texto-container,
+ #personagem .campos-texto-container { max-width: 100%; }
+ #jogador input:not([type='checkbox']):not([type='file']),
+ #personagem input:not([type='checkbox']):not([type='file']),
+ #jogador textarea, #personagem textarea { max-width: 100%; }
+ #jogador textarea, #personagem textarea { resize: vertical; }
+ #personagem .campo-inline { grid-template-columns: minmax(76px, 28%) minmax(0, 1fr); }
+ #personagem .linha-check { gap: 8px; }
+ #personagem .linha-check > label { font-size: clamp(12px, 3.2vw, 15px); }
+ #personagem .check-caveira { width: 34px; height: 34px; }
+ /* Os 12 traços crescem naturalmente; sem corte ou miniaturização. */
+ #personagem .col.double { display: block; height: auto; overflow: visible; padding: 16px 12px; }
+ #personagem .grupo-tracos {
+   display: flex; flex-direction: column; height: auto;
+   min-height: 0; overflow: visible; gap: 3px;
+ }
+ #personagem .grupo-tracos .linha-traco {
+   flex: 0 0 auto; min-height: 48px; padding: 3px 0;
+   gap: 6px; align-items: center;
+ }
+ #personagem .linha-traco .nome-traco {
+   font-size: clamp(11px, 3.2vw, 15px);
+   line-height: 1.25; overflow-wrap: anywhere; hyphens: auto;
+ }
+ #personagem .linha-traco .tracos-box {
+   grid-template-columns: repeat(4, minmax(0, 35px));
+   gap: 3px;
+ }
+ #personagem .marcador-dado { width: 100%; max-height: none; min-height: 38px; }
+ #personagem .marcador-dado-visual { padding-top: 0; }
+ #personagem .cabecalho-tracos span { font-size: clamp(11px, 3vw, 14px); }
+ /* Armas, rolagem e itens continuam editáveis. */
+ #inventario .inventario-rolagens { gap: 12px; }
+ #inventario .cartao-rolagem, #inventario .cartao-arma { padding: 12px; }
+ #inventario .campo-inventario { min-height: 42px; font-size: 16px; }
+ #inventario .bonus-distancias { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 5px; }
+ #inventario .bonus-distancia { font-size: 11px; }
+ #inventario .bonus-distancia span { min-height: 36px; }
+ #inventario .botao-rolar { min-height: 42px; }
+ #inventario .inventario-cabecalho { flex-wrap: wrap; }
+ #inventario .tabela-itens-rolagem { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+ /* Navegação inferior fixa e acessível. */
+ .navegacao-mobile {
+   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+   position: fixed; bottom: 0; left: 0; right: 0; z-index: 1100;
+   min-height: 66px; padding: 4px 5px calc(4px + env(safe-area-inset-bottom, 0px));
+   background: #3d2314; border-top: 2px solid #b48b4b;
+   box-shadow: 0 -3px 14px rgba(0,0,0,.22);
+ }
+ .aba-mobile {
+   display: flex; flex-direction: column; align-items: center; justify-content: center;
+   gap: 2px; min-width: 0; min-height: 52px;
+   padding: 5px 2px; background: none; border: 0;
+   color: #f4eccf; text-decoration: none;
+   font: 11px Georgia, serif; cursor: pointer;
+ }
+ .aba-mobile > span:first-child { font-size: 22px; line-height: 1; }
+ .aba-mobile.ativa, .aba-mobile[aria-current='location'] { color: #f5ca74; background: rgba(255,255,255,.08); border-radius: 5px; }
+ .aba-mobile:focus-visible, .acoes-mobile button:focus-visible { outline: 3px solid #e9bb73; outline-offset: -3px; }
+ .fundo-acoes-mobile { display: block; position: fixed; inset: 0; z-index: 1190; background: rgba(15,10,6,.65); }
+ .acoes-mobile {
+   display: flex; flex-direction: column; gap: 12px;
+   position: fixed; z-index: 1200; bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+   left: 12px; right: 12px; padding: 18px; border: 2px solid #6b4630;
+   border-radius: 10px; background: #f4eccf;
+   box-shadow: 0 10px 35px rgba(0,0,0,.4);
+ }
+ .acoes-mobile h2 { margin: 0 0 6px; font-size: 20px; }
+ .acoes-mobile .btn-oeste { min-height: 44px; }
+}
+@media (max-width: 360px) {
+ #personagem .linha-traco .tracos-box { grid-template-columns: repeat(4, minmax(0, 29px)); gap: 2px; }
+ #personagem .marcador-dado { min-height: 34px; }
+ #inventario .bonus-distancias { gap: 3px; }
+ #inventario .bonus-distancia { font-size: 10px; }
+}
+
+
+
+/* Railroad Mobile v3 — abas são TELAS, não âncoras em uma página longa. */
+@media (max-width: 768px) {
+  :root { --largura-sidebar: 0px; }
+  html { width:100%; max-width:100%; overflow-x:hidden !important; scroll-behavior:auto; }
+  body { width:100%; max-width:100%; min-width:0; margin:0; padding-left:0 !important;
+    overflow-x:hidden !important; padding-bottom:calc(70px + env(safe-area-inset-bottom,0px)); }
+  *, *::before, *::after { box-sizing:border-box; }
+  #slot-sidebar, .barra-lateral { display:none !important; }
+  /* Oculta telas inativas inclusive seus conteúdos; impede Inventário aparecer em Quadro. */
+  #jogador, #personagem, #quadro-mobile, #inventario {
+    display:none !important; width:100% !important; max-width:100% !important;
+    min-width:0 !important; height:auto !important; min-height:0 !important;
+    overflow:visible !important; margin:0 !important; padding:0 !important;
+  }
+  #jogador.tela-mobile-ativa, #personagem.tela-mobile-ativa,
+  #quadro-mobile.tela-mobile-ativa, #inventario.tela-mobile-ativa {
+    display:flex !important; flex-direction:column !important; align-items:stretch;
+  }
+  #jogador > .col, #personagem > .col, #inventario > .col, #quadro-mobile > .col {
+    flex:0 0 auto; width:100% !important; max-width:100% !important;
+    min-width:0 !important; height:auto !important; overflow:visible !important;
+    padding:12px !important; margin:0 !important;
+  }
+  #jogador > .col { border:0 !important; }
+  #quadro-mobile { min-height:calc(100dvh - 72px) !important; }
+  #quadro-mobile > .col { min-height:calc(100dvh - 84px) !important;
+    display:flex; flex-direction:column; }
+  #quadro-mobile .barra-ferramentas { display:flex; flex-wrap:wrap; gap:6px; }
+  #quadro-mobile .barra-ferramentas button, #quadro-mobile .barra-ferramentas label { min-height:40px; }
+  #quadro-mobile .area-canvas { flex:1 1 auto; height:clamp(300px,65dvh,900px); min-height:300px;
+    width:100%; max-width:100%; touch-action:none; }
+  #jogador textarea { min-height:76px !important; height:100px; max-height:55dvh; resize:vertical; }
+  #inventario .inventario-itens, #inventario .inventario-cabecalho { min-width:0; max-width:100%; }
+  #inventario .tabela-itens-rolagem { display:block !important; width:100% !important;
+    max-width:100% !important; min-width:0 !important; overflow-x:auto !important;
+    overflow-y:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; }
+  #inventario .tabela-itens input { min-width:0 !important; max-width:100%; }
+  .navegacao-mobile { grid-template-columns:repeat(5,minmax(0,1fr)) !important; width:100%; }
+  .aba-mobile { font-size:clamp(9px,2.3vw,11px); }
+}
+@media (max-width:768px) and (orientation:landscape) {
+  body { padding-bottom:calc(50px + env(safe-area-inset-bottom,0px)); }
+  .navegacao-mobile { min-height:44px !important; padding:2px 4px calc(2px + env(safe-area-inset-bottom,0px)) !important; }
+  .aba-mobile { min-height:38px !important; flex-direction:row; gap:4px; font-size:10px; }
+  .aba-mobile > span:first-child { font-size:17px; }
+  #quadro-mobile { min-height:calc(100dvh - 52px) !important; }
+  #quadro-mobile > .col { min-height:calc(100dvh - 62px) !important; }
+  #quadro-mobile .area-canvas { min-height:170px; height:55dvh; }
+}
+
+
+/* Mobile v4: Inventário exclusivo de itens, rolagens em Personagem. */
+@media (max-width:768px) {
+  #inventario { display:none !important; min-width:0 !important; width:100% !important; }
+  #inventario.tela-mobile-ativa { display:block !important; }
+  #inventario > .inventario-itens { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; padding:12px !important; }
+  #inventario .inventario-cabecalho { flex-wrap:wrap; width:100%; }
+  #inventario .inventario-cabecalho .botao-rolar { min-height:42px; }
+  #inventario .tabela-itens-rolagem { width:100% !important; max-width:100% !important; min-width:0 !important; overflow:visible !important; }
+  #inventario .tabela-itens { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; border-collapse:separate; }
+  #inventario .tabela-itens thead { display:none; }
+  #inventario .tabela-itens tbody { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; }
+  #inventario .tabela-itens tr { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; width:100%; min-width:0; padding:12px; border:2px solid #6b4630; border-radius:6px; background:rgba(244,220,179,.4); }
+  #inventario .tabela-itens td { display:block; min-width:0; width:100%; padding:0; border:0; }
+  #inventario .tabela-itens td::before { display:block; margin-bottom:4px; font:bold 12px Georgia,serif; color:#3d2314; }
+  #inventario .tabela-itens td:nth-child(1) { grid-column:1 / -1; }
+  #inventario .tabela-itens td:nth-child(1)::before { content:'Item'; }
+  #inventario .tabela-itens td:nth-child(2)::before { content:'Quantidade'; }
+  #inventario .tabela-itens td:nth-child(3)::before { content:'Tamanho'; }
+  #inventario .tabela-itens td:nth-child(4) { grid-column:1 / -1; }
+  #inventario .tabela-itens td:nth-child(4)::before { content:'Descrição'; }
+  #inventario .tabela-itens td:nth-child(5) { grid-column:1 / -1; text-align:right; }
+  #inventario .tabela-itens input { width:100%; max-width:100%; min-width:0; min-height:42px; font-size:16px; }
+  #inventario .botao-remover-item { min-width:44px; min-height:40px; }
+  #personagem > .inventario-rolagens { display:flex; flex:0 0 auto; width:100% !important; min-width:0 !important; max-width:100% !important; padding:16px 12px 24px !important; overflow:visible !important; border-top:2px solid rgba(61,35,20,.35); }
+  #personagem .inventario-rolagens .cartao-rolagem,
+  #personagem .inventario-rolagens .cartao-arma { width:100%; min-width:0; }
+  #personagem .inventario-rolagens .campo-inventario { width:100%; min-width:0; max-width:100%; box-sizing:border-box; font-size:16px; }
+  #personagem .inventario-rolagens .bonus-distancias { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; }
+  #personagem .inventario-rolagens .bonus-distancia { min-width:0; }
+  #personagem .inventario-rolagens .bonus-distancia input { width:100%; min-width:0; padding:5px 1px; }
+  #personagem .inventario-rolagens .botao-rolar { min-height:44px; }
+  #personagem .inventario-rolagens h2 { font:clamp(19px,1.8vw,27px) 'Rye',serif; margin:0 0 5px; color:#3d2314; }
+  #personagem .inventario-rolagens .cartao-rolagem { display:grid; gap:5px; padding:10px; border:2px solid #6b4630; border-radius:5px; background:rgba(244,220,179,.4); }
+  #personagem .inventario-rolagens .cartao-rolagem h3 { font:15px 'Rye',serif; margin:0; }
+  #personagem .inventario-rolagens .cartao-rolagem label { font:12px 'Rye',serif; }
+  #personagem .inventario-rolagens .cartao-arma { margin:0; padding:8px; border:2px solid #6b4630; border-radius:5px; display:grid; gap:5px; background:rgba(244,220,179,.4); }
+  #personagem .inventario-rolagens .cartao-arma legend { font:bold 14px 'Rye',Georgia,serif; padding:0 5px; }
+  #personagem .inventario-rolagens .bonus-distancia { display:grid; gap:4px; text-align:center; font:11px Georgia,serif; }
+  #personagem .inventario-rolagens .bonus-distancia span { min-height:25px; display:flex; align-items:end; justify-content:center; }
+  #personagem .inventario-rolagens .botao-rolar { padding:8px 10px; border:2px solid #27170f; border-radius:4px; background:linear-gradient(#805032,#422515); color:#fff0d3; font:bold 13px 'Rye',serif; }
+  #personagem .inventario-rolagens .resultado-rolagem { display:block; min-height:16px; color:#70251d; font:bold 13px Georgia,serif; }
+  #personagem .inventario-rolagens .campo-inventario { min-height:40px; padding:5px 7px; border:2px solid #6b4630; border-radius:3px; background:#fff7e9; color:#3d2314; }
+}
+
+/* Retratos padronizados no celular; preserva moldura do Personagem. */
+@media (max-width: 768px) {
+  #jogador .label-retrato, #personagem .label-retrato {
+    width: min(65vw, 200px);
+    max-width: 200px;
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
+  }
+  #jogador .circulo-interno { aspect-ratio: 1 / 1; border-radius: 50%; }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  #jogador .label-retrato, #personagem .label-retrato {
+    width: min(35vh, 155px);
+    max-width: 155px;
+  }
+}

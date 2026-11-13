@@ -1,0 +1,252 @@
+.cabecalho-tracos span:first-child {
+    font-weight: bold;
+    text-align: left;
+    text-transform: uppercase;
+    font: 14px 'Rye', serif;
+}
+
+.cabecalho-tracos span {
+    font-weight: bold;
+    text-transform: uppercase;
+    font: 14px 'Rye', serif;
+}
+
+/* Estilos exclusivos da seção Personagem. */
+#personagem .campo-inline {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+}
+#personagem .campo-inline .label-campo { margin: 0; }
+#personagem .campo-inline input[type="text"] {
+    display: block;
+    width: 100%; min-width: 0;
+    padding: 10px 12px;
+    border: 2px solid #3d2314;
+    border-radius: 4px;
+    background: #fcf8f2;
+    color: #3d2314;
+    font: 14px 'Rye', serif;
+}
+#personagem .campo-inline input:focus-visible { outline: 3px solid #a56a42; outline-offset: 2px; }
+#personagem .grupo-caveiras { padding-block: 16px; }
+#personagem .linha-check {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px; min-width: 0;
+}
+#personagem .linha-check > label {
+    font-family: 'Rye', serif; font-size: clamp(14px, 1.25vw, 20px);
+    font-weight: bold; letter-spacing: .4px;
+}
+#personagem .caveiras-box, #personagem .tracos-box {
+    display: flex; align-items: center; gap: clamp(3px, .55vw, 10px);
+    flex: 0 0 auto;
+}
+/* A própria caixa de seleção é clicável, acessível e salva pelo JS. */
+#personagem .check-caveira, #personagem .check-tracos {
+    appearance: none; -webkit-appearance: none;
+    display: block; flex: 0 0 auto;
+    width: clamp(22px, 2.05vw, 34px); height: clamp(22px, 2.05vw, 34px);
+    margin: 0; padding: 0; border: 0;
+    background-color: #3d2314;
+    -webkit-mask: var(--icone-vazio) center / contain no-repeat;
+    mask: var(--icone-vazio) center / contain no-repeat;
+    cursor: pointer;
+    transition: background-color .15s ease, transform .15s ease;
+}
+#personagem .check-caveira {
+    --icone-vazio: url('../assets/icons/caveira-contorno.svg');
+    --icone-cheio: url('../assets/icons/caveira-preenchida.svg');
+}
+#personagem .check-tracos {
+    --icone-vazio: url('../assets/icons/gota-contorno.svg');
+    --icone-cheio: url('../assets/icons/gota-preenchida.svg');
+}
+#personagem .check-caveira:checked, #personagem .check-tracos:checked {
+    -webkit-mask-image: var(--icone-cheio); mask-image: var(--icone-cheio);
+    background-color: #3d2314;
+}
+#personagem .check-caveira:hover, #personagem .check-tracos:hover { transform: scale(1.09); }
+#personagem .check-caveira:focus-visible, #personagem .check-tracos:focus-visible {
+    outline: 3px solid #a56a42; outline-offset: 3px; border-radius: 3px;
+}
+/* Os 12 traços dividem a altura disponível da terceira coluna. */
+#personagem .col.double { display: flex; flex-direction: column; }
+#personagem .grupo-tracos {
+    display: flex; flex-direction: column; flex: 1 1 auto;
+    min-height: 0; gap: 0;
+}
+#personagem .tracos-dados { flex: 0 0 auto; }
+#personagem .tracos-dados h2 {
+    font: 22px 'Rye', serif; margin: 0 0 14px;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px;
+}
+#personagem .tracos-dados span { font-size: 15px; }
+#personagem .grupo-tracos .linha-traco {
+    flex: 1 1 0; margin: 0;
+    padding: 6px 0; border: 0;
+}
+@media (max-width: 1100px) {
+    #personagem .campo-inline { grid-template-columns: 92px minmax(0, 1fr); gap: 7px; }
+    #personagem .linha-check > label { font-size: 14px; }
+}
+
+/* Dados sobre gotas: preservamos o input checkbox para o salvamento existente. */
+#personagem .linha-traco { gap: 10px; }
+#personagem .linha-traco .nome-traco {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: clamp(12px, 1.1vw, 17px);
+    overflow-wrap: anywhere;
+}
+#personagem .linha-traco .tracos-box {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(30px, 42px));
+    gap: clamp(3px, .65vw, 10px);
+    flex: 0 0 auto;
+}
+#personagem .marcador-dado {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 42 / 48;
+    cursor: pointer;
+}
+/* O checkbox continua acessível e participa da serialização. */
+#personagem .marcador-dado .check-tracos,
+#personagem .marcador-dado .check-tracos:checked {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    z-index: 1;
+    margin: 0;
+    -webkit-mask: none; mask: none;
+    background: transparent;
+    cursor: pointer;
+}
+#personagem .marcador-dado-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; height: 100%;
+    padding-top: 9px;
+    box-sizing: border-box;
+    background: url('../assets/icons/gota-contorno.svg') center / contain no-repeat;
+    color: #3d2314;
+    font: bold clamp(11px, 1vw, 15px) Georgia, serif;
+    user-select: none;
+    pointer-events: none;
+}
+#personagem .marcador-dado .check-tracos:checked + .marcador-dado-visual {
+    background-image: url('../assets/icons/gota-preenchida.svg');
+    color: #8c2920;
+}
+#personagem .marcador-dado .check-tracos:focus-visible + .marcador-dado-visual {
+    outline: 3px solid #a56a42;
+    outline-offset: 2px;
+    border-radius: 5px;
+}
+#personagem .marcador-dado:hover .marcador-dado-visual { transform: scale(1.06); }
+@media (max-width: 900px) {
+    #personagem .linha-traco .tracos-box { grid-template-columns: repeat(4, 30px); }
+}
+
+/* Traços compactos: doze linhas distribuídas pela altura útil da coluna. */
+#personagem .col.double { min-height: 0; }
+#personagem .grupo-tracos {
+    display: grid;
+    grid-template-rows: repeat(12, minmax(0, 1fr));
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    align-content: stretch;
+}
+#personagem .grupo-tracos .linha-traco {
+    min-height: 0;
+    padding: 0 0 5px;
+    gap: 4px;
+    margin: 0;
+}
+#personagem .linha-traco .tracos-box {
+    grid-template-columns: repeat(4, minmax(0, 32px));
+    gap: clamp(2px, .4vw, 6px);
+}
+#personagem .linha-traco .nome-traco {
+    font-size: clamp(11px, .95vw, 15px);
+    line-height: 1.15;
+}
+#personagem .marcador-dado { width: 100%; max-height: 37px; }
+#personagem .marcador-dado-visual {
+    font-size: clamp(10px, .85vw, 13px);
+    padding-top: 6px;
+}
+@media (max-height: 700px) {
+    #personagem .linha-traco .tracos-box { grid-template-columns: repeat(4, minmax(0, 27px)); }
+    #personagem .grupo-tracos .linha-traco { padding-block: 1px; }
+}
+
+/* Traços sem divisórias: espaçamento exclusivamente abaixo de cada linha.
+   A grade continua distribuindo os 12 traços dentro da altura disponível. */
+#personagem .grupo-tracos {
+    row-gap: 0;
+}
+#personagem .grupo-tracos .linha-traco {
+    border: 0;
+    border-bottom: 0;
+    margin: 0;
+    padding: 0 0 5px;
+    column-gap: 5px;
+    align-items: center;
+}
+#personagem .linha-traco .nome-traco {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-wrap: normal;
+    hyphens: auto;
+}
+#personagem .linha-traco .tracos-box {
+    flex: 0 0 auto;
+    column-gap: 3px;
+}
+@media (max-height: 700px) {
+    #personagem .grupo-tracos .linha-traco { padding-bottom: 2px; }
+}
+
+/* Refinamento final: traços inteiros na coluna, com dados legíveis. */
+#personagem .col.double {overflow:hidden;padding-block:clamp(8px,1.5vh,20px);}
+#personagem .grupo-tracos {height:100%;grid-template-rows:repeat(12,minmax(0,1fr));overflow:hidden;}
+#personagem .grupo-tracos .linha-traco {min-height:0;padding:0 0 2px;gap:6px;}
+#personagem .linha-traco .tracos-box {grid-template-columns:repeat(4,minmax(0,clamp(26px,2.3vw,40px)));gap:clamp(2px,.35vw,6px);}
+#personagem .marcador-dado {aspect-ratio:42/48;max-height:min(44px,6vh);}
+#personagem .marcador-dado-visual {font-size:clamp(11px,1vw,15px);padding-top:clamp(4px,.7vh,7px);}
+#personagem .linha-traco .nome-traco {font-size:clamp(11px,1vw,16px);line-height:1.1;}
+#personagem .grupo-campo textarea {min-height:54px;resize:vertical;}
+@media(max-height:650px){#personagem .linha-traco .tracos-box {grid-template-columns:repeat(4,minmax(0,26px));}#personagem .marcador-dado-visual {font-size:11px;}}
+
+/* Cabeçalho único para as quatro colunas de dados. */
+#personagem .grupo-tracos {grid-template-rows: auto repeat(12,minmax(0,1fr));}
+#personagem .cabecalho-tracos {display:grid;grid-template-columns:minmax(0,1fr) repeat(4,minmax(0,32px));gap:clamp(2px,.4vw,6px);align-items:end;text-align:center;font: bold clamp(11px,.9vw,14px) Georgia,serif;color:#3d2314;padding-bottom:3px;}
+#personagem .marcador-dado-visual {font-size:0 !important;padding-top:0 !important;}
+
+/* Cabeçalho e gotas compartilham exatamente a mesma grade horizontal. */
+#personagem .grupo-tracos {
+    --largura-gota: clamp(26px, 2.3vw, 40px);
+    --intervalo-gota: clamp(2px, .35vw, 6px);
+}
+#personagem .grupo-tracos .linha-traco,
+#personagem .grupo-tracos .cabecalho-tracos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) repeat(4, var(--largura-gota));
+    column-gap: var(--intervalo-gota);
+    align-items: center;
+}
+#personagem .linha-traco .tracos-box {
+    display: contents;
+}
+#personagem .cabecalho-tracos {text-align:center;}
+#personagem .cabecalho-tracos span:not(:first-child) {text-align:center;}
+@media (max-height:650px) {
+  #personagem .grupo-tracos {--largura-gota:26px;}
+}

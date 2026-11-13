@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Smokum&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Railroad RPG</title>
+</head>
+<body>
+    <!-- Fragmentos carregados antes do JavaScript original. -->
+    <div id="slot-sidebar" data-include="html/sidebar.html"></div>
+    <section class="flex" id="jogador">
+        <div data-include="html/jogador.html" class="fragmento-coluna"></div>
+        <div data-include="html/quadro.html" class="fragmento-quadro"></div>
+    </section>
+    <section id="quadro-mobile" aria-label="Quadro tático"></section>
+    <div data-include="html/personagem.html"></div>
+    <div data-include="html/inventario.html"></div>
+    <nav class="navegacao-mobile" aria-label="Navegação principal no celular">
+        <a href="#jogador" class="aba-mobile ativa" data-aba="jogador"><span aria-hidden="true">♟</span><span>Jogador</span></a>
+        <a href="#personagem" class="aba-mobile" data-aba="personagem"><span aria-hidden="true">★</span><span>Personagem</span></a>
+        <a href="#quadro-mobile" class="aba-mobile" data-aba="quadro-mobile"><span aria-hidden="true">✎</span><span>Quadro</span></a>
+        <a href="#inventario" class="aba-mobile" data-aba="inventario"><span aria-hidden="true">▤</span><span>Inventário</span></a>
+        <button type="button" class="aba-mobile" id="abrir-acoes-mobile" aria-expanded="false" aria-controls="acoes-mobile"><span aria-hidden="true">☰</span><span>Ficha</span></button>
+    </nav>
+    <div class="fundo-acoes-mobile" id="fundo-acoes-mobile" hidden></div>
+    <div class="acoes-mobile" id="acoes-mobile" role="dialog" aria-label="Ações da ficha" aria-modal="true" hidden>
+        <h2>Minha ficha</h2>
+        <button type="button" class="btn-oeste" id="exportar-mobile">Salvar ficha (JSON)</button>
+        <button type="button" class="btn-oeste" id="importar-mobile">Carregar ficha (JSON)</button>
+        <button type="button" class="btn-oeste" id="apagar-mobile">Apagar ficha</button>
+        <button type="button" class="btn-oeste" id="fechar-acoes-mobile">Fechar</button>
+    </div>
+    <script src="js/mobile.js"></script>
+    <script src="js/includes.js"></script>
+</body>
+</html>

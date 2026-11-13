@@ -1,0 +1,48 @@
+/* Única fonte das dimensões globais e proporções das seções. */
+:root { --largura-sidebar: 200px; --largura-minima-conteudo: 850px; --espaco-coluna: 10px; }
+.flex { display: flex; width: 100%; }
+.col { min-width: 0; min-height: 0; padding: 20px var(--espaco-coluna); overflow-y: auto; overflow-x: hidden; scrollbar-gutter: stable; }
+/* Os includes são transparentes apenas onde são usados como wrappers. */
+#slot-sidebar, .fragmento-coluna, .fragmento-quadro,
+body > [data-include] { display: contents; }
+#jogador, #personagem, #inventario {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    align-items: stretch;
+}
+#jogador, #inventario { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
+#personagem { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr); }
+#jogador > .col, #personagem > .col, #inventario > .col {
+    min-width: 0;
+    width: auto;
+    max-width: none;
+}
+/* Preserve as proporções em telas estreitas, permitindo rolagem horizontal. */
+@media (max-width: 1100px) {
+    #jogador, #personagem, #inventario { min-width: var(--largura-minima-conteudo); }
+    body { overflow-x: auto; }
+}
+@media (max-width: 900px) {
+    :root { --largura-sidebar: 180px; --espaco-coluna: 14px; }
+}
+@media (max-width: 550px) {
+    :root { --largura-sidebar: 145px; }
+    .barra-lateral { padding: 16px 8px; }
+    .barra-lateral .logo { font-size: 1.6rem; }
+    .barra-lateral .btn-nav { font-size: 20px; padding: 10px 6px; }
+}
+
+/* Cada painel ocupa uma única visualização; o conteúdo excedente rola dentro da coluna. */
+#jogador > .col, #personagem > .col, #inventario > .col {
+    height: 100%;
+    min-height: 0;
+    align-self: stretch;
+}
+@media (max-height: 720px) {
+    .col { padding-block: 12px; }
+}
