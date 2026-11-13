@@ -25,6 +25,7 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 - [x] **Atualização em Tempo Real:** informações das fichas atualizadas dinamicamente conforme as alterações realizadas.
 - [x] **Gerenciamento de Personagens e Inventário:** criação, personalização e acompanhamento da evolução dos personagens além de inventário dinâmico que permite adicionar e retirar itens bem como criar novos.
 - [x] **Ferramentas de Jogo:** recursos interativos para auxiliar jogadores durante as sessões.
+- [x] **Versão Mobile Adaptada** Use tablets e smartphones compartilhe fichas entre desktop e mobile.
 - [ ] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas.
 - [ ] **Guia de Campanhas:** campanhas pré montadas para todos.
 - [ ] **Integração com Banco de Dados**
