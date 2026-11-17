@@ -18,7 +18,7 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 
 ## 🔫 Funcionalidades
 
-- [ ] **Sistema Próprio de RPG:** mecânicas, atributos, características e regras desenvolvidas especialmente para o Railroad.
+- [X] **Sistema Próprio de RPG V1.0:** mecânicas, atributos, características e regras desenvolvidas especialmente para o Railroad.
 - [x] **Interface Temática:** identidade visual inspirada no Velho Oeste.
 - [x] **Perfil do Jogador com Campo de Colagens:** perfil completo para o jogador que permita a colagem de inspirações anotações e temas.
 - [x] **Fichas Dinâmicas:** criação e edição de fichas de personagens diretamente pelo site.
