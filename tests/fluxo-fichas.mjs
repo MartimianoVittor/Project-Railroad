@@ -3,9 +3,18 @@ import { criarGerenciadorFichas } from '../js/modules/fichas.js';
 import { normalizarFicha } from '../js/core/validacao.js';
 
 class Elemento {
-    constructor() { this.children = []; this.listeners = {}; this.dataset = {}; this.hidden = false; this.value = ''; this.open = false; }
+    constructor() {
+        this.children = [];
+        this.listeners = {};
+        this.dataset = {};
+        this.hidden = false;
+        this.value = '';
+        this.open = false;
+        this.clicks = 0;
+    }
     addEventListener(tipo, fn) { (this.listeners[tipo] ??= []).push(fn); }
-    async disparar(tipo, evento = {}) { for (const fn of this.listeners[tipo] ?? []) await fn(evento); }
+    disparar(tipo, evento = {}) { for (const fn of this.listeners[tipo] ?? []) fn(evento); }
+    click() { this.clicks++; this.disparar('click'); }
     setAttribute(nome, valor) { this[nome] = valor; }
     removeAttribute(nome) { delete this[nome]; }
     replaceChildren(...filhos) { this.children = filhos; }
@@ -13,10 +22,14 @@ class Elemento {
     showModal() { this.open = true; }
     close() { this.open = false; }
 }
+
 const elementos = new Map();
-const obter = (id) => { if (!elementos.has(id)) elementos.set(id, new Elemento()); return elementos.get(id); };
+const porId = (id) => {
+    if (!elementos.has(id)) elementos.set(id, new Elemento());
+    return elementos.get(id);
+};
 globalThis.document = {
-    getElementById: obter,
+    getElementById: porId,
     querySelectorAll: () => [new Elemento(), new Elemento()],
     createElement: () => new Elemento(),
     addEventListener: () => {},
@@ -24,108 +37,125 @@ globalThis.document = {
 globalThis.window = { addEventListener: () => {} };
 const memoria = new Map();
 globalThis.localStorage = {
-    getItem: (k) => memoria.get(k) ?? null,
-    setItem: (k, v) => memoria.set(k, v),
-    removeItem: (k) => memoria.delete(k),
+    getItem: (chave) => memoria.get(chave) ?? null,
+    setItem: (chave, valor) => memoria.set(chave, String(valor)),
+    removeItem: (chave) => memoria.delete(chave),
 };
 globalThis.confirm = () => true;
-globalThis.prompt = () => 'Ficha renomeada';
+globalThis.prompt = () => 'Título renomeado';
 globalThis.location = { origin: 'https://railroad.example', pathname: '/Railroad/' };
 
 const linhas = [];
-let contador = 0;
+let sequencia = 0;
 class Consulta {
-    constructor() { this.op = 'list'; this.filtro = null; }
+    constructor() { this.op = 'list'; this.filtros = []; }
     select() { return this; }
     order() { return this; }
-    eq(_, valor) { this.filtro = valor; return this; }
-    single() { return this; }
+    eq(campo, valor) { this.filtros.push([campo, valor]); return this; }
+    single() { this.unico = true; return this; }
+    maybeSingle() { this.unico = true; return this; }
     insert(dados) { this.op = 'insert'; this.dados = dados; return this; }
     update(dados) { this.op = 'update'; this.dados = dados; return this; }
     delete() { this.op = 'delete'; return this; }
     then(resolver) {
-        let data;
+        const registros = linhas.filter((linha) => this.filtros.every(([campo, valor]) => linha[campo] === valor));
+        let data = registros[0] || null;
+        let error = null;
         if (this.op === 'insert') {
-            data = { ...this.dados, id: String(++contador), updated_at: new Date().toISOString() };
-            linhas.push(data);
+            const duplicada = this.dados.origem_importacao && linhas.some((linha) =>
+                linha.usuario_id === this.dados.usuario_id && linha.origem_importacao === this.dados.origem_importacao);
+            if (duplicada) {
+                error = { code: '23505', message: 'origem duplicada' };
+            } else {
+                data = { ...this.dados, id: String(++sequencia), updated_at: new Date().toISOString() };
+                linhas.push(data);
+            }
         } else if (this.op === 'update') {
-            data = linhas.find((l) => l.id === this.filtro);
             if (data) Object.assign(data, this.dados);
         } else if (this.op === 'delete') {
-            const indice = linhas.findIndex((l) => l.id === this.filtro);
-            data = indice < 0 ? null : linhas.splice(indice, 1)[0];
-        } else {
-            data = this.filtro ? linhas.find((l) => l.id === this.filtro) : [...linhas];
+            if (data) linhas.splice(linhas.indexOf(data), 1);
+        } else if (!this.unico) {
+            data = [...registros];
         }
-        return Promise.resolve(resolver({ data, error: null }));
+        return Promise.resolve(resolver({ data, error }));
     }
 }
-const usuario = { id: 'usuario-1', email: 'teste@example.org' };
+
+const usuario = { id: 'usuario-1', email: 'teste@railroad.example' };
 const cliente = {
-    from: () => new Consulta(),
+    from: (tabela) => { assert.equal(tabela, 'fichas'); return new Consulta(); },
     auth: {
-        onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+        onAuthStateChange: () => {},
         getSession: async () => ({ data: { session: { user: usuario } }, error: null }),
         getUser: async () => ({ data: { user: usuario }, error: null }),
         signOut: async () => ({ error: null }),
     },
 };
-let edicao = normalizarFicha({});
-const gestor = criarGerenciadorFichas({
-    coletarFicha: () => structuredClone(edicao),
-    carregarFicha: (f) => { edicao = structuredClone(f); },
+
+// O Railroad antigo salvava apenas uma ficha neste slot.
+localStorage.setItem('railroad_rpg_ficha', JSON.stringify(normalizarFicha({
+    personagem: { 'nome-personagem': 'Antigo local' },
+})));
+let formulario = normalizarFicha({});
+const gestao = criarGerenciadorFichas({
+    coletarFicha: () => structuredClone(formulario),
+    carregarFicha: (ficha) => { formulario = structuredClone(ficha); },
     normalizarFicha,
-    lerLocal: () => null,
-    gravarLocal: () => {},
-    apagarLocal: () => {},
+    baixarFicha: () => {},
+    interpretarArquivo: (texto) => normalizarFicha(JSON.parse(texto)),
     conectar: async () => cliente,
     configurado: () => true,
 });
-await gestor.iniciar();
-assert.equal(obter('painel-fichas').open, true);
-assert.equal(obter('conta-autenticada').hidden, false);
-obter('nome-nova-ficha').value = 'Pistoleiro fictício';
-await obter('form-criar-ficha').disparar('submit', { preventDefault() {} });
-await new Promise((r) => setTimeout(r, 40));
-assert.equal(linhas.length, 1, 'criação de ficha');
-assert.equal(obter('painel-fichas').open, false, 'seleção da ficha criada');
-assert.equal(edicao.personagem['nome-personagem'], 'Pistoleiro fictício');
+const aguardar = () => new Promise((resolver) => setTimeout(resolver, 35));
 
-edicao.inventario.itens.push({ nome: 'Corda', quantidade: 1, tamanho: 1, local: 'montaria' });
-assert.equal(gestor.salvarAgora(), true);
-await new Promise((r) => setTimeout(r, 1400));
-assert.equal(linhas[0].dados.inventario.itens[0].local, 'montaria', 'salvamento na nuvem');
-assert.equal([...memoria.keys()].filter((k) => k.startsWith('railroad_rascunho')).length, 0, 'rascunho sincronizado removido');
+await gestao.iniciar();
+assert.equal(porId('painel-fichas').open, true, 'login abre gerenciamento online');
+assert.equal(porId('conta-autenticada').hidden, false);
+assert.equal(formulario.personagem['nome-personagem'], 'Antigo local', 'migra ficha local existente');
 
-await gestor.importarFicha(normalizarFicha({ personagem: { 'nome-personagem': 'Outro personagem' } }));
-assert.equal(linhas.length, 2, 'importação cria outra ficha');
-assert.equal(edicao.personagem['nome-personagem'], 'Outro personagem');
-assert.equal(linhas[0].dados.inventario.itens[0].local, 'montaria', 'a ficha anterior não foi sobrescrita');
+porId('btn-fichas-locais').click();
+assert.equal(porId('painel-locais').open, true, 'há painel local independente');
+assert.equal(porId('painel-fichas').open, false);
+assert.equal(porId('lista-fichas-locais').children.length, 1);
 
-// Reabrir a primeira ficha não pode misturar os dados da segunda.
-await obter('btn-minhas-fichas').disparar('click');
-await new Promise((r) => setTimeout(r, 40));
-const lista = obter('lista-fichas');
-const linhaPrimeira = lista.children.find((l) => l.children[0].children[0].textContent === 'Pistoleiro fictício');
-await linhaPrimeira.children[1].children[0].disparar('click');
-await new Promise((r) => setTimeout(r, 40));
-assert.equal(edicao.inventario.itens[0].local, 'montaria', 'troca restaura os itens corretos');
-assert.equal(edicao.personagem['nome-personagem'], 'Pistoleiro fictício');
+porId('nome-nova-local').value = 'Outro no navegador';
+porId('form-criar-local').disparar('submit', { preventDefault() {} });
+await aguardar();
+assert.equal(porId('lista-fichas-locais').children.length > 0, true);
+assert.equal(formulario.personagem['nome-personagem'], 'Outro no navegador');
+formulario.personagem['nome-personagem'] = 'Editado sem enviar';
+gestao.salvarAgora();
+assert.equal(linhas.length, 0, 'edições locais não são enviadas para o Supabase');
 
-await obter('btn-minhas-fichas').disparar('click');
-await new Promise((r) => setTimeout(r, 40));
-const linhaRenomear = obter('lista-fichas').children.find((l) => l.children[0].children[0].textContent === 'Pistoleiro fictício');
-await linhaRenomear.children[1].children[1].disparar('click');
-await new Promise((r) => setTimeout(r, 40));
-assert.equal(linhas[0].titulo, 'Ficha renomeada');
+porId('btn-minhas-fichas').click();
+porId('nome-nova-ficha').value = 'Pistoleiro online';
+porId('form-criar-ficha').disparar('submit', { preventDefault() {} });
+await aguardar();
+assert.equal(linhas.length, 1, 'criação de ficha online');
+assert.equal(formulario.personagem['nome-personagem'], 'Pistoleiro online');
 
-const linhaDuplicar = obter('lista-fichas').children.find((l) => l.children[0].children[0].textContent === 'Ficha renomeada');
-await linhaDuplicar.children[1].children[2].disparar('click');
-await new Promise((r) => setTimeout(r, 40));
-assert.equal(linhas.length, 3, 'duplicação cria terceiro registro');
-assert.equal(linhas[2].dados.inventario.itens[0].local, 'montaria');
+const arquivo = { text: async () => JSON.stringify(normalizarFicha({
+    personagem: { 'nome-personagem': 'Importado do JSON' },
+    inventario: { itens: [{ nome: 'Corda', local: 'montaria' }] },
+})) };
+porId('btn-minhas-fichas').click();
+porId('importar-ficha-local').click();
+assert.equal(porId('input-importar-online').clicks, 1, 'botão abre explorador JSON');
+porId('input-importar-online').disparar('change', { target: { files: [arquivo], value: 'arquivo.json' } });
+await aguardar();
+assert.equal(linhas.length, 2, 'importou o JSON como nova ficha online');
+assert.equal(formulario.inventario.itens[0].local, 'montaria');
 
-await gestor.apagarAtual();
-assert.equal(linhas.length, 2, 'exclusão remove apenas a ficha aberta');
-assert.equal(obter('conta-autenticada').hidden, false, 'conta permanece conectada');
-console.log('OK: sessão simulada, múltiplas fichas, sincronização, troca, renomeação, duplicação e exclusão.');
+porId('btn-minhas-fichas').click();
+porId('input-importar-online').disparar('change', { target: { files: [arquivo], value: 'arquivo.json' } });
+await aguardar();
+assert.equal(linhas.length, 2, 'segunda importação idêntica não duplica');
+assert.match(porId('mensagem-conta').textContent, /já foi importada/);
+
+const antesDeApagar = structuredClone(linhas);
+await gestao.apagarLocalAtual();
+assert.deepEqual(linhas, antesDeApagar, 'apagar ficha nunca exclui nem modifica o database');
+assert.match(porId('status-salvamento').textContent, /online preservados/);
+assert.match(porId('ficha-atual').textContent, /Local:/);
+
+console.log('OK: gerenciadores separados, arquivo JSON, bloqueio de duplicatas e apagar somente no navegador.');

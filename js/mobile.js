@@ -36,7 +36,7 @@
             }
         }
     });
-    [['exportar-mobile', 'btn-exportar'], ['importar-mobile', 'input-importar'], ['apagar-mobile', 'btn-apagar-ficha'], ['fichas-mobile', 'btn-minhas-fichas'], ['conta-mobile', 'btn-conta-google']].forEach(([origem, alvo]) => {
+    [['apagar-mobile', 'btn-apagar-ficha'], ['fichas-mobile', 'btn-minhas-fichas'], ['locais-mobile', 'btn-fichas-locais']].forEach(([origem, alvo]) => {
         document.getElementById(origem).addEventListener('click', () => {
             exibir(false);
             document.getElementById(alvo)?.click();

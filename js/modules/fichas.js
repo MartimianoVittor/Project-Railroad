@@ -1,487 +1,593 @@
 import { supabaseConfigurado } from '../config/supabase.js';
 import { obterSupabase } from '../services/supabaseClient.js';
 import { criarRepositorioFichas } from '../services/fichasRepository.js';
+import { criarRepositorioLocal } from '../services/fichasLocais.js';
+import { identidadeDaImportacao } from '../services/identidadeImportacao.js';
 
-const TEMPO_RASCUNHO_MS = 250;
-const TEMPO_NUVEM_MS = 1200;
-const CHAVE_RASCUNHO = 'railroad_rascunho';
-const CHAVE_ULTIMA_FICHA = 'railroad_ultima_ficha';
+const ESPERA_LOCAL_MS = 250;
+const ESPERA_NUVEM_MS = 1200;
+const PREFIXO_RASCUNHO = 'railroad_rascunho';
+const PREFIXO_ULTIMA = 'railroad_ultima_ficha';
 
-/** Mantém a sessão, a ficha selecionada e a sincronização fora dos módulos de jogo. */
+const tituloValido = (valor) => String(valor || '').trim().slice(0, 120) || 'Novo personagem';
+const tituloDoPersonagem = (dados) => tituloValido(dados.personagem?.['nome-personagem'] || 'Ficha importada');
+
+/**
+ * O modo de edição é independente do login: uma pessoa conectada pode editar
+ * fichas locais sem que seus dados sejam enviados para a nuvem.
+ */
 export function criarGerenciadorFichas({
-    coletarFicha, carregarFicha, normalizarFicha, lerLocal, gravarLocal, apagarLocal,
+    coletarFicha, carregarFicha, normalizarFicha, baixarFicha, interpretarArquivo,
     conectar = obterSupabase, configurado = supabaseConfigurado,
+    repositorioLocal = criarRepositorioLocal(),
 }) {
     const porId = (id) => document.getElementById(id);
-    const painel = porId('painel-fichas');
+    const painelOnline = porId('painel-fichas');
+    const painelLocal = porId('painel-locais');
+    const fichaVazia = () => normalizarFicha({ versao: 3 });
+    const chaveRascunho = (uid, id) => `${PREFIXO_RASCUNHO}:${uid}:${id}`;
+    const chaveUltima = (uid) => `${PREFIXO_ULTIMA}:${uid}`;
+
     let cliente = null;
-    let repositorio = null;
+    let repositorioNuvem = null;
     let usuario = null;
-    let fichaAtiva = null;
-    let timerRascunho = null;
+    let modoEdicao = 'local';
+    let fichaNuvem = null;
+    let fichaLocal = null;
+    let timerLocal = null;
     let timerNuvem = null;
     let alteracaoPendente = false;
     let filaEnvios = Promise.resolve();
     let operacaoEmAndamento = false;
 
-    const fichaVazia = () => normalizarFicha({ versao: 3 });
-    const chaveRascunho = (usuarioId, fichaId) => `${CHAVE_RASCUNHO}:${usuarioId}:${fichaId}`;
-    const chaveUltima = (usuarioId) => `${CHAVE_ULTIMA_FICHA}:${usuarioId}`;
-    const tituloValido = (titulo) => String(titulo ?? '').trim().slice(0, 120) || 'Novo personagem';
-    const tituloDaFicha = (dados) => tituloValido(dados?.personagem?.['nome-personagem'] || 'Ficha importada');
-
-    function informar(mensagem, erro = false) {
-        const elemento = porId('mensagem-conta');
-        if (elemento) {
-            elemento.textContent = mensagem;
-            elemento.dataset.erro = String(erro);
-        }
+    function mensagem(id, texto, erro = false) {
+        const elemento = porId(id);
+        elemento.textContent = texto;
+        elemento.dataset.erro = String(erro);
     }
 
-    function estadoSalvamento(mensagem) {
-        for (const id of ['status-salvamento', 'status-salvamento-mobile']) {
-            const elemento = porId(id);
-            if (elemento)
-                elemento.textContent = mensagem;
-        }
+    function estadoSalvamento(texto) {
+        for (const id of ['status-salvamento', 'status-salvamento-mobile'])
+            porId(id).textContent = texto;
     }
 
     function atualizarInterface() {
         porId('conta-visitante').hidden = Boolean(usuario);
         porId('conta-autenticada').hidden = !usuario;
         porId('entrar-google').disabled = !configurado();
-        porId('email-conta').textContent = usuario?.email || 'Conta autenticada';
+        porId('email-conta').textContent = usuario?.email || '';
 
-        const identificacao = usuario
-            ? (fichaAtiva ? `Ficha: ${fichaAtiva.titulo}` : 'Nenhuma ficha selecionada')
-            : 'Ficha local (sem login)';
-        for (const id of ['ficha-atual', 'ficha-atual-mobile']) {
-            const elemento = porId(id);
-            if (elemento)
-                elemento.textContent = identificacao;
-        }
-        porId('btn-conta-google').textContent = usuario ? 'Minha conta' : 'Entrar com Google';
-        porId('conta-mobile').textContent = usuario ? 'Minha conta' : 'Entrar com Google';
-        // Evita editar uma ficha sem identificador enquanto há uma sessão ativa.
+        const identificacao = modoEdicao === 'local'
+            ? `Local: ${fichaLocal?.titulo || 'sem ficha'}`
+            : `Online: ${fichaNuvem?.titulo || 'sem ficha'}`;
+        for (const id of ['ficha-atual', 'ficha-atual-mobile'])
+            porId(id).textContent = identificacao;
+
+        const bloqueado = modoEdicao === 'nuvem' && !fichaNuvem;
         document.querySelectorAll('#jogador, #personagem, #inventario, #quadro-mobile')
-            .forEach((secao) => { secao.inert = Boolean(usuario && !fichaAtiva); });
-        let existeFichaLocal = false;
-        try { existeFichaLocal = Boolean(lerLocal()); } catch { /* JSON local antigo inválido. */ }
-        porId('importar-ficha-local').hidden = !usuario || !existeFichaLocal;
+            .forEach((secao) => { secao.inert = bloqueado; });
     }
 
-    function abrirPainel() {
-        if (!painel.open)
-            painel.showModal();
+    function fecharPaineis() {
+        if (painelOnline.open) painelOnline.close();
+        if (painelLocal.open) painelLocal.close();
+    }
+
+    function abrirOnline() {
+        fecharPaineis();
+        painelOnline.showModal();
         if (usuario)
-            void atualizarLista();
-        else if (!configurado())
-            informar('Configure o Supabase para ativar o login. Sua ficha local continua funcionando.');
+            void atualizarListaOnline();
         else
-            informar('Entre com Google para acessar suas fichas privadas.');
+            mensagem('mensagem-conta', configurado()
+                ? 'Entre com Google para acessar suas fichas privadas.'
+                : 'Configure o Supabase para usar o gerenciamento online.');
     }
 
-    function fecharPainel() {
-        if (painel.open)
-            painel.close();
+    function abrirLocais() {
+        fecharPaineis();
+        desenharListaLocal();
+        mensagem('mensagem-locais', 'Estas fichas existem somente neste navegador.');
+        painelLocal.showModal();
     }
 
-    function lerRascunho(usuarioId, fichaId) {
+    function garantirLocal() {
+        const id = repositorioLocal.ativa();
+        fichaLocal = (id && repositorioLocal.obter(id))
+            || repositorioLocal.listar().map((ficha) => repositorioLocal.obter(ficha.id)).find(Boolean)
+            || repositorioLocal.criar('Ficha local', fichaVazia());
+        repositorioLocal.selecionar(fichaLocal.id);
+    }
+
+    function restaurarLocal() {
+        garantirLocal();
+        modoEdicao = 'local';
+        fichaNuvem = null;
+        carregarFicha(normalizarFicha(fichaLocal.dados));
+        atualizarInterface();
+        estadoSalvamento('Ficha salva neste navegador');
+    }
+
+    function lerRascunho(uid, id) {
         try {
-            const texto = localStorage.getItem(chaveRascunho(usuarioId, fichaId));
+            const texto = localStorage.getItem(chaveRascunho(uid, id));
             return texto ? JSON.parse(texto) : null;
         } catch (erro) {
-            console.warn('Rascunho local inválido.', erro);
+            console.warn('Não foi possível ler o rascunho local.', erro);
             return null;
         }
     }
 
-    function agendarNuvem() {
-        clearTimeout(timerNuvem);
-        timerNuvem = setTimeout(() => { void sincronizar(); }, TEMPO_NUVEM_MS);
-    }
-
-    /** Grava um rascunho antes de tentar enviar para a nuvem. */
     function salvarAgora() {
-        clearTimeout(timerRascunho);
+        clearTimeout(timerLocal);
         alteracaoPendente = false;
-        if (usuario && !fichaAtiva)
-            return false;
+
         try {
             const dados = coletarFicha();
-            if (!usuario) {
-                gravarLocal(dados);
-                estadoSalvamento('Salva neste dispositivo');
+            if (modoEdicao === 'local') {
+                fichaLocal = repositorioLocal.salvar(fichaLocal.id, dados);
+                estadoSalvamento('Ficha salva neste navegador');
+            } else if (usuario && fichaNuvem) {
+                localStorage.setItem(chaveRascunho(usuario.id, fichaNuvem.id), JSON.stringify({
+                    dados, token: crypto.randomUUID(),
+                }));
+                estadoSalvamento('Alterações locais; sincronizando…');
+                clearTimeout(timerNuvem);
+                timerNuvem = setTimeout(() => { void sincronizar(); }, ESPERA_NUVEM_MS);
             } else {
-                const rascunho = { dados, token: crypto.randomUUID() };
-                localStorage.setItem(chaveRascunho(usuario.id, fichaAtiva.id), JSON.stringify(rascunho));
-                estadoSalvamento('Alterações locais; aguardando nuvem…');
-                agendarNuvem();
+                return false;
             }
             return true;
         } catch (erro) {
-            console.error('Erro ao salvar a ficha localmente.', erro);
-            estadoSalvamento('Erro ao guardar alterações locais');
+            console.error('Não foi possível salvar a ficha no navegador.', erro);
+            estadoSalvamento('Falha no salvamento local; faça um backup JSON');
             return false;
         }
     }
 
     function agendarSalvamento() {
-        if (usuario && !fichaAtiva)
-            return;
         alteracaoPendente = true;
-        clearTimeout(timerRascunho);
-        timerRascunho = setTimeout(salvarAgora, TEMPO_RASCUNHO_MS);
+        clearTimeout(timerLocal);
+        timerLocal = setTimeout(salvarAgora, ESPERA_LOCAL_MS);
     }
 
-    /** Os envios são serializados para não sobrescrever um salvamento mais novo. */
     async function sincronizar() {
         clearTimeout(timerNuvem);
-        if (!usuario || !fichaAtiva)
+        if (modoEdicao !== 'nuvem' || !usuario || !fichaNuvem)
             return true;
-        const usuarioId = usuario.id;
-        const fichaId = fichaAtiva.id;
-        const rascunho = lerRascunho(usuarioId, fichaId);
+
+        const uid = usuario.id;
+        const id = fichaNuvem.id;
+        const rascunho = lerRascunho(uid, id);
         if (!rascunho)
             return true;
 
-        const envio = filaEnvios.then(() => repositorio.salvar(fichaId, rascunho.dados));
+        const envio = filaEnvios.then(() => repositorioNuvem.salvar(id, rascunho.dados));
         filaEnvios = envio.catch(() => {});
         try {
             await envio;
-            // Só remove o rascunho enviado; outro pode ter sido criado durante o envio.
-            if (lerRascunho(usuarioId, fichaId)?.token === rascunho.token)
-                localStorage.removeItem(chaveRascunho(usuarioId, fichaId));
-            if (usuario?.id === usuarioId && fichaAtiva?.id === fichaId) {
-                if (lerRascunho(usuarioId, fichaId)) {
+            if (lerRascunho(uid, id)?.token === rascunho.token)
+                localStorage.removeItem(chaveRascunho(uid, id));
+            if (usuario?.id === uid && fichaNuvem?.id === id) {
+                if (lerRascunho(uid, id)) {
                     estadoSalvamento('Novas alterações pendentes…');
-                    agendarNuvem();
+                    clearTimeout(timerNuvem);
+                    timerNuvem = setTimeout(() => { void sincronizar(); }, ESPERA_NUVEM_MS);
                 } else {
-                    estadoSalvamento('Salva na nuvem');
+                    estadoSalvamento('Ficha salva na nuvem');
                 }
             }
             return true;
         } catch (erro) {
-            console.warn('Não foi possível sincronizar a ficha.', erro);
-            if (usuario?.id === usuarioId && fichaAtiva?.id === fichaId)
-                estadoSalvamento('Sem sincronização; rascunho mantido neste dispositivo');
+            console.warn('Falha ao sincronizar; rascunho preservado.', erro);
+            estadoSalvamento('Sem conexão: rascunho guardado neste navegador');
             return false;
         }
     }
 
     async function concluirSalvamento() {
-        clearTimeout(timerRascunho);
+        clearTimeout(timerLocal);
         clearTimeout(timerNuvem);
         if (alteracaoPendente && !salvarAgora())
             return false;
         return sincronizar();
     }
 
-    async function executar(acao) {
-        if (operacaoEmAndamento)
-            return;
+    async function executar(painel, acao) {
+        if (operacaoEmAndamento) return;
         operacaoEmAndamento = true;
         painel.setAttribute('aria-busy', 'true');
         try {
             await acao();
         } catch (erro) {
-            console.error('Railroad: falha na operação de fichas.', erro);
-            informar(`Não foi possível concluir: ${erro.message}`, true);
+            console.error('Railroad: erro na operação de fichas.', erro);
+            mensagem(painel === painelOnline ? 'mensagem-conta' : 'mensagem-locais',
+                `Operação não concluída: ${erro.message}`, true);
         } finally {
             operacaoEmAndamento = false;
             painel.removeAttribute('aria-busy');
         }
     }
 
-    function botaoAcao(texto, acao, desabilitado = false) {
+    function criarBotao(texto, acao, painel, desabilitado = false) {
         const botao = document.createElement('button');
         botao.type = 'button';
         botao.textContent = texto;
         botao.disabled = desabilitado;
-        botao.addEventListener('click', () => { void executar(acao); });
+        botao.addEventListener('click', () => { void executar(painel, acao); });
         return botao;
     }
 
-    function desenharLista(fichas) {
+    function desenharLinha(ficha, painel, acoes, ativa) {
+        const linha = document.createElement('li');
+        linha.className = `linha-ficha${ativa ? ' ativa' : ''}`;
+        const informacoes = document.createElement('div');
+        informacoes.className = 'informacoes-ficha';
+        const titulo = document.createElement('strong');
+        titulo.textContent = ficha.titulo;
+        const data = document.createElement('small');
+        const atualizadaEm = ficha.updated_at || ficha.updatedAt;
+        data.textContent = atualizadaEm
+            ? `Atualizada em ${new Date(atualizadaEm).toLocaleString('pt-BR')}` : '';
+        informacoes.append(titulo, data);
+        const botoes = document.createElement('div');
+        botoes.className = 'acoes-linha-ficha';
+        for (const [rotulo, acao, desabilitado] of acoes)
+            botoes.append(criarBotao(rotulo, acao, painel, desabilitado));
+        linha.append(informacoes, botoes);
+        return linha;
+    }
+
+    function desenharListaLocal() {
+        const lista = porId('lista-fichas-locais');
+        lista.replaceChildren();
+        for (const ficha of repositorioLocal.listar()) {
+            const ativa = modoEdicao === 'local' && ficha.id === fichaLocal?.id;
+            lista.append(desenharLinha(ficha, painelLocal, [
+                [ativa ? 'Aberta' : 'Abrir', () => abrirFichaLocal(ficha.id), ativa],
+                ['Renomear', () => renomearLocal(ficha)],
+                ['Duplicar', () => duplicarLocal(ficha)],
+                ['Excluir local', () => excluirLocal(ficha)],
+            ], ativa));
+        }
+    }
+
+    async function abrirFichaLocal(id) {
+        if (!(await concluirSalvamento()))
+            return mensagem('mensagem-locais', 'Não foi possível guardar a ficha atual.', true);
+        const registro = repositorioLocal.obter(id);
+        if (!registro) throw new Error('Ficha local não encontrada.');
+        fichaLocal = registro;
+        repositorioLocal.selecionar(registro.id);
+        modoEdicao = 'local';
+        fichaNuvem = null;
+        carregarFicha(normalizarFicha(registro.dados));
+        atualizarInterface();
+        estadoSalvamento('Ficha salva neste navegador');
+        fecharPaineis();
+    }
+
+    async function criarFichaLocal(titulo, dados = null) {
+        if (!(await concluirSalvamento()))
+            throw new Error('Salve sua ficha atual antes de criar outra.');
+        const nova = dados || normalizarFicha({
+            versao: 3, personagem: { 'nome-personagem': titulo },
+        });
+        const registro = repositorioLocal.criar(tituloValido(titulo), nova);
+        await abrirFichaLocal(registro.id);
+    }
+
+    async function renomearLocal(ficha) {
+        const titulo = prompt('Novo nome da ficha local:', ficha.titulo);
+        if (titulo === null) return;
+        if (!titulo.trim()) throw new Error('O nome não pode ficar vazio.');
+        repositorioLocal.renomear(ficha.id, titulo);
+        if (fichaLocal?.id === ficha.id)
+            fichaLocal.titulo = tituloValido(titulo);
+        atualizarInterface();
+        desenharListaLocal();
+    }
+
+    async function duplicarLocal(ficha) {
+        const registro = repositorioLocal.obter(ficha.id);
+        await criarFichaLocal(`${ficha.titulo} (cópia)`, normalizarFicha(registro.dados));
+    }
+
+    async function excluirLocal(ficha) {
+        if (!confirm(`Remover "${ficha.titulo}" deste navegador? A nuvem não será alterada.`))
+            return;
+        if (modoEdicao === 'local' && fichaLocal?.id === ficha.id) {
+            clearTimeout(timerLocal);
+            alteracaoPendente = false;
+        }
+        repositorioLocal.excluir(ficha.id);
+        if (fichaLocal?.id === ficha.id) {
+            garantirLocal();
+            if (modoEdicao === 'local')
+                carregarFicha(normalizarFicha(fichaLocal.dados));
+        }
+        atualizarInterface();
+        desenharListaLocal();
+        mensagem('mensagem-locais', 'Ficha excluída apenas deste navegador.');
+    }
+
+    function desenharListaOnline(fichas) {
         const lista = porId('lista-fichas');
         lista.replaceChildren();
         if (!fichas.length) {
-            const aviso = document.createElement('li');
-            aviso.textContent = 'Nenhuma ficha na nuvem. Crie a primeira acima.';
-            lista.append(aviso);
-            return;
+            const item = document.createElement('li');
+            item.textContent = 'Nenhuma ficha online ainda. Crie ou importe uma acima.';
+            lista.append(item);
         }
         for (const ficha of fichas) {
-            const linha = document.createElement('li');
-            linha.className = `linha-ficha${ficha.id === fichaAtiva?.id ? ' ativa' : ''}`;
-            const informacoes = document.createElement('div');
-            informacoes.className = 'informacoes-ficha';
-            const titulo = document.createElement('strong');
-            titulo.textContent = ficha.titulo;
-            const data = document.createElement('small');
-            data.textContent = `Atualizada em ${new Date(ficha.updated_at).toLocaleString('pt-BR')}`;
-            informacoes.append(titulo, data);
-            const acoes = document.createElement('div');
-            acoes.className = 'acoes-linha-ficha';
-            acoes.append(
-                botaoAcao(ficha.id === fichaAtiva?.id ? 'Aberta' : 'Abrir', () => selecionarFicha(ficha.id), ficha.id === fichaAtiva?.id),
-                botaoAcao('Renomear', () => renomearFicha(ficha)),
-                botaoAcao('Duplicar', () => duplicarFicha(ficha)),
-                botaoAcao('Excluir', () => excluirFicha(ficha))
-            );
-            linha.append(informacoes, acoes);
-            lista.append(linha);
+            const ativa = modoEdicao === 'nuvem' && ficha.id === fichaNuvem?.id;
+            lista.append(desenharLinha(ficha, painelOnline, [
+                [ativa ? 'Aberta' : 'Abrir', () => abrirFichaOnline(ficha.id), ativa],
+                ['Renomear', () => renomearOnline(ficha)],
+                ['Duplicar', () => duplicarOnline(ficha)],
+                ['Excluir na nuvem', () => excluirOnline(ficha)],
+            ], ativa));
         }
     }
 
-    async function atualizarLista() {
-        if (!usuario || !repositorio)
-            return;
-        const usuarioConsultado = usuario.id;
-        informar('Consultando fichas…');
+    async function atualizarListaOnline() {
+        if (!usuario || !repositorioNuvem) return;
+        const uid = usuario.id;
+        mensagem('mensagem-conta', 'Consultando fichas…');
         try {
-            const fichas = await repositorio.listar();
-            if (usuario?.id !== usuarioConsultado)
-                return;
-            desenharLista(fichas);
-            informar(`${fichas.length} ficha(s) na sua conta.`);
+            const fichas = await repositorioNuvem.listar();
+            if (usuario?.id !== uid) return;
+            desenharListaOnline(fichas);
+            mensagem('mensagem-conta', `${fichas.length} ficha(s) online na sua conta.`);
         } catch (erro) {
-            informar(`Não foi possível listar as fichas: ${erro.message}`, true);
+            mensagem('mensagem-conta', `Falha ao listar fichas: ${erro.message}`, true);
         }
     }
 
-    async function selecionarFicha(id) {
-        await concluirSalvamento(); // Se a rede falhar, o rascunho anterior permanece no dispositivo.
-        const registro = await repositorio.obter(id);
-        fichaAtiva = { id: registro.id, titulo: registro.titulo };
+    async function abrirFichaOnline(id) {
+        if (!(await concluirSalvamento()))
+            throw new Error('Não foi possível salvar a ficha atual; tente novamente.');
+        const registro = await repositorioNuvem.obter(id);
         const rascunho = lerRascunho(usuario.id, id);
+        fichaNuvem = { id: registro.id, titulo: registro.titulo };
+        modoEdicao = 'nuvem';
         carregarFicha(normalizarFicha(rascunho?.dados || registro.dados));
         localStorage.setItem(chaveUltima(usuario.id), id);
         atualizarInterface();
-        estadoSalvamento(rascunho ? 'Rascunho local pendente de sincronização' : 'Salva na nuvem');
-        if (rascunho)
-            agendarNuvem();
-        fecharPainel();
-    }
-
-    async function criarFicha(titulo, dados = null) {
-        await concluirSalvamento();
-        const nova = dados || normalizarFicha({ versao: 3, personagem: { 'nome-personagem': titulo } });
-        const registro = await repositorio.criar(usuario.id, tituloValido(titulo), nova);
-        await selecionarFicha(registro.id);
-    }
-
-    async function renomearFicha(ficha) {
-        const resposta = prompt('Novo nome desta ficha:', ficha.titulo);
-        if (resposta === null)
-            return;
-        if (!resposta.trim()) {
-            informar('O nome da ficha não pode ficar vazio.', true);
-            return;
+        estadoSalvamento(rascunho ? 'Rascunho local aguardando sincronização' : 'Ficha salva na nuvem');
+        if (rascunho) {
+            clearTimeout(timerNuvem);
+            timerNuvem = setTimeout(() => { void sincronizar(); }, ESPERA_NUVEM_MS);
         }
-        const titulo = tituloValido(resposta);
-        await repositorio.renomear(ficha.id, titulo);
-        if (fichaAtiva?.id === ficha.id) {
-            fichaAtiva.titulo = titulo;
+        fecharPaineis();
+    }
+
+    async function criarOnline(titulo, dados = null) {
+        if (!(await concluirSalvamento()))
+            throw new Error('Salve a ficha atual antes de continuar.');
+        const nova = dados || normalizarFicha({
+            versao: 3, personagem: { 'nome-personagem': titulo },
+        });
+        const registro = await repositorioNuvem.criar(usuario.id, tituloValido(titulo), nova);
+        await abrirFichaOnline(registro.id);
+    }
+
+    async function renomearOnline(ficha) {
+        const titulo = prompt('Novo nome da ficha online:', ficha.titulo);
+        if (titulo === null) return;
+        if (!titulo.trim()) throw new Error('O nome não pode ficar vazio.');
+        await repositorioNuvem.renomear(ficha.id, tituloValido(titulo));
+        if (fichaNuvem?.id === ficha.id) {
+            fichaNuvem.titulo = tituloValido(titulo);
             atualizarInterface();
         }
-        await atualizarLista();
+        await atualizarListaOnline();
     }
 
-    async function duplicarFicha(ficha) {
-        await concluirSalvamento();
-        const registro = await repositorio.obter(ficha.id);
-        const dados = lerRascunho(usuario.id, ficha.id)?.dados || registro.dados;
-        await criarFicha(`${ficha.titulo} (cópia)`.slice(0, 120), normalizarFicha(dados));
+    async function duplicarOnline(ficha) {
+        if (!(await concluirSalvamento()))
+            throw new Error('Não foi possível salvar a ficha atual.');
+        const registro = await repositorioNuvem.obter(ficha.id);
+        const rascunho = lerRascunho(usuario.id, ficha.id);
+        await criarOnline(`${ficha.titulo} (cópia)`, normalizarFicha(rascunho?.dados || registro.dados));
     }
 
-    async function excluirFicha(ficha) {
-        if (!confirm(`Excluir definitivamente a ficha "${ficha.titulo}" da sua conta?`))
+    async function excluirOnline(ficha) {
+        if (!confirm(`Excluir "${ficha.titulo}" PERMANENTEMENTE do banco de dados?`))
             return;
-        // Aguarda envios anteriores; não inicia novos envios da ficha a excluir.
-        if (fichaAtiva?.id === ficha.id) {
-            clearTimeout(timerRascunho);
+        if (fichaNuvem?.id === ficha.id) {
+            clearTimeout(timerLocal);
             clearTimeout(timerNuvem);
             alteracaoPendente = false;
         }
         await filaEnvios;
-        await repositorio.excluir(ficha.id);
+        await repositorioNuvem.excluir(ficha.id);
         localStorage.removeItem(chaveRascunho(usuario.id, ficha.id));
-        if (fichaAtiva?.id === ficha.id) {
-            fichaAtiva = null;
+        if (fichaNuvem?.id === ficha.id) {
             localStorage.removeItem(chaveUltima(usuario.id));
-            carregarFicha(fichaVazia());
-            atualizarInterface();
-            estadoSalvamento('Crie ou abra uma ficha para editar');
+            restaurarLocal();
         }
-        await atualizarLista();
+        await atualizarListaOnline();
     }
 
-    async function importarFicha(dados) {
-        const ficha = normalizarFicha(dados);
-        if (!usuario) {
-            carregarFicha(ficha);
-            gravarLocal(ficha);
-            estadoSalvamento('Ficha importada e salva neste dispositivo');
+    async function importarArquivoLocal(arquivo) {
+        const dados = interpretarArquivo(await arquivo.text());
+        await criarFichaLocal(tituloDoPersonagem(dados), dados);
+        estadoSalvamento('JSON importado para este navegador');
+    }
+
+    async function importarArquivoOnline(arquivo) {
+        if (!usuario)
+            throw new Error('Entre com Google antes de importar para a nuvem.');
+        const dados = interpretarArquivo(await arquivo.text());
+        const identidade = await identidadeDaImportacao(dados);
+        const resultado = await repositorioNuvem.criarImportada(
+            usuario.id, tituloDoPersonagem(dados), dados, identidade
+        );
+        if (resultado.duplicada) {
+            await atualizarListaOnline();
+            mensagem('mensagem-conta',
+                `A ficha "${resultado.registro.titulo}" já foi importada para esta conta. Nenhuma duplicata foi criada.`);
             return;
         }
-        await criarFicha(tituloDaFicha(ficha), ficha);
+        await abrirFichaOnline(resultado.registro.id);
     }
 
-    async function apagarAtual() {
-        if (!usuario) {
-            if (!confirm('Apagar a ficha local deste dispositivo?'))
+    /** O botão externo NUNCA faz DELETE no Supabase. */
+    async function apagarLocalAtual() {
+        if (modoEdicao === 'nuvem') {
+            if (!confirm('Descartar apenas o rascunho deste navegador? A ficha salva no banco permanecerá intacta.'))
                 return;
-            clearTimeout(timerRascunho);
+            clearTimeout(timerLocal);
+            clearTimeout(timerNuvem);
             alteracaoPendente = false;
-            apagarLocal();
-            carregarFicha(fichaVazia());
-            estadoSalvamento('Ficha local apagada');
-            return;
+            localStorage.removeItem(chaveRascunho(usuario.id, fichaNuvem.id));
+            restaurarLocal();
+            estadoSalvamento('Rascunho local removido; dados online preservados');
+        } else {
+            if (!confirm('Apagar esta ficha somente do navegador? O banco de dados não será alterado.'))
+                return;
+            const id = fichaLocal.id;
+            clearTimeout(timerLocal);
+            alteracaoPendente = false;
+            repositorioLocal.excluir(id);
+            // Retorna a uma ficha local em branco, preservando as demais.
+            fichaLocal = repositorioLocal.criar('Ficha local', fichaVazia());
+            repositorioLocal.selecionar(fichaLocal.id);
+            carregarFicha(normalizarFicha(fichaLocal.dados));
+            atualizarInterface();
+            estadoSalvamento('Ficha removida apenas deste navegador');
         }
-        if (!fichaAtiva) {
-            abrirPainel();
-            return;
-        }
-        await executar(() => excluirFicha(fichaAtiva));
     }
 
     function modoVisitante() {
-        clearTimeout(timerRascunho);
+        clearTimeout(timerLocal);
         clearTimeout(timerNuvem);
         alteracaoPendente = false;
         usuario = null;
-        fichaAtiva = null;
-        try {
-            carregarFicha(normalizarFicha(lerLocal() || fichaVazia()));
-        } catch (erro) {
-            console.warn('Ficha local inválida.', erro);
-            carregarFicha(fichaVazia());
-        }
-        atualizarInterface();
-        estadoSalvamento('Modo local');
+        restaurarLocal();
     }
 
-    async function modoAutenticado(user) {
-        usuario = user;
-        fichaAtiva = null;
-        carregarFicha(fichaVazia());
-        atualizarInterface();
-        estadoSalvamento('Selecione ou crie uma ficha');
-        const ultima = localStorage.getItem(chaveUltima(user.id));
+    async function modoAutenticado(conta) {
+        if (alteracaoPendente) salvarAgora();
+        usuario = conta;
+        // Limpa da tela a ficha de outra conta antes de carregar a nova.
+        restaurarLocal();
+        const ultima = localStorage.getItem(chaveUltima(conta.id));
         if (ultima) {
             try {
-                await selecionarFicha(ultima);
+                await abrirFichaOnline(ultima);
                 return;
             } catch (erro) {
-                console.warn('Última ficha indisponível.', erro);
-                localStorage.removeItem(chaveUltima(user.id));
+                console.warn('Última ficha não disponível:', erro);
+                localStorage.removeItem(chaveUltima(conta.id));
             }
         }
-        abrirPainel();
+        restaurarLocal();
+        abrirOnline();
     }
 
     async function entrarGoogle() {
-        if (!cliente) {
-            informar('Configure o Supabase antes de usar o Google.', true);
-            return;
-        }
+        if (!cliente) throw new Error('O Supabase ainda não está configurado.');
         const { error } = await cliente.auth.signInWithOAuth({
-            provider: 'google',
-            options: { redirectTo: `${location.origin}${location.pathname}` },
+            provider: 'google', options: { redirectTo: `${location.origin}${location.pathname}` },
         });
-        if (error)
-            throw error;
+        if (error) throw error;
     }
 
     async function sairGoogle() {
-        if (!(await concluirSalvamento())) {
-            if (!confirm('Não foi possível sincronizar as últimas alterações. O rascunho ficou neste navegador. Sair mesmo assim?'))
-                return;
-        }
+        if (!(await concluirSalvamento()) && !confirm(
+            'Há um rascunho sem sincronizar. Ele continuará neste navegador. Deseja sair?'
+        )) return;
         const { error } = await cliente.auth.signOut();
-        if (error)
-            throw error;
+        if (error) throw error;
         modoVisitante();
-        fecharPainel();
+        fecharPaineis();
     }
 
     function registrarEventos() {
-        for (const id of ['btn-minhas-fichas', 'btn-conta-google'])
-            porId(id)?.addEventListener('click', abrirPainel);
-        porId('fechar-painel-fichas').addEventListener('click', fecharPainel);
-        porId('entrar-google').addEventListener('click', () => { void executar(entrarGoogle); });
-        porId('sair-google').addEventListener('click', () => { void executar(sairGoogle); });
+        porId('btn-minhas-fichas').addEventListener('click', abrirOnline);
+        porId('btn-fichas-locais').addEventListener('click', abrirLocais);
+        porId('btn-apagar-ficha').addEventListener('click', () => { void apagarLocalAtual(); });
+        porId('fechar-painel-fichas').addEventListener('click', fecharPaineis);
+        porId('fechar-painel-locais').addEventListener('click', fecharPaineis);
+        porId('entrar-google').addEventListener('click', () => { void executar(painelOnline, entrarGoogle); });
+        porId('sair-google').addEventListener('click', () => { void executar(painelOnline, sairGoogle); });
+
         porId('form-criar-ficha').addEventListener('submit', (evento) => {
             evento.preventDefault();
-            const campo = porId('nome-nova-ficha');
-            void executar(async () => {
-                await criarFicha(campo.value);
-                campo.value = '';
+            void executar(painelOnline, async () => {
+                await criarOnline(porId('nome-nova-ficha').value);
+                porId('nome-nova-ficha').value = '';
             });
         });
-        porId('importar-ficha-local').addEventListener('click', () => {
-            void executar(async () => {
-                const dados = lerLocal();
-                if (!dados)
-                    return;
-                await criarFicha(tituloDaFicha(dados), normalizarFicha(dados));
+        porId('form-criar-local').addEventListener('submit', (evento) => {
+            evento.preventDefault();
+            void executar(painelLocal, async () => {
+                await criarFichaLocal(porId('nome-nova-local').value);
+                porId('nome-nova-local').value = '';
             });
         });
-        window.addEventListener('pagehide', () => {
-            if (alteracaoPendente)
-                salvarAgora(); // A rede não é garantida no fechamento; mantém o rascunho local.
+
+        porId('exportar-json').addEventListener('click', () => {
+            const dados = normalizarFicha(coletarFicha());
+            const id = modoEdicao === 'local' ? fichaLocal?.id : fichaNuvem?.id;
+            // ID estável reconhece a mesma ficha mesmo depois de edições futuras.
+            baixarFicha({ ...dados, railroadId: id });
         });
+        for (const [botao, input, painel, importar] of [
+            ['importar-json-local', 'input-importar-local', painelLocal, importarArquivoLocal],
+            ['importar-ficha-local', 'input-importar-online', painelOnline, importarArquivoOnline],
+        ]) {
+            porId(botao).addEventListener('click', () => porId(input).click());
+            porId(input).addEventListener('change', (evento) => {
+                const arquivo = evento.target.files?.[0];
+                evento.target.value = '';
+                if (arquivo) void executar(painel, () => importar(arquivo));
+            });
+        }
+
+        const salvarAoSair = () => {
+            if (alteracaoPendente) salvarAgora();
+        };
+        window.addEventListener('pagehide', salvarAoSair);
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden' && alteracaoPendente)
-                salvarAgora();
+            if (document.visibilityState === 'hidden') salvarAoSair();
         });
     }
 
     async function iniciar() {
         registrarEventos();
-        if (!configurado()) {
-            modoVisitante();
+        try {
+            repositorioLocal.migrarAntiga(normalizarFicha);
+            restaurarLocal();
+        } catch (erro) {
+            console.error('Falha ao preparar as fichas locais.', erro);
+            estadoSalvamento('Falha no armazenamento local; exporte suas fichas JSON');
             return;
         }
+        if (!configurado()) return;
+
         try {
             cliente = await conectar();
-            repositorio = criarRepositorioFichas(cliente);
-            cliente.auth.onAuthStateChange((evento, sessaoAtual) => {
-                // Mudanças de conta em outra aba não podem deixar a ficha anterior visível.
-                // Evita chamadas assíncronas do Supabase dentro do callback de autenticação.
+            repositorioNuvem = criarRepositorioFichas(cliente);
+            cliente.auth.onAuthStateChange((evento, sessao) => {
                 if (evento === 'SIGNED_OUT' && usuario)
-                    queueMicrotask(() => {
-                        if (alteracaoPendente) salvarAgora();
-                        modoVisitante();
-                        fecharPainel();
-                    });
-                else if (evento === 'SIGNED_IN' && usuario && sessaoAtual?.user?.id !== usuario.id)
-                    queueMicrotask(() => {
-                        if (alteracaoPendente) salvarAgora();
-                        void modoAutenticado(sessaoAtual.user);
-                    });
+                    queueMicrotask(() => { modoVisitante(); fecharPaineis(); });
+                else if (evento === 'SIGNED_IN' && usuario && sessao?.user?.id !== usuario.id)
+                    queueMicrotask(() => { void modoAutenticado(sessao.user); });
             });
             const { data: sessao, error: erroSessao } = await cliente.auth.getSession();
-            if (erroSessao)
-                throw erroSessao;
-            if (!sessao.session) {
-                modoVisitante();
-                return;
-            }
+            if (erroSessao) throw erroSessao;
+            if (!sessao.session) return;
             const { data, error } = await cliente.auth.getUser();
-            if (error)
-                throw error;
-            if (data.user)
-                await modoAutenticado(data.user);
-            else
-                modoVisitante();
+            if (error) throw error;
+            if (data.user) await modoAutenticado(data.user);
         } catch (erro) {
-            console.warn('Supabase indisponível; modo local mantido.', erro);
-            modoVisitante();
-            estadoSalvamento('Nuvem indisponível; modo local');
+            console.warn('Supabase indisponível; a ficha local continuará funcionando.', erro);
+            estadoSalvamento('Nuvem indisponível; você pode continuar no modo local');
         }
     }
 
-    return { iniciar, agendarSalvamento, salvarAgora, importarFicha, apagarAtual };
+    return { iniciar, agendarSalvamento, salvarAgora, apagarLocalAtual };
 }

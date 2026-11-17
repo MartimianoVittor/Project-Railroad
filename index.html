@@ -31,19 +31,17 @@
         <h2>Minha ficha</h2>
         <p class="identificacao-ficha" id="ficha-atual-mobile"></p>
         <p class="status-salvamento" id="status-salvamento-mobile" role="status" aria-live="polite"></p>
-        <button type="button" class="btn-oeste" id="fichas-mobile">Minhas fichas</button>
-        <button type="button" class="btn-oeste" id="conta-mobile">Conta Google</button>
-        <button type="button" class="btn-oeste" id="exportar-mobile">Salvar ficha (JSON)</button>
-        <button type="button" class="btn-oeste" id="importar-mobile">Carregar ficha (JSON)</button>
-        <button type="button" class="btn-oeste" id="apagar-mobile">Apagar ficha</button>
+        <button type="button" class="btn-oeste" id="fichas-mobile">Fichas online</button>
+        <button type="button" class="btn-oeste" id="locais-mobile">Fichas locais</button>
+        <button type="button" class="btn-oeste" id="apagar-mobile">Apagar ficha local</button>
         <button type="button" class="btn-oeste" id="fechar-acoes-mobile">Fechar</button>
     </div>
     <!-- Painel único de autenticação e gerenciamento de personagens. -->
     <dialog id="painel-fichas" class="painel-fichas" aria-labelledby="painel-fichas-titulo">
         <header class="painel-fichas-cabecalho">
             <div>
-                <h2 id="painel-fichas-titulo">Minhas fichas</h2>
-                <p>Seus personagens no Railroad</p>
+                <h2 id="painel-fichas-titulo">Fichas online</h2>
+                <p>Personagens privados salvos no Supabase</p>
             </div>
             <button type="button" id="fechar-painel-fichas" class="fechar-painel-fichas" aria-label="Fechar painel">×</button>
         </header>
@@ -65,11 +63,38 @@
                     <button type="submit" class="btn-oeste">Criar ficha</button>
                 </div>
             </form>
-            <button type="button" id="importar-ficha-local" class="btn-oeste" hidden>Importar minha ficha local para a conta</button>
+            <button type="button" id="importar-ficha-local" class="btn-oeste">Importar minhas fichas locais (JSON)</button>
+            <input type="file" id="input-importar-online" accept=".json,application/json" hidden>
+            <p class="dica-fichas">Escolha no explorador um arquivo JSON para adicionar à sua conta. Repetir a importação não cria outra ficha.</p>
             <h3>Personagens salvos</h3>
             <ul id="lista-fichas" class="lista-fichas"></ul>
             <p class="dica-fichas">Apenas você pode acessar suas fichas. O compartilhamento com mestres e jogadores será implementado futuramente.</p>
         </section>
+    </dialog>
+    <dialog id="painel-locais" class="painel-fichas" aria-labelledby="painel-locais-titulo">
+        <header class="painel-fichas-cabecalho">
+            <div>
+                <h2 id="painel-locais-titulo">Fichas locais</h2>
+                <p>Arquivos e personagens salvos neste navegador</p>
+            </div>
+            <button type="button" id="fechar-painel-locais" class="fechar-painel-fichas" aria-label="Fechar fichas locais">×</button>
+        </header>
+        <p id="mensagem-locais" class="mensagem-conta" role="status" aria-live="polite"></p>
+        <form id="form-criar-local" class="form-criar-ficha">
+            <label for="nome-nova-local">Nova ficha local</label>
+            <div class="form-criar-ficha-controles">
+                <input id="nome-nova-local" type="text" maxlength="120" required placeholder="Nome da ficha">
+                <button type="submit" class="btn-oeste">Criar local</button>
+            </div>
+        </form>
+        <div class="acoes-gerenciamento-local">
+            <button type="button" id="exportar-json" class="btn-oeste">Exportar ficha aberta (JSON)</button>
+            <button type="button" id="importar-json-local" class="btn-oeste">Carregar arquivo JSON</button>
+            <input type="file" id="input-importar-local" accept=".json,application/json" hidden>
+        </div>
+        <h3>Salvas neste dispositivo</h3>
+        <ul id="lista-fichas-locais" class="lista-fichas"></ul>
+        <p class="dica-fichas">As fichas locais não são enviadas automaticamente à nuvem. Para enviar um arquivo, utilize Fichas online → Importar ficha JSON para a nuvem.</p>
     </dialog>
     <script src="js/mobile.js"></script>
     <script src="js/includes.js"></script>
