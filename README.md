@@ -25,9 +25,10 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 - [x] **Atualização em Tempo Real:** informações das fichas atualizadas dinamicamente conforme as alterações realizadas.
 - [x] **Gerenciamento de Personagens e Inventário:** criação, personalização e acompanhamento da evolução dos personagens além de inventário dinâmico que permite adicionar e retirar itens bem como criar novos.
 - [x] **Ferramentas de Jogo:** recursos interativos para auxiliar jogadores durante as sessões.
+- [x] **Integração com Banco de Dados:** fichas privadas usando Supabase Auth e PostgreSQL com RLS.
 - [ ] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas.
 - [ ] **Guia de Campanhas:** campanhas pré montadas para todos.
-- [x] **Integração com Banco de Dados:** fichas privadas usando Supabase Auth e PostgreSQL com RLS.
+
 
 ## 🛠️ Tecnologias
 
@@ -57,3 +58,4 @@ O Railroad está em construção. Novas funcionalidades, mecânicas e ferramenta
 ### 🌄 RAILROAD
 
 **Prepare seu cavalo, carregue seu revólver.**
+

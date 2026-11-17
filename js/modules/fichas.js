@@ -6,7 +6,6 @@ import { identidadeDaImportacao } from '../services/identidadeImportacao.js';
 
 const ESPERA_LOCAL_MS = 250;
 const ESPERA_NUVEM_MS = 1200;
-const PREFIXO_RASCUNHO = 'railroad_rascunho';
 const PREFIXO_ULTIMA = 'railroad_ultima_ficha';
 
 const tituloValido = (valor) => String(valor || '').trim().slice(0, 120) || 'Novo personagem';
@@ -25,7 +24,6 @@ export function criarGerenciadorFichas({
     const painelOnline = porId('painel-fichas');
     const painelLocal = porId('painel-locais');
     const fichaVazia = () => normalizarFicha({ versao: 3 });
-    const chaveRascunho = (uid, id) => `${PREFIXO_RASCUNHO}:${uid}:${id}`;
     const chaveUltima = (uid) => `${PREFIXO_ULTIMA}:${uid}`;
 
     let cliente = null;
@@ -109,16 +107,10 @@ export function criarGerenciadorFichas({
     }
 
     function lerRascunho(uid, id) {
-        try {
-            const texto = localStorage.getItem(chaveRascunho(uid, id));
-            return texto ? JSON.parse(texto) : null;
-        } catch (erro) {
-            console.warn('Não foi possível ler o rascunho local.', erro);
-            return null;
-        }
+        return repositorioLocal.lerRascunho(uid, id);
     }
 
-    function salvarAgora() {
+    async function salvarAgora() {
         clearTimeout(timerLocal);
         alteracaoPendente = false;
 
@@ -126,11 +118,11 @@ export function criarGerenciadorFichas({
             const dados = coletarFicha();
             if (modoEdicao === 'local') {
                 fichaLocal = repositorioLocal.salvar(fichaLocal.id, dados);
+                await repositorioLocal.flush();
                 estadoSalvamento('Ficha salva neste navegador');
             } else if (usuario && fichaNuvem) {
-                localStorage.setItem(chaveRascunho(usuario.id, fichaNuvem.id), JSON.stringify({
-                    dados, token: crypto.randomUUID(),
-                }));
+                repositorioLocal.gravarRascunho(usuario.id, fichaNuvem.id, dados);
+                await repositorioLocal.flush();
                 estadoSalvamento('Alterações locais; sincronizando…');
                 clearTimeout(timerNuvem);
                 timerNuvem = setTimeout(() => { void sincronizar(); }, ESPERA_NUVEM_MS);
@@ -140,6 +132,7 @@ export function criarGerenciadorFichas({
             return true;
         } catch (erro) {
             console.error('Não foi possível salvar a ficha no navegador.', erro);
+            alteracaoPendente = true;
             estadoSalvamento('Falha no salvamento local; faça um backup JSON');
             return false;
         }
@@ -148,7 +141,7 @@ export function criarGerenciadorFichas({
     function agendarSalvamento() {
         alteracaoPendente = true;
         clearTimeout(timerLocal);
-        timerLocal = setTimeout(salvarAgora, ESPERA_LOCAL_MS);
+        timerLocal = setTimeout(() => { void salvarAgora(); }, ESPERA_LOCAL_MS);
     }
 
     async function sincronizar() {
@@ -158,16 +151,18 @@ export function criarGerenciadorFichas({
 
         const uid = usuario.id;
         const id = fichaNuvem.id;
-        const rascunho = lerRascunho(uid, id);
-        if (!rascunho)
-            return true;
-
-        const envio = filaEnvios.then(() => repositorioNuvem.salvar(id, rascunho.dados));
-        filaEnvios = envio.catch(() => {});
         try {
+            await repositorioLocal.flush();
+            const rascunho = lerRascunho(uid, id);
+            if (!rascunho) return true;
+
+            const envio = filaEnvios.then(() => repositorioNuvem.salvar(id, rascunho.dados));
+            filaEnvios = envio.catch(() => {});
             await envio;
-            if (lerRascunho(uid, id)?.token === rascunho.token)
-                localStorage.removeItem(chaveRascunho(uid, id));
+            if (lerRascunho(uid, id)?.token === rascunho.token) {
+                repositorioLocal.apagarRascunho(uid, id);
+                await repositorioLocal.flush();
+            }
             if (usuario?.id === uid && fichaNuvem?.id === id) {
                 if (lerRascunho(uid, id)) {
                     estadoSalvamento('Novas alterações pendentes…');
@@ -188,8 +183,15 @@ export function criarGerenciadorFichas({
     async function concluirSalvamento() {
         clearTimeout(timerLocal);
         clearTimeout(timerNuvem);
-        if (alteracaoPendente && !salvarAgora())
+        if (alteracaoPendente && !(await salvarAgora()))
             return false;
+        try {
+            await repositorioLocal.flush();
+        } catch (erro) {
+            console.error('Falha ao persistir as alterações locais.', erro);
+            estadoSalvamento('Falha no salvamento local; faça um backup JSON');
+            return false;
+        }
         return sincronizar();
     }
 
@@ -274,6 +276,7 @@ export function criarGerenciadorFichas({
             versao: 3, personagem: { 'nome-personagem': titulo },
         });
         const registro = repositorioLocal.criar(tituloValido(titulo), nova);
+        await repositorioLocal.flush();
         await abrirFichaLocal(registro.id);
     }
 
@@ -282,6 +285,7 @@ export function criarGerenciadorFichas({
         if (titulo === null) return;
         if (!titulo.trim()) throw new Error('O nome não pode ficar vazio.');
         repositorioLocal.renomear(ficha.id, titulo);
+        await repositorioLocal.flush();
         if (fichaLocal?.id === ficha.id)
             fichaLocal.titulo = tituloValido(titulo);
         atualizarInterface();
@@ -306,6 +310,7 @@ export function criarGerenciadorFichas({
             if (modoEdicao === 'local')
                 carregarFicha(normalizarFicha(fichaLocal.dados));
         }
+        await repositorioLocal.flush();
         atualizarInterface();
         desenharListaLocal();
         mensagem('mensagem-locais', 'Ficha excluída apenas deste navegador.');
@@ -402,7 +407,8 @@ export function criarGerenciadorFichas({
         }
         await filaEnvios;
         await repositorioNuvem.excluir(ficha.id);
-        localStorage.removeItem(chaveRascunho(usuario.id, ficha.id));
+        repositorioLocal.apagarRascunho(usuario.id, ficha.id);
+        await repositorioLocal.flush();
         if (fichaNuvem?.id === ficha.id) {
             localStorage.removeItem(chaveUltima(usuario.id));
             restaurarLocal();
@@ -441,8 +447,10 @@ export function criarGerenciadorFichas({
             clearTimeout(timerLocal);
             clearTimeout(timerNuvem);
             alteracaoPendente = false;
-            localStorage.removeItem(chaveRascunho(usuario.id, fichaNuvem.id));
+            repositorioLocal.apagarRascunho(usuario.id, fichaNuvem.id);
+            await repositorioLocal.flush();
             restaurarLocal();
+            await repositorioLocal.flush();
             estadoSalvamento('Rascunho local removido; dados online preservados');
         } else {
             if (!confirm('Apagar esta ficha somente do navegador? O banco de dados não será alterado.'))
@@ -454,6 +462,7 @@ export function criarGerenciadorFichas({
             // Retorna a uma ficha local em branco, preservando as demais.
             fichaLocal = repositorioLocal.criar('Ficha local', fichaVazia());
             repositorioLocal.selecionar(fichaLocal.id);
+            await repositorioLocal.flush();
             carregarFicha(normalizarFicha(fichaLocal.dados));
             atualizarInterface();
             estadoSalvamento('Ficha removida apenas deste navegador');
@@ -469,7 +478,7 @@ export function criarGerenciadorFichas({
     }
 
     async function modoAutenticado(conta) {
-        if (alteracaoPendente) salvarAgora();
+        if (alteracaoPendente && !(await salvarAgora())) return;
         usuario = conta;
         // Limpa da tela a ficha de outra conta antes de carregar a nova.
         restaurarLocal();
@@ -548,7 +557,7 @@ export function criarGerenciadorFichas({
         }
 
         const salvarAoSair = () => {
-            if (alteracaoPendente) salvarAgora();
+            if (alteracaoPendente) void salvarAgora();
         };
         window.addEventListener('pagehide', salvarAoSair);
         document.addEventListener('visibilitychange', () => {
@@ -559,8 +568,9 @@ export function criarGerenciadorFichas({
     async function iniciar() {
         registrarEventos();
         try {
-            repositorioLocal.migrarAntiga(normalizarFicha);
+            await repositorioLocal.migrarAntiga(normalizarFicha);
             restaurarLocal();
+            await repositorioLocal.flush();
         } catch (erro) {
             console.error('Falha ao preparar as fichas locais.', erro);
             estadoSalvamento('Falha no armazenamento local; exporte suas fichas JSON');

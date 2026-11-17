@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { criarGerenciadorFichas } from '../js/modules/fichas.js';
 import { normalizarFicha } from '../js/core/validacao.js';
+import { criarRepositorioLocal } from '../js/services/fichasLocais.js';
+import { criarBancoEmMemoria } from './apoioBanco.mjs';
 
 class Elemento {
     constructor() {
@@ -40,6 +42,8 @@ globalThis.localStorage = {
     getItem: (chave) => memoria.get(chave) ?? null,
     setItem: (chave, valor) => memoria.set(chave, String(valor)),
     removeItem: (chave) => memoria.delete(chave),
+    key: (indice) => [...memoria.keys()][indice] ?? null,
+    get length() { return memoria.size; },
 };
 globalThis.confirm = () => true;
 globalThis.prompt = () => 'Título renomeado';
@@ -105,6 +109,7 @@ const gestao = criarGerenciadorFichas({
     interpretarArquivo: (texto) => normalizarFicha(JSON.parse(texto)),
     conectar: async () => cliente,
     configurado: () => true,
+    repositorioLocal: criarRepositorioLocal(localStorage, async () => criarBancoEmMemoria()),
 });
 const aguardar = () => new Promise((resolver) => setTimeout(resolver, 35));
 
@@ -124,7 +129,7 @@ await aguardar();
 assert.equal(porId('lista-fichas-locais').children.length > 0, true);
 assert.equal(formulario.personagem['nome-personagem'], 'Outro no navegador');
 formulario.personagem['nome-personagem'] = 'Editado sem enviar';
-gestao.salvarAgora();
+await gestao.salvarAgora();
 assert.equal(linhas.length, 0, 'edições locais não são enviadas para o Supabase');
 
 porId('btn-minhas-fichas').click();
