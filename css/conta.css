@@ -1,0 +1,79 @@
+/* Conta e fichas: isolado do layout de jogo (desktop e mobile). */
+.identificacao-ficha,
+.status-salvamento {
+    margin: 0;
+    color: #f4eccf;
+    font: 12px/1.4 Georgia, serif;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.status-salvamento { color: #e8c783; }
+.acoes-mobile .identificacao-ficha,
+.acoes-mobile .status-salvamento { color: #3d2314; }
+
+.painel-fichas {
+    width: min(720px, calc(100% - 24px));
+    max-height: min(88dvh, 850px);
+    overflow-y: auto;
+    margin: auto;
+    padding: 22px;
+    color: #3d2314;
+    background: #f4eccf;
+    border: 3px solid #6b4630;
+    border-radius: 10px;
+    box-shadow: 0 12px 45px rgba(0,0,0,.35);
+    font-family: Georgia, serif;
+    z-index: 3000;
+}
+
+.painel-fichas::backdrop { background: rgba(23,13,7,.8); }
+.painel-fichas [hidden] { display: none !important; }
+.painel-fichas-cabecalho,
+.identidade-conta,
+.form-criar-ficha-controles,
+.linha-ficha,
+.acoes-linha-ficha {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.painel-fichas-cabecalho { justify-content: space-between; border-bottom: 2px solid #8d6748; padding-bottom: 12px; }
+.painel-fichas-cabecalho h2 { margin: 0; font: 27px 'Rye', serif; }
+.painel-fichas-cabecalho p { margin: 5px 0 0; }
+.fechar-painel-fichas { border: 0; background: none; color: #3d2314; font: 32px/1 Georgia, serif; cursor: pointer; }
+.painel-fichas-secao { margin-top: 18px; }
+.mensagem-conta { min-height: 20px; margin: 12px 0 0; font: 14px/1.4 Georgia, serif; }
+.mensagem-conta[data-erro="true"] { color: #8b252d; font-weight: bold; }
+.identidade-conta { justify-content: space-between; flex-wrap: wrap; overflow-wrap: anywhere; }
+.identidade-conta span { min-width: 0; flex: 1; }
+.painel-fichas .btn-oeste { cursor: pointer; padding: 9px 12px; font: bold 13px Georgia, serif; }
+.painel-fichas button:disabled { opacity: .5; cursor: wait; }
+.form-criar-ficha { margin: 20px 0; }
+.form-criar-ficha label { display: block; margin-bottom: 7px; font-weight: bold; }
+.form-criar-ficha input { min-width: 0; flex: 1; padding: 10px; border: 2px solid #806044; background: #fff9ec; font: 16px Georgia, serif; }
+.painel-fichas h3 { font: 19px 'Rye', serif; }
+.lista-fichas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.linha-ficha { justify-content: space-between; flex-wrap: wrap; padding: 12px; border: 1px solid #a88a66; border-radius: 6px; background: #fff7e6; }
+.linha-ficha.ativa { border: 2px solid #6b4630; }
+.informacoes-ficha { flex: 1 1 150px; min-width: 0; overflow-wrap: anywhere; }
+.informacoes-ficha strong { display: block; }
+.informacoes-ficha small { display: block; margin-top: 4px; color: #72513b; }
+.acoes-linha-ficha { flex-wrap: wrap; gap: 6px; }
+.acoes-linha-ficha button { padding: 7px 9px; font: 13px Georgia, serif; border: 1px solid #6b4630; border-radius: 4px; background: #e5d3b2; color: #3d2314; cursor: pointer; }
+.acoes-linha-ficha button:hover { background: #d4af79; }
+.acoes-linha-ficha button:disabled { opacity: .55; cursor: default; }
+.dica-fichas { color: #72513b; font-size: 13px; line-height: 1.4; }
+.painel-fichas button:focus-visible,
+.painel-fichas input:focus-visible { outline: 3px solid #c3832e; outline-offset: 2px; }
+
+@media (max-width: 768px) {
+    /* O menu de ficha pode conter mais ações do que a altura do celular. */
+    .acoes-mobile { max-height: calc(100dvh - 88px - env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+    .painel-fichas { padding: 15px; max-height: calc(100dvh - 28px); }
+    .painel-fichas-cabecalho h2 { font-size: 22px; }
+    .form-criar-ficha-controles { align-items: stretch; flex-direction: column; }
+    .form-criar-ficha input, .form-criar-ficha button { width: 100%; min-height: 42px; }
+    .acoes-linha-ficha { width: 100%; }
+    .acoes-linha-ficha button { flex: 1; min-height: 38px; }
+}

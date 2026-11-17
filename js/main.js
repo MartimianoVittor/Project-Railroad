@@ -1,4 +1,4 @@
-/** Inicialização, persistência e integração dos módulos do Railroad. */
+/** Inicialização dos módulos de jogo e do gerenciador de fichas. */
 import { lerFicha, gravarFicha, apagarFicha } from './core/storage.js';
 import { normalizarFicha } from './core/validacao.js';
 import { baixarFicha, interpretarArquivo } from './core/importExport.js';
@@ -7,10 +7,12 @@ import { coletarJogador, restaurarJogador, iniciarJogador } from './modules/joga
 import { iniciarQuadro } from './modules/quadro/index.js';
 import { coletarInventario, restaurarInventario, iniciarInventario } from './modules/inventario.js';
 import { iniciarSidebar } from './modules/sidebar.js';
+import { criarGerenciadorFichas } from './modules/fichas.js';
 import { mostrarErro } from './utils/arquivos.js';
-const INTERVALO_SALVAMENTO_MS = 250;
+
 let quadro = null;
-let temporizador = null;
+let fichas = null;
+
 function coletarFicha() {
     return normalizarFicha({
         ...coletarJogador(),
@@ -19,20 +21,7 @@ function coletarFicha() {
         inventario: coletarInventario(),
     });
 }
-function salvarFicha() {
-    try {
-        gravarFicha(coletarFicha());
-        return true;
-    }
-    catch (erro) {
-        console.warn('Não foi possível salvar a ficha.', erro);
-        return false;
-    }
-}
-function agendarSalvamento() {
-    clearTimeout(temporizador);
-    temporizador = setTimeout(salvarFicha, INTERVALO_SALVAMENTO_MS);
-}
+
 function carregarFicha(dados) {
     const ficha = normalizarFicha(dados);
     restaurarJogador(ficha);
@@ -40,33 +29,30 @@ function carregarFicha(dados) {
     restaurarInventario(ficha.inventario);
     quadro?.restaurarQuadro(ficha);
 }
+
 function iniciar() {
-    quadro = iniciarQuadro({ agendarSalvamento, salvarDadosFicha: salvarFicha });
+    const agendarSalvamento = () => fichas?.agendarSalvamento();
+    const salvarAgora = () => fichas?.salvarAgora();
+
+    quadro = iniciarQuadro({ agendarSalvamento, salvarDadosFicha: salvarAgora });
     iniciarJogador(agendarSalvamento);
     observarPersonagem(agendarSalvamento);
     iniciarInventario(agendarSalvamento);
+
+    fichas = criarGerenciadorFichas({
+        coletarFicha, carregarFicha, normalizarFicha,
+        lerLocal: lerFicha, gravarLocal: gravarFicha, apagarLocal: apagarFicha,
+    });
     iniciarSidebar({
-        coletarFicha,
-        carregarFicha,
-        apagarFicha,
-        baixarFicha,
-        interpretarArquivo,
-        gravarFicha,
-        normalizarFicha,
+        coletarFicha, baixarFicha, interpretarArquivo,
+        importarFicha: (dados) => fichas.importarFicha(dados),
+        apagarAtual: () => fichas.apagarAtual(),
         mostrarErro,
     });
-    try {
-        const ficha = lerFicha();
-        if (ficha)
-            carregarFicha(ficha);
-    }
-    catch (erro) {
-        mostrarErro('Não foi possível carregar a ficha.', erro);
-    }
+    void fichas.iniciar();
 }
-if (document.readyState === 'loading') {
+
+if (document.readyState === 'loading')
     document.addEventListener('DOMContentLoaded', iniciar, { once: true });
-}
-else {
+else
     iniciar();
-}

@@ -36,7 +36,7 @@
             }
         }
     });
-    [['exportar-mobile', 'btn-exportar'], ['importar-mobile', 'input-importar'], ['apagar-mobile', 'btn-apagar-ficha']].forEach(([origem, alvo]) => {
+    [['exportar-mobile', 'btn-exportar'], ['importar-mobile', 'input-importar'], ['apagar-mobile', 'btn-apagar-ficha'], ['fichas-mobile', 'btn-minhas-fichas'], ['conta-mobile', 'btn-conta-google']].forEach(([origem, alvo]) => {
         document.getElementById(origem).addEventListener('click', () => {
             exibir(false);
             document.getElementById(alvo)?.click();
@@ -68,9 +68,10 @@
             destino.appendChild(quadro);
     }
     // Mover o mesmo painel de rolagens, sem duplicar campos ou IDs.
-    const origemRolagens = document.querySelector('#inventario .inventario-rolagens');
-    const destinoPersonagem = document.getElementById('personagem');
     function organizarRolagens() {
+        // Fragmentos são carregados depois deste script: localizar os nós no momento do uso.
+        const origemRolagens = document.querySelector('.inventario-rolagens');
+        const destinoPersonagem = document.getElementById('personagem');
         if (!origemRolagens || !destinoPersonagem)
             return;
         if (mq.matches) {

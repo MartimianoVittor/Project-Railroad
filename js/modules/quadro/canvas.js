@@ -1,5 +1,7 @@
 export function criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento }) {
     let primeiraMedicao = true;
+    let versaoImagem = 0;
+    let imagemPendente = null;
     function ajustarTamanhoCanvas() {
         const larguraAnterior = canvas.width;
         const alturaAnterior = canvas.height;
@@ -23,12 +25,28 @@ export function criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento }) {
             agendarSalvamento();
     }
     function carregarImagemNoCanvas(dataURL) {
-        if (!dataURL || typeof dataURL !== 'string')
+        // Ao trocar de personagem, ignora carregamentos atrasados da ficha anterior.
+        const requisicao = ++versaoImagem;
+        imagemPendente = typeof dataURL === 'string' && dataURL ? dataURL : null;
+        if (!imagemPendente)
             return;
         const imagem = new Image();
-        imagem.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(imagem, 0, 0, canvas.width, canvas.height); };
-        imagem.onerror = () => console.warn('Não foi possível restaurar o desenho.');
+        imagem.onload = () => {
+            if (requisicao !== versaoImagem)
+                return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(imagem, 0, 0, canvas.width, canvas.height);
+            imagemPendente = null;
+        };
+        imagem.onerror = () => {
+            if (requisicao === versaoImagem)
+                console.warn('Não foi possível restaurar o desenho.');
+        };
         imagem.src = dataURL;
     }
-    return { ajustarTamanhoCanvas, carregarImagemNoCanvas };
+    function obterImagem() {
+        // Evita sobrescrever o desenho salvo antes de a imagem terminar de carregar.
+        return imagemPendente || canvas.toDataURL('image/png');
+    }
+    return { ajustarTamanhoCanvas, carregarImagemNoCanvas, obterImagem };
 }

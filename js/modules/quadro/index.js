@@ -52,7 +52,7 @@ export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
                 return null;
             return dados;
         }).filter(Boolean);
-        return { desenhoCanvas: canvas.toDataURL('image/png'), itensQuadro };
+        return { desenhoCanvas: canvasAPI.obterImagem(), itensQuadro };
     }
     function restaurarQuadro(ficha) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);

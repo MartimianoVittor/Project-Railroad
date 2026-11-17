@@ -29,11 +29,48 @@
     <div class="fundo-acoes-mobile" id="fundo-acoes-mobile" hidden></div>
     <div class="acoes-mobile" id="acoes-mobile" role="dialog" aria-label="Ações da ficha" aria-modal="true" hidden>
         <h2>Minha ficha</h2>
+        <p class="identificacao-ficha" id="ficha-atual-mobile"></p>
+        <p class="status-salvamento" id="status-salvamento-mobile" role="status" aria-live="polite"></p>
+        <button type="button" class="btn-oeste" id="fichas-mobile">Minhas fichas</button>
+        <button type="button" class="btn-oeste" id="conta-mobile">Conta Google</button>
         <button type="button" class="btn-oeste" id="exportar-mobile">Salvar ficha (JSON)</button>
         <button type="button" class="btn-oeste" id="importar-mobile">Carregar ficha (JSON)</button>
         <button type="button" class="btn-oeste" id="apagar-mobile">Apagar ficha</button>
         <button type="button" class="btn-oeste" id="fechar-acoes-mobile">Fechar</button>
     </div>
+    <!-- Painel único de autenticação e gerenciamento de personagens. -->
+    <dialog id="painel-fichas" class="painel-fichas" aria-labelledby="painel-fichas-titulo">
+        <header class="painel-fichas-cabecalho">
+            <div>
+                <h2 id="painel-fichas-titulo">Minhas fichas</h2>
+                <p>Seus personagens no Railroad</p>
+            </div>
+            <button type="button" id="fechar-painel-fichas" class="fechar-painel-fichas" aria-label="Fechar painel">×</button>
+        </header>
+        <p id="mensagem-conta" class="mensagem-conta" role="status" aria-live="polite"></p>
+        <section id="conta-visitante" class="painel-fichas-secao">
+            <p>Entre com sua conta Google para criar e guardar várias fichas privadas.</p>
+            <p>Sua ficha local continuará disponível sem login. Ela não será enviada automaticamente.</p>
+            <button type="button" id="entrar-google" class="btn-oeste">Entrar com Google</button>
+        </section>
+        <section id="conta-autenticada" class="painel-fichas-secao" hidden>
+            <div class="identidade-conta">
+                <span id="email-conta"></span>
+                <button type="button" id="sair-google" class="btn-oeste">Sair da conta</button>
+            </div>
+            <form id="form-criar-ficha" class="form-criar-ficha">
+                <label for="nome-nova-ficha">Nova ficha de personagem</label>
+                <div class="form-criar-ficha-controles">
+                    <input id="nome-nova-ficha" name="nome" type="text" maxlength="120" placeholder="Nome da ficha" required>
+                    <button type="submit" class="btn-oeste">Criar ficha</button>
+                </div>
+            </form>
+            <button type="button" id="importar-ficha-local" class="btn-oeste" hidden>Importar minha ficha local para a conta</button>
+            <h3>Personagens salvos</h3>
+            <ul id="lista-fichas" class="lista-fichas"></ul>
+            <p class="dica-fichas">Apenas você pode acessar suas fichas. O compartilhamento com mestres e jogadores será implementado futuramente.</p>
+        </section>
+    </dialog>
     <script src="js/mobile.js"></script>
     <script src="js/includes.js"></script>
 </body>

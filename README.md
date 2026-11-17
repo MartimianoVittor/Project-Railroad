@@ -27,7 +27,7 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 - [x] **Ferramentas de Jogo:** recursos interativos para auxiliar jogadores durante as sessões.
 - [ ] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas.
 - [ ] **Guia de Campanhas:** campanhas pré montadas para todos.
-- [ ] **Integração com Banco de Dados**
+- [ ] **Integração com Banco de Dados:** código preparado para Supabase, aguardando configuração do projeto e credenciais OAuth.
 
 ## 🛠️ Tecnologias
 
@@ -36,6 +36,7 @@ As tecnologias utilizadas no desenvolvimento do projeto serão apresentadas conf
 - HTML5
 - CSS3
 - JavaScript
+- Supabase Auth (Google OAuth) e PostgreSQL (JSONB + RLS; após configuração)
 
 ## 🎯 Objetivos
 
@@ -56,3 +57,15 @@ O Railroad está em construção. Novas funcionalidades, mecânicas e ferramenta
 ### 🌄 RAILROAD
 
 **Prepare seu cavalo, carregue seu revólver.**
+## ☁️ Fichas privadas e login Google
+
+O projeto agora inclui o gerenciamento de múltiplas fichas por conta Google,
+com criação, seleção, renomeação, duplicação, exclusão e sincronização.
+A integração só entra em funcionamento depois de configurar um projeto Supabase.
+
+**Instruções de ativação:** [`supabase/CONFIGURACAO.md`](supabase/CONFIGURACAO.md).
+
+Enquanto não estiver configurado, a ficha local, o inventário, o quadro e a
+importação/exportação JSON continuam funcionando normalmente.
+O compartilhamento com mestres e jogadores está previsto, mas ainda não foi
+liberado: as políticas atuais permitem acesso somente ao proprietário.

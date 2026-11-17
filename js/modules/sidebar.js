@@ -1,34 +1,37 @@
-export function iniciarSidebar({ coletarFicha, carregarFicha, apagarFicha, baixarFicha, interpretarArquivo, gravarFicha, normalizarFicha, mostrarErro }) {
+/** Ações de arquivo; o gerenciador decide entre modo local e conta Google. */
+export function iniciarSidebar({ coletarFicha, baixarFicha, interpretarArquivo, importarFicha, apagarAtual, mostrarErro }) {
     document.getElementById('btn-exportar')?.addEventListener('click', () => {
         try {
             baixarFicha(coletarFicha());
-        }
-        catch (erro) {
+        } catch (erro) {
             mostrarErro('Não foi possível exportar a ficha.', erro);
         }
     });
+
     document.getElementById('input-importar')?.addEventListener('change', async (evento) => {
         const arquivo = evento.target.files?.[0];
         if (!arquivo)
             return;
         try {
-            const dados = interpretarArquivo(await arquivo.text());
-            const ficha = normalizarFicha(dados);
-            carregarFicha(ficha);
-            gravarFicha(ficha);
-            alert('Ficha carregada com sucesso, forasteiro!');
-        }
-        catch (erro) {
-            mostrarErro('Erro ao importar. Escolha um JSON válido do Railroad RPG.', erro);
-        }
-        finally {
+            let ficha;
+            try {
+                ficha = interpretarArquivo(await arquivo.text());
+            } catch (erro) {
+                mostrarErro('O arquivo selecionado não é um JSON válido do Railroad.', erro);
+                return;
+            }
+            try {
+                await importarFicha(ficha);
+                alert('Ficha importada com sucesso!');
+            } catch (erro) {
+                mostrarErro('Não foi possível salvar a ficha importada. Confira a conexão e o banco de dados.', erro);
+            }
+        } finally {
             evento.target.value = '';
         }
     });
+
     document.getElementById('btn-apagar-ficha')?.addEventListener('click', () => {
-        if (!confirm('Tem certeza de que deseja apagar sua ficha? Todos os dados salvos serão perdidos.'))
-            return;
-        apagarFicha();
-        location.reload();
+        void apagarAtual();
     });
 }
