@@ -13,7 +13,7 @@
 .acoes-mobile .status-salvamento { color: #3d2314; }
 
 .painel-fichas {
-    width: min(720px, calc(100% - 24px));
+    width: min(790px, calc(100% - 24px));
     max-height: min(88dvh, 850px);
     overflow-y: auto;
     margin: auto;
@@ -67,7 +67,96 @@
 .acoes-linha-ficha button:disabled { opacity: .55; cursor: default; }
 .dica-fichas { color: #72513b; font-size: 13px; line-height: 1.4; }
 .painel-fichas button:focus-visible,
-.painel-fichas input:focus-visible { outline: 3px solid #c3832e; outline-offset: 2px; }
+.painel-fichas input:focus-visible,
+.painel-fichas select:focus-visible { outline: 3px solid #c3832e; outline-offset: 2px; }
+
+/* Convites de campanhas, abaixo da lista de fichas online. */
+.secao-convites-mesa {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 3px double #967652;
+}
+.titulo-convites-mesa h3 { margin: 0 0 7px; }
+.titulo-convites-mesa p { margin: 0 0 16px; }
+.titulo-convites-mesa > button { margin-bottom: 15px; }
+.codigo-jogador-mesa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 13px;
+    border: 1px solid #aa865c;
+    border-radius: 6px;
+    background: #ead5ad;
+}
+.codigo-jogador-mesa > div { min-width: 0; }
+.codigo-jogador-mesa strong { display: block; font-size: 14px; }
+.codigo-jogador-mesa code { display: block; margin-top: 7px; overflow-wrap: anywhere; font-size: 13px; }
+.lista-convites-mesas, .lista-envios-mesa { list-style: none; margin: 13px 0 0; padding: 0; display: grid; gap: 12px; }
+.cartao-convite-mesa {
+    min-width: 0;
+    padding: 15px;
+    border: 2px solid #95704d;
+    border-radius: 7px;
+    background: #fff7e6;
+}
+.cabecalho-convite-mesa { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 9px; }
+.cabecalho-convite-mesa h4 { margin: 0; font: bold 17px Georgia, serif; }
+.status-mesa {
+    padding: 5px 8px;
+    border: 1px solid #96734d;
+    border-radius: 12px;
+    background: #efdfbd;
+    font: bold 12px Georgia, serif;
+}
+.status-pendente { border-color: #b3773a; color: #79481a; }
+.status-aceito { border-color: #507c57; color: #2e6139; }
+.status-recusado { border-color: #9d4a47; color: #833330; }
+.acoes-convite-mesa { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+.botao-mesa {
+    padding: 8px 11px;
+    border: 1px solid #68452c;
+    border-radius: 4px;
+    background: #e6d1ad;
+    color: #3d2314;
+    font: bold 13px Georgia, serif;
+    cursor: pointer;
+}
+.botao-mesa:hover { background: #d6b787; }
+.botao-mesa-destaque { background: #68452c; color: #fff2d7; }
+.botao-mesa-destaque:hover { background: #8b5a37; }
+.lista-envios-mesa { gap: 8px; margin: 15px 0; }
+.envio-mesa {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 9px;
+    padding: 10px;
+    border: 1px dashed #b79a70;
+    border-radius: 4px;
+    background: #f4e8cc;
+}
+.informacoes-envio { min-width: 0; overflow-wrap: anywhere; }
+.informacoes-envio strong { display: block; }
+.informacoes-envio small { display: block; margin-top: 4px; color: #795739; }
+.estado-aprovada { color: #2e6139 !important; }
+.estado-recusada { color: #933631 !important; }
+.form-enviar-ficha { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+.form-enviar-ficha label { flex: 1 1 180px; font: bold 13px Georgia, serif; }
+.seletor-ficha-mesa {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin-top: 7px;
+    padding: 9px;
+    border: 2px solid #806044;
+    border-radius: 4px;
+    background: #fff9ec;
+    color: #3d2314;
+    font: 15px Georgia, serif;
+}
+.sem-convites-mesa { padding: 14px; color: #72513b; background: #eadcc0; border-radius: 5px; }
 
 @media (max-width: 768px) {
     /* O menu de ficha pode conter mais ações do que a altura do celular. */
@@ -78,4 +167,9 @@
     .form-criar-ficha input, .form-criar-ficha button { width: 100%; min-height: 42px; }
     .acoes-linha-ficha { width: 100%; }
     .acoes-linha-ficha button { flex: 1; min-height: 38px; }
+    .codigo-jogador-mesa { align-items: stretch; flex-direction: column; }
+    .codigo-jogador-mesa button { align-self: flex-start; }
+    .form-enviar-ficha { flex-direction: column; align-items: stretch; }
+    .form-enviar-ficha label { flex-basis: auto; }
+    .form-enviar-ficha button { min-height: 42px; }
 }

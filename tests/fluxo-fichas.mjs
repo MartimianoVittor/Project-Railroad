@@ -86,12 +86,18 @@ class Consulta {
 }
 
 const usuario = { id: 'usuario-1', email: 'teste@railroad.example' };
+let oauthChamadas = 0;
 const cliente = {
     from: (tabela) => { assert.equal(tabela, 'fichas'); return new Consulta(); },
+    rpc: async (funcao) => {
+        assert.equal(funcao, 'listar_convites_jogador');
+        return { data: [], error: null };
+    },
     auth: {
         onAuthStateChange: () => {},
         getSession: async () => ({ data: { session: { user: usuario } }, error: null }),
         getUser: async () => ({ data: { user: usuario }, error: null }),
+        signInWithOAuth: async () => { oauthChamadas++; return { error: null }; },
         signOut: async () => ({ error: null }),
     },
 };
@@ -113,7 +119,11 @@ const gestao = criarGerenciadorFichas({
 });
 const aguardar = () => new Promise((resolver) => setTimeout(resolver, 35));
 
-await gestao.iniciar();
+const inicializacao = gestao.iniciar();
+porId('entrar-google').click(); // Ação antes da migração e conexão terminarem.
+await inicializacao;
+await aguardar();
+assert.equal(oauthChamadas, 1, 'login espera a inicialização sem alegar configuração ausente');
 assert.equal(porId('painel-fichas').open, true, 'login abre gerenciamento online');
 assert.equal(porId('conta-autenticada').hidden, false);
 assert.equal(formulario.personagem['nome-personagem'], 'Antigo local', 'migra ficha local existente');

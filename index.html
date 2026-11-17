@@ -68,7 +68,23 @@
             <p class="dica-fichas">Escolha no explorador um arquivo JSON para adicionar à sua conta. Repetir a importação não cria outra ficha.</p>
             <h3>Personagens salvos</h3>
             <ul id="lista-fichas" class="lista-fichas"></ul>
-            <p class="dica-fichas">Apenas você pode acessar suas fichas. O compartilhamento com mestres e jogadores será implementado futuramente.</p>
+            <p class="dica-fichas">Suas fichas continuam privadas. Somente uma ficha que você enviar a uma mesa poderá ser consultada pelo mestre daquela campanha.</p>
+
+            <section class="secao-convites-mesa" aria-labelledby="titulo-convites-mesa">
+                <header class="titulo-convites-mesa">
+                    <h3 id="titulo-convites-mesa">Convites de mesa</h3>
+                    <p class="dica-fichas">Os convites enviados por mestres aparecem aqui. Aceitar um convite não envia nenhuma ficha automaticamente.</p>
+                    <button type="button" id="atualizar-convites-mesa" class="btn-oeste">↻ Atualizar convites</button>
+                </header>
+                <div class="codigo-jogador-mesa">
+                    <div>
+                        <strong>Seu código de jogador</strong>
+                        <code id="codigo-jogador-mesas">—</code>
+                    </div>
+                    <button type="button" id="copiar-codigo-jogador" class="btn-oeste">Copiar código</button>
+                </div>
+                <ul id="lista-convites-mesas" class="lista-convites-mesas" aria-label="Convites recebidos de campanhas"></ul>
+            </section>
         </section>
     </dialog>
     <dialog id="painel-locais" class="painel-fichas" aria-labelledby="painel-locais-titulo">

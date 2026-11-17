@@ -3,6 +3,8 @@ import { obterSupabase } from '../services/supabaseClient.js';
 import { criarRepositorioFichas } from '../services/fichasRepository.js';
 import { criarRepositorioLocal } from '../services/fichasLocais.js';
 import { identidadeDaImportacao } from '../services/identidadeImportacao.js';
+import { criarRepositorioMesas } from '../services/mesasRepository.js';
+import { criarPainelConvitesMesa } from './convitesMesa.js';
 
 const ESPERA_LOCAL_MS = 250;
 const ESPERA_NUVEM_MS = 1200;
@@ -28,6 +30,7 @@ export function criarGerenciadorFichas({
 
     let cliente = null;
     let repositorioNuvem = null;
+    let painelConvites = null;
     let usuario = null;
     let modoEdicao = 'local';
     let fichaNuvem = null;
@@ -37,6 +40,9 @@ export function criarGerenciadorFichas({
     let alteracaoPendente = false;
     let filaEnvios = Promise.resolve();
     let operacaoEmAndamento = false;
+    let preparacaoLocal = null;
+    let conexaoSupabase = null;
+    let erroConexao = null;
 
     function mensagem(id, texto, erro = false) {
         const elemento = porId(id);
@@ -78,7 +84,7 @@ export function criarGerenciadorFichas({
             void atualizarListaOnline();
         else
             mensagem('mensagem-conta', configurado()
-                ? 'Entre com Google para acessar suas fichas privadas.'
+                ? (erroConexao || 'Entre com Google para acessar suas fichas privadas.')
                 : 'Configure o Supabase para usar o gerenciamento online.');
     }
 
@@ -339,13 +345,23 @@ export function criarGerenciadorFichas({
         if (!usuario || !repositorioNuvem) return;
         const uid = usuario.id;
         mensagem('mensagem-conta', 'Consultando fichas…');
+        let fichas = [];
         try {
-            const fichas = await repositorioNuvem.listar();
+            fichas = await repositorioNuvem.listar();
             if (usuario?.id !== uid) return;
             desenharListaOnline(fichas);
             mensagem('mensagem-conta', `${fichas.length} ficha(s) online na sua conta.`);
         } catch (erro) {
             mensagem('mensagem-conta', `Falha ao listar fichas: ${erro.message}`, true);
+        }
+
+        if (usuario?.id !== uid) return;
+        try {
+            await painelConvites?.atualizar(uid, fichas);
+        } catch (erro) {
+            console.warn('Não foi possível consultar os convites das campanhas.', erro);
+            mensagem('mensagem-conta',
+                `As fichas estão disponíveis, mas os convites de mesa não puderam ser carregados: ${erro.message}`, true);
         }
     }
 
@@ -474,11 +490,13 @@ export function criarGerenciadorFichas({
         clearTimeout(timerNuvem);
         alteracaoPendente = false;
         usuario = null;
+        painelConvites?.limpar();
         restaurarLocal();
     }
 
     async function modoAutenticado(conta) {
         if (alteracaoPendente && !(await salvarAgora())) return;
+        painelConvites?.limpar();
         usuario = conta;
         // Limpa da tela a ficha de outra conta antes de carregar a nova.
         restaurarLocal();
@@ -496,9 +514,52 @@ export function criarGerenciadorFichas({
         abrirOnline();
     }
 
+    function prepararArmazenamento() {
+        preparacaoLocal ??= (async () => {
+            await repositorioLocal.migrarAntiga(normalizarFicha);
+            restaurarLocal();
+            await repositorioLocal.flush();
+        })();
+        return preparacaoLocal;
+    }
+
+    function conectarSupabase() {
+        if (!configurado())
+            throw new Error('Preencha a URL e a chave pública em js/config/supabase.js.');
+
+        conexaoSupabase ??= Promise.resolve()
+            .then(() => conectar())
+            .then((conectado) => {
+                if (!conectado?.auth)
+                    throw new Error('O cliente Supabase não pôde ser inicializado.');
+                cliente = conectado;
+                repositorioNuvem ??= criarRepositorioFichas(cliente);
+                painelConvites ??= criarPainelConvitesMesa({
+                    repositorio: criarRepositorioMesas(cliente),
+                    executarAcao: (acao) => executar(painelOnline, acao),
+                });
+                erroConexao = null;
+                return conectado;
+            })
+            .catch((erro) => {
+                conexaoSupabase = null; // O usuário pode tentar novamente.
+                erroConexao = `Falha ao conectar ao Supabase: ${erro.message}. Tente novamente.`;
+                throw new Error(erroConexao, { cause: erro });
+            });
+
+        return conexaoSupabase;
+    }
+
     async function entrarGoogle() {
-        if (!cliente) throw new Error('O Supabase ainda não está configurado.');
-        const { error } = await cliente.auth.signInWithOAuth({
+        mensagem('mensagem-conta', 'Preparando o login com Google…');
+        try {
+            await prepararArmazenamento();
+        } catch (erro) {
+            throw new Error('Falha ao preparar as fichas locais. Confira o armazenamento do navegador e recarregue.', { cause: erro });
+        }
+
+        const conexao = await conectarSupabase();
+        const { error } = await conexao.auth.signInWithOAuth({
             provider: 'google', options: { redirectTo: `${location.origin}${location.pathname}` },
         });
         if (error) throw error;
@@ -522,6 +583,19 @@ export function criarGerenciadorFichas({
         porId('fechar-painel-locais').addEventListener('click', fecharPaineis);
         porId('entrar-google').addEventListener('click', () => { void executar(painelOnline, entrarGoogle); });
         porId('sair-google').addEventListener('click', () => { void executar(painelOnline, sairGoogle); });
+        porId('atualizar-convites-mesa').addEventListener('click', () => {
+            void executar(painelOnline, atualizarListaOnline);
+        });
+        porId('copiar-codigo-jogador').addEventListener('click', () => {
+            void executar(painelOnline, async () => {
+                if (!usuario) return;
+                if (navigator.clipboard?.writeText)
+                    await navigator.clipboard.writeText(usuario.id);
+                else
+                    prompt('Copie seu código de jogador:', usuario.id);
+                mensagem('mensagem-conta', 'Código de jogador pronto para enviar ao mestre.');
+            });
+        });
 
         porId('form-criar-ficha').addEventListener('submit', (evento) => {
             evento.preventDefault();
@@ -568,9 +642,7 @@ export function criarGerenciadorFichas({
     async function iniciar() {
         registrarEventos();
         try {
-            await repositorioLocal.migrarAntiga(normalizarFicha);
-            restaurarLocal();
-            await repositorioLocal.flush();
+            await prepararArmazenamento();
         } catch (erro) {
             console.error('Falha ao preparar as fichas locais.', erro);
             estadoSalvamento('Falha no armazenamento local; exporte suas fichas JSON');
@@ -579,8 +651,7 @@ export function criarGerenciadorFichas({
         if (!configurado()) return;
 
         try {
-            cliente = await conectar();
-            repositorioNuvem = criarRepositorioFichas(cliente);
+            cliente = await conectarSupabase();
             cliente.auth.onAuthStateChange((evento, sessao) => {
                 if (evento === 'SIGNED_OUT' && usuario)
                     queueMicrotask(() => { modoVisitante(); fecharPaineis(); });
@@ -596,6 +667,7 @@ export function criarGerenciadorFichas({
         } catch (erro) {
             console.warn('Supabase indisponível; a ficha local continuará funcionando.', erro);
             estadoSalvamento('Nuvem indisponível; você pode continuar no modo local');
+            mensagem('mensagem-conta', erroConexao || `Erro na autenticação: ${erro.message}`, true);
         }
     }
 

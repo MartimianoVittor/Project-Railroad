@@ -63,7 +63,13 @@ armazenamento.setItem(antigoNaoMigrado, JSON.stringify({
 }));
 const bancoComFalha = { ...banco, gravarFicha: async () => { throw new Error('Disco cheio'); } };
 const falha = criarRepositorioLocal(armazenamento, async () => bancoComFalha);
-await assert.rejects(falha.migrarAntiga(normalizarFicha), /originais foram preservados/);
+const avisoOriginal = console.warn;
+try {
+    console.warn = () => {}; // A falha é intencional neste teste de recuperação.
+    await assert.rejects(falha.migrarAntiga(normalizarFicha), /originais foram preservados/);
+} finally {
+    console.warn = avisoOriginal;
+}
 assert.ok(armazenamento.getItem(antigoNaoMigrado), 'não destruiu a única cópia durante falha');
 armazenamento.removeItem(antigoNaoMigrado);
 
