@@ -1,0 +1,467 @@
+/* Controles de rolagem na primeira coluna do inventário. */
+#inventario .inventario-rolagens {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#inventario h2 {
+    font: clamp(19px,1.8vw,27px) 'Rye',serif;
+    margin: 0 0 5px;
+    color: #3d2314;
+}
+
+#inventario .cartao-rolagem {
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+    border: 2px solid #6b4630;
+    border-radius: 5px;
+    background: rgba(244,220,179,.4);
+}
+
+#inventario .cartao-rolagem h3 {
+    font: clamp(13px,1.1vw,17px) 'Rye',serif;
+    margin: 0 0 3px;
+}
+
+#inventario .cartao-rolagem label {
+    font: 12px 'Rye',serif;
+}
+
+#inventario .campo-inventario {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 30px;
+    padding: 5px 7px;
+    border: 2px solid #6b4630;
+    border-radius: 3px;
+    background: #fff7e9;
+    color: #3d2314;
+    font: 13px Georgia,serif;
+}
+
+#inventario .botao-rolar {
+    padding: 8px 10px;
+    margin-top: 4px;
+    border: 2px solid #27170f;
+    border-radius: 4px;
+    background: linear-gradient(#805032,#422515);
+    color: #fff0d3;
+    font: bold 13px 'Rye',serif;
+    cursor: pointer;
+    box-shadow: 2px 3px 0 #24170f;
+}
+
+#inventario .botao-rolar:hover {
+    filter: brightness(1.15);
+}
+
+#inventario .botao-rolar:focus-visible,#inventario .campo-inventario:focus-visible {
+    outline: 3px solid #c58c42;
+    outline-offset: 2px;
+}
+
+#inventario .resultado-rolagem {
+    display: block;
+    min-height: 16px;
+    color: #70251d;
+    font: bold 13px Georgia,serif;
+    overflow-wrap: anywhere;
+}
+
+/* Armas são registros editáveis; somente a rolagem genérica possui botão. */
+#inventario .inventario-rolagens {
+    gap: 8px;
+}
+
+#inventario .cartao-arma {
+    min-width: 0;
+    margin: 0;
+    padding: 8px;
+    border: 2px solid #6b4630;
+    border-radius: 5px;
+    display: grid;
+    gap: 5px;
+    background: rgba(244,220,179,.4);
+}
+
+#inventario .cartao-arma legend {
+    font: bold 14px 'Rye',Georgia,serif;
+    color: #3d2314;
+    padding: 0 5px;
+}
+
+#inventario .cartao-arma > label {
+    font-size: 12px;
+}
+
+#inventario .bonus-distancias {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 5px;
+}
+
+#inventario .bonus-distancia {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    text-align: center;
+    font: 11px Georgia,serif;
+}
+
+#inventario .bonus-distancia span {
+    min-height: 25px;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+
+#inventario .bonus-distancia input {
+    text-align: center;
+    padding: 4px 2px;
+}
+
+#inventario .inventario-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+#inventario .inventario-cabecalho .botao-rolar {
+    margin: 0;
+}
+
+#inventario .tabela-itens-rolagem {
+    width: 100%;
+    overflow: auto;
+}
+
+#inventario .tabela-itens {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font: 13px Georgia,serif;
+}
+
+#inventario .tabela-itens th {
+    text-align: left;
+    background: #6b4630;
+    color: #fff2d9;
+    padding: 9px 6px;
+}
+
+#inventario .tabela-itens td {
+    padding: 6px 4px;
+    border-bottom: 1px solid #a98763;
+    vertical-align: top;
+}
+
+#inventario .tabela-itens input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 6px 4px;
+    background: #fff7e9;
+    border: 1px solid #6b4630;
+    border-radius: 3px;
+    font: 13px Georgia,serif;
+}
+
+#inventario .botao-remover-item {
+    background: #6b4630;
+    color: white;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 6px;
+}
+
+#inventario .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Nome e contador de munição compartilham a largura já existente da arma. */
+#inventario .arma-linha-nome, #personagem .arma-linha-nome {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 8px;
+    align-items: end;
+    min-width: 0;
+}
+
+#inventario .arma-nome, #personagem .arma-nome {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+#inventario .arma-nome input, #personagem .arma-nome input {
+    min-width: 0;
+    width: 100%;
+}
+
+#inventario .arma-municao, #personagem .arma-municao {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+#inventario .arma-municao-titulo, #personagem .arma-municao-titulo {
+    font: 11px Georgia,serif;
+    text-align: center;
+}
+
+#inventario .arma-municao-controles, #personagem .arma-municao-controles {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+}
+
+#inventario .municao-botao, #personagem .municao-botao {
+    width: 26px;
+    min-width: 26px;
+    padding: 0;
+    border: 1px solid #442818;
+    border-radius: 3px;
+    background: #70452c;
+    color: #fff3dc;
+    font: bold 17px Georgia,serif;
+    cursor: pointer;
+}
+
+#inventario .municao-valor, #personagem .municao-valor {
+    width: 35px;
+    min-width: 0;
+    height: 32px;
+    padding: 2px;
+    border: 2px solid #6b4630;
+    border-radius: 3px;
+    background: #fff7e9;
+    color: #3d2314;
+    font: 14px Georgia,serif;
+    text-align: center;
+    box-sizing: border-box;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+#inventario .municao-valor::-webkit-inner-spin-button, #personagem .municao-valor::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#inventario .municao-botao:focus-visible, #personagem .municao-botao:focus-visible {
+    outline: 3px solid #c58c42;
+    outline-offset: 2px;
+}
+
+@media (max-width:768px) {
+    #personagem .municao-botao {
+        min-height: 40px;
+        min-width: 30px;
+        width: 30px;
+    }
+
+    #personagem .municao-valor {
+        height: 40px;
+        width: 38px;
+    }
+
+}
+
+/* Contador de espaço ao lado do botão de adicionar, sem alterar a tabela. */
+#inventario .inventario-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 0;
+}
+
+#inventario .inventario-espacos {
+    display: flex;
+    gap: 8px;
+    align-items: end;
+}
+
+#inventario .inventario-espaco-campo {
+    display: grid;
+    gap: 4px;
+    width: 86px;
+    font: 11px Georgia, serif;
+    color: #3d2314;
+}
+
+#inventario .inventario-espaco-campo input {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 2px solid #6b4630;
+    border-radius: 3px;
+    background: #fff7e9;
+    color: #3d2314;
+    font: 13px Georgia, serif;
+    text-align: center;
+}
+
+#inventario #espaco-ocupado {
+    background: #e9ddc6;
+}
+
+@media (max-width: 768px) {
+    #inventario .inventario-acoes {
+        justify-content: flex-start;
+    }
+
+}
+
+/* Inventário: tabela com rolagem própria e resumo fixo no rodapé da coluna. */
+@media (min-width: 769px) {
+    #inventario > .inventario-itens {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #inventario .tabela-itens-rolagem {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+    /* Rodapé fixo da coluna: os quatro campos permanecem na mesma linha. */
+    #inventario .inventario-resumo {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        flex: 0 0 auto;
+        min-width: 0;
+        padding: 12px 0 2px;
+        border-top: 2px solid #6b4630;
+        background: #f4eccf;
+    }
+
+    #inventario .inventario-resumo-campo {
+        display: grid;
+        gap: 5px;
+        min-width: 0;
+        color: #3d2314;
+        font: 11px Georgia, serif;
+    }
+
+    #inventario .inventario-resumo-campo span {
+        text-align: center;
+        overflow-wrap: anywhere;
+    }
+
+    #inventario .inventario-resumo-campo input {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 6px 2px;
+        border: 2px solid #6b4630;
+        border-radius: 3px;
+        background: #fff7e9;
+        color: #3d2314;
+        text-align: center;
+        font: 14px Georgia, serif;
+    }
+
+    #inventario .inventario-resumo-campo input[readonly] {
+        background: #e9ddc6;
+    }
+
+}
+
+#inventario .tabela-itens .celula-local-item {
+    text-align: center;
+    vertical-align: middle;
+    padding-inline: 2px;
+}
+
+#inventario .botao-local-item {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 34px 34px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+#inventario .botao-local-item.icone-chapeu {
+    background-image: url('../assets/icons/chapeu-contorno.svg');
+}
+
+#inventario .botao-local-item.icone-chapeu[aria-pressed="true"] {
+    background-image: url('../assets/icons/chapeu-preenchido.svg');
+}
+
+#inventario .botao-local-item:focus-visible {
+    outline: 2px solid #6b4630;
+    outline-offset: 2px;
+}
+
+/* ==========================================================
+   TABELA DE ITENS — LARGURAS E CABEÇALHOS (DESKTOP)
+   Mantém a tipografia e a cor de todas as legendas uniformes.
+   A descrição recebe a largura restante.
+   ========================================================== */
+@media (min-width: 769px) {
+    #inventario .tabela-itens {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    #inventario .tabela-itens th:nth-child(1) { width: 6%; }  /* Chapéu */
+    #inventario .tabela-itens th:nth-child(2) { width: 6%; }  /* Alforge */
+    #inventario .tabela-itens th:nth-child(3) { width: 16%; } /* Item */
+    #inventario .tabela-itens th:nth-child(4) { width: 6%; }  /* Qtd. */
+    #inventario .tabela-itens th:nth-child(5) { width: 6%; }  /* Tam. */
+    #inventario .tabela-itens th:nth-child(6) { width: auto; } /* Descrição */
+    #inventario .tabela-itens th:nth-child(7) { width: 42px; } /* Remover */
+
+    #inventario .tabela-itens thead th {
+        font-family: 'Rye', serif;
+        font-size: 13px;
+        font-weight: normal;
+        color: #fff2d9;
+        background-color: #6b4630;
+        vertical-align: middle;
+        padding: 8px 8px;
+        overflow-wrap: anywhere;
+    }
+
+    #inventario .botao-local-item {
+        width: min(30px, 100%);
+        height: 32px;
+        background-size: 28px 28px;
+    }
+}
+
+#inventario .botao-local-item.icone-alforge {
+    background-image: url('../assets/icons/alforge-contorno.svg');
+}
+#inventario .botao-local-item.icone-alforge[aria-pressed="true"] {
+    background-image: url('../assets/icons/alforge-preenchido.svg');
+}

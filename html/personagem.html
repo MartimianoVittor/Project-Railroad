@@ -1,0 +1,200 @@
+<section class="flex" id="personagem">
+        <div class="col coluna-retrato">
+            <form id="form-personagem" enctype="multipart/form-data">
+                <label for="escolher-foto-personagem" class="label-retrato">
+                    <div class="circulo-interno">
+                        <img id="foto-personagem" class="imagem-exibida" src="assets/imgs/imagemPersonagemPlaceholder.png" alt="Clique para escolher a fotografia do personagem">
+                        <span class="texto-hover">Trocar Imagem</span>
+                    </div>
+                </label>
+                <input type="file" id="escolher-foto-personagem" accept="image/*" style="display: none;">
+                <div class="campos-texto-container">
+                    <div class="grupo-campo">
+                        <label for="nome-personagem" class="label-campo">Nome:</label>
+                        <input type="text" id="nome-personagem" name="nome-personagem" placeholder="Seu nome aqui.">
+                    </div>
+                    <div class="grupo-campo">
+                        <label for="apelido-personagem" class="label-campo">Apelido:</label>
+                        <input type="text" id="apelido-personagem" name="apelido-personagem" placeholder="Seu apelido aqui.">
+                    </div>
+                    <div class="grupo-campo">
+                        <label for="profissao-personagem" class="label-campo">Profissão:</label>
+                        <textarea id="profissao-personagem" name="profissao-personagem" rows="2" placeholder="Suas profissões."></textarea>
+                    </div>
+                    <div class="grupo-campo">
+                        <label for="lingua-personagem" class="label-campo">Lingua:</label>
+                        <textarea id="lingua-personagem" name="lingua-personagem" rows="2" placeholder="Seus idiomas."></textarea>
+                    </div>
+                </div>
+            </form> 
+        </div>
+        <div class="col">
+            <div class="campos-texto-container">
+                <div class="campo-inline">
+                    <label for="fama" class="label-campo">Fama:</label>
+                    <input type="text" id="fama" placeholder="Sua Fama.">
+                </div>
+                <div class="campo-inline">
+                    <label for="palavra" class="label-campo">Palavra:</label>
+                    <input type="text" id="palavra" placeholder="Sua Palavra.">
+                </div>
+                <div class="campo-inline">
+                    <label for="dinheiro" class="label-campo">Dinheiro:</label>
+                    <input type="text" id="dinheiro" placeholder="Seu Dinheiro.">
+                </div>
+            </div>
+            <div class="grupo-caveiras">
+                <div class="linha-check">
+                    <label>Ferimentos:</label>
+                    <div class="caveiras-box">
+                        <input type="checkbox" class="check-caveira" data-grupo="ferimentos" aria-label="Ferimentos 1">
+                        <input type="checkbox" class="check-caveira" data-grupo="ferimentos" aria-label="Ferimentos 2">
+                        <input type="checkbox" class="check-caveira" data-grupo="ferimentos" aria-label="Ferimentos 3">
+                    </div>
+                </div>
+                <div class="linha-check">
+                    <label>Sede:</label>
+                    <div class="caveiras-box">
+                        <input type="checkbox" class="check-caveira" data-grupo="sede" aria-label="Sede 1">
+                        <input type="checkbox" class="check-caveira" data-grupo="sede" aria-label="Sede 2">
+                        <input type="checkbox" class="check-caveira" data-grupo="sede" aria-label="Sede 3">
+                    </div>
+                </div>
+                <div class="linha-check">
+                    <label>Fome:</label>
+                    <div class="caveiras-box">
+                        <input type="checkbox" class="check-caveira" data-grupo="fome" aria-label="Fome 1">
+                        <input type="checkbox" class="check-caveira" data-grupo="fome" aria-label="Fome 2">
+                        <input type="checkbox" class="check-caveira" data-grupo="fome" aria-label="Fome 3">
+                    </div>
+                </div>
+                <div class="linha-check">
+                    <label>Cansaço:</label>
+                    <div class="caveiras-box">
+                        <input type="checkbox" class="check-caveira" data-grupo="cansaco" aria-label="Cansaço 1">
+                        <input type="checkbox" class="check-caveira" data-grupo="cansaco" aria-label="Cansaço 2">
+                        <input type="checkbox" class="check-caveira" data-grupo="cansaco" aria-label="Cansaço 3">
+                    </div>
+                </div>
+            </div>
+            <div class="campos-texto-container">
+                <div class="grupo-campo">
+                        <label for="bio-personagem" class="label-campo">Sobre Você:</label>
+                        <textarea id="bio-personagem" name="bio-personagem" rows="14" placeholder="Fale sobre você."></textarea>
+                    </div>
+            </div>
+        </div>
+        <div class="col double">
+            <div class="grupo-tracos">
+                <div class="cabecalho-tracos" aria-hidden="true"><span>TRAÇOS</span><span>d4</span><span>d6</span><span>d8</span><span>d12</span></div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Sangue Quente:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Sangue Quente — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-1" aria-label="Sangue Quente, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Sangue Quente — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-1" aria-label="Sangue Quente, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Sangue Quente — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-1" aria-label="Sangue Quente, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Sangue Quente — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-1" aria-label="Sangue Quente, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Mira Afiada:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Mira Afiada — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-2" aria-label="Mira Afiada, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Mira Afiada — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-2" aria-label="Mira Afiada, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Mira Afiada — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-2" aria-label="Mira Afiada, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Mira Afiada — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-2" aria-label="Mira Afiada, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Guerreiro Ancestral:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Guerreiro Ancestral — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-3" aria-label="Guerreiro Ancestral, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Guerreiro Ancestral — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-3" aria-label="Guerreiro Ancestral, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Guerreiro Ancestral — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-3" aria-label="Guerreiro Ancestral, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Guerreiro Ancestral — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-3" aria-label="Guerreiro Ancestral, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Amigo Kaboom:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Amigo Kaboom — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-4" aria-label="Amigo Kaboom, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Amigo Kaboom — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-4" aria-label="Amigo Kaboom, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Amigo Kaboom — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-4" aria-label="Amigo Kaboom, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Amigo Kaboom — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-4" aria-label="Amigo Kaboom, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Orelha Em Pé:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Orelha Em Pé — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-5" aria-label="Orelha Em Pé, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Orelha Em Pé — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-5" aria-label="Orelha Em Pé, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Orelha Em Pé — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-5" aria-label="Orelha Em Pé, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Orelha Em Pé — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-5" aria-label="Orelha Em Pé, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Passos Na Sombra:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Passos Na Sombra — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-6" aria-label="Passos Na Sombra, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Passos Na Sombra — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-6" aria-label="Passos Na Sombra, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Passos Na Sombra — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-6" aria-label="Passos Na Sombra, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Passos Na Sombra — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-6" aria-label="Passos Na Sombra, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Poeira e Ossos:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Poeira e Ossos — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-7" aria-label="Poeira e Ossos, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Poeira e Ossos — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-7" aria-label="Poeira e Ossos, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Poeira e Ossos — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-7" aria-label="Poeira e Ossos, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Poeira e Ossos — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-7" aria-label="Poeira e Ossos, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Rédea e Sela:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Rédea e Sela — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-8" aria-label="Rédea e Sela, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Rédea e Sela — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-8" aria-label="Rédea e Sela, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Rédea e Sela — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-8" aria-label="Rédea e Sela, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Rédea e Sela — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-8" aria-label="Rédea e Sela, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Língua de Trapo:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Língua de Trapo — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-9" aria-label="Língua de Trapo, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Língua de Trapo — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-9" aria-label="Língua de Trapo, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Língua de Trapo — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-9" aria-label="Língua de Trapo, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Língua de Trapo — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-9" aria-label="Língua de Trapo, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Agourento e Carrancudo:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Agourento e Carrancudo — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-10" aria-label="Agourento e Carrancudo, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Agourento e Carrancudo — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-10" aria-label="Agourento e Carrancudo, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Agourento e Carrancudo — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-10" aria-label="Agourento e Carrancudo, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Agourento e Carrancudo — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-10" aria-label="Agourento e Carrancudo, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Cachola Cheia:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Cachola Cheia — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-11" aria-label="Cachola Cheia, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Cachola Cheia — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-11" aria-label="Cachola Cheia, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Cachola Cheia — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-11" aria-label="Cachola Cheia, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Cachola Cheia — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-11" aria-label="Cachola Cheia, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+                <div class="linha-check linha-traco">
+                    <label class="nome-traco">Grande Maioral:</label>
+                    <div class="tracos-box">
+                        <label class="marcador-dado" title="Grande Maioral — d4"><input type="checkbox" class="check-tracos" data-grupo="traco-12" aria-label="Grande Maioral, d4"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Grande Maioral — d6"><input type="checkbox" class="check-tracos" data-grupo="traco-12" aria-label="Grande Maioral, d6"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Grande Maioral — d8"><input type="checkbox" class="check-tracos" data-grupo="traco-12" aria-label="Grande Maioral, d8"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                        <label class="marcador-dado" title="Grande Maioral — d12"><input type="checkbox" class="check-tracos" data-grupo="traco-12" aria-label="Grande Maioral, d12"><span class="marcador-dado-visual" aria-hidden="true"></span></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

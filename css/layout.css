@@ -1,0 +1,128 @@
+/* Única fonte das dimensões globais e proporções das seções. */
+:root {
+    --largura-sidebar: 200px;
+    --largura-minima-conteudo: 850px;
+    --espaco-coluna: 10px;
+}
+
+.flex {
+    display: flex;
+    width: 100%;
+}
+
+.col {
+    min-width: 0;
+    min-height: 0;
+    padding: 20px var(--espaco-coluna);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+}
+
+/* Os includes são transparentes apenas onde são usados como wrappers. */
+#slot-sidebar, .fragmento-coluna, .fragmento-quadro,
+body > [data-include] {
+    display: contents;
+}
+
+#jogador, #personagem, #inventario {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    align-items: stretch;
+}
+
+#jogador, #inventario {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+}
+
+#personagem {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+}
+
+#jogador > .col, #personagem > .col, #inventario > .col {
+    min-width: 0;
+    width: auto;
+    max-width: none;
+}
+
+/* Desktop: colunas fluidas, sem largura mínima que corte a página. */
+@media (max-width: 900px) {
+    :root {
+        --espaco-coluna: 10px;
+    }
+
+}
+
+@media (max-width: 550px) {
+    :root {
+        --largura-sidebar: 145px;
+    }
+
+    .barra-lateral {
+        padding: 16px 8px;
+    }
+
+    .barra-lateral .logo {
+        font-size: 1.6rem;
+    }
+
+    .barra-lateral .btn-nav {
+        font-size: 20px;
+        padding: 10px 6px;
+    }
+
+}
+
+/* Cada painel ocupa uma única visualização; o conteúdo excedente rola dentro da coluna. */
+#jogador > .col, #personagem > .col, #inventario > .col {
+    height: 100%;
+    min-height: 0;
+    align-self: stretch;
+}
+
+@media (max-height: 720px) {
+    .col {
+        padding-block: 12px;
+    }
+
+}
+
+/* Rolagem individual em cada coluna, apenas no computador. */
+@media (min-width: 769px) {
+    html, body {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    html {
+        overflow-y: auto;
+    }
+
+    body {
+        overflow-y: visible;
+    }
+
+    #jogador, #personagem, #inventario {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    #jogador > .col, #personagem > .col, #inventario > .col {
+        height: 100%;
+        min-height: 0;
+        min-width: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior-y: auto;
+        scrollbar-gutter: stable;
+    }
+
+}
