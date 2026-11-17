@@ -1,11 +1,6 @@
-/**
- * Configuração PÚBLICA do projeto Supabase.
- * Preencha URL e chave publishable (ou anon). Nunca coloque service_role ou
- * segredos do Google neste arquivo, pois ele é servido pelo navegador.
- */
 export const SUPABASE = Object.freeze({
-    url: '',
-    publishableKey: '',
+    url: 'https://cltrtjgdobzncopstsfb.supabase.co',
+    publishableKey: 'sb_publishable_H953s9tjkVJ_HL8I8GbAlw_hixTSP0X',
 });
 
 export function supabaseConfigurado() {
