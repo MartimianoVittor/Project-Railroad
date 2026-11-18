@@ -442,7 +442,7 @@
     }
 
     #inventario .tabela-itens th:nth-child(1) { width: 110px; text-align: center; } /* Local */
-    #inventario .tabela-itens th:nth-child(2) { width: 18%; } /* Item */
+    #inventario .tabela-itens th:nth-child(2) { width: 15%; } /* Item */
     #inventario .tabela-itens th:nth-child(3) { width: 8%; }  /* Qtd. */
     #inventario .tabela-itens th:nth-child(4) { width: 8%; }  /* Tam. */
     #inventario .tabela-itens th:nth-child(5) { width: auto; } /* Descrição */

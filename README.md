@@ -26,7 +26,7 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 - [x] **Gerenciamento de Personagens e Inventário:** criação, personalização e acompanhamento da evolução dos personagens além de inventário dinâmico que permite adicionar e retirar itens bem como criar novos.
 - [x] **Ferramentas de Jogo:** recursos interativos para auxiliar jogadores durante as sessões.
 - [x] **Integração com Banco de Dados:** fichas privadas usando Supabase Auth e PostgreSQL com RLS.
-- [ ] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas repositório "".
+- [ ] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas repositório "http://github.com/MartimianoVittor/Project-Railroad-Master".
 - [ ] **Guia de Campanhas:** campanhas pré montadas para todos.
 
 
@@ -47,13 +47,13 @@ As tecnologias utilizadas no desenvolvimento do projeto serão apresentadas conf
 - Desenvolver uma experiência de navegação intuitiva e temática.
 - Integrar as regras do sistema às funcionalidades da plataforma.
 
-## 🚧 Status do Projeto
+## 🚧 Status do Projeto 
 
-<sub>Versão 1.2.4 — correção de inicialização e diagnóstico dos componentes HTML</sub>
+**finalizado, em expansão.**
 
 Você ja pode criar suas fichas e personagens em salva-las local e online
 
-versão do mestre e campanhas em desenvolvimento confira o repositório "".
+versão do mestre e campanhas em desenvolvimento confira o repositório "http://github.com/MartimianoVittor/Project-Railroad-Master".
 
 ---
 
@@ -61,53 +61,3 @@ versão do mestre e campanhas em desenvolvimento confira o repositório "".
 
 **Prepare seu cavalo, carregue seu revólver.**
 
-## Interface v1.2.0
-
-- **Jogador, Personagem, Inventário e Quadro:** páginas independentes, com rolagem dentro da área de trabalho.
-- **Fichas:** gerenciamento de personagens online (criar, abrir, renomear, duplicar e excluir).
-- **Conta:** Google OAuth, convites, mesas e envio de fichas para o mestre.
-- **Local:** fichas no dispositivo, importação e exportação de arquivos JSON.
-
-O formato das fichas e o banco Supabase não foram alterados. Veja `ATUALIZAR_DE_V1.1.0.md`.
-
-
-## Ajustes de interface v1.2.1
-
-- Barra lateral de 160 px, com ações na ordem **Conta → Fichas → Local**.
-- No computador, **Jogador e Quadro** dividem a mesma página; o Quadro
-  continua independente apenas na navegação do celular.
-- As fichas preservam os IDs, dados e funcionalidades. Os espaçamentos externos
-  foram compactados para caber melhor em monitores comuns.
-- Campos com textos longos ou janelas muito pequenas ainda podem exigir
-  rolagem **interna**: não ocultamos informações nem desabilitamos a rolagem.
-- O mesmo canvas é deslocado entre desktop e celular, sem criar um segundo quadro.
-
-
-## Ajustes de interface v1.2.2
-
-- Na tabela de itens, **Local** reúne os ícones do personagem e da montaria em uma única coluna.
-- Removidos os textos redundantes "Teste de traço" e "Nome" dos cartões do Inventário.
-- Ações inferiores da barra lateral: **Conta → Ficha → Local**.
-- Os painéis de gerenciamento têm fechamento nativo pelo botão **×**.
-- As molduras dos retratos do Jogador e do Personagem utilizam toda a largura da primeira coluna no desktop.
-
-Consulte `ATUALIZAR_DE_V1.2.1.md` para instalar a atualização.
-
-
-## Correção de inicialização v1.2.4
-
-- Os fragmentos HTML são carregados sem usar cópias antigas do cache.
-- Controles ausentes são identificados pelo nome, evitando erros genéricos de `addEventListener`.
-- A falta de um botão secundário não bloqueia o acesso à conta Google.
-- Nenhuma mudança no formato das fichas ou no banco de dados.
-
-Veja `ATUALIZAR_DE_V1.2.3.md` para instalar a atualização.
-
-## Correção v1.2.5 — Inicialização e botões
-
-Os controles **Conta**, **Ficha** e **Local** agora fazem parte do `index.html`,
-sem depender do carregamento de um fragmento para aparecer. O carregamento
-modular das fichas e dos diálogos foi preservado, com isolamento de falhas.
-A versão remove referências a botões obsoletos e mantém o formato de dados.
-
-Para atualizar a partir da v1.2.4, consulte `ATUALIZAR_DE_V1.2.4.md`.

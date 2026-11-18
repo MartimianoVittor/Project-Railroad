@@ -1,7 +1,7 @@
 /* Identidade externa e navegação por páginas.
    As fichas, seus campos e sua lógica permanecem nos estilos originais. */
 :root {
-    --largura-sidebar: 160px;
+    --largura-sidebar: 190px;
     --fundo-pergaminho: #f4eccf;
     --fundo-cartao: #fff7e5;
     --borda-couro: #805c3e;
@@ -246,4 +246,129 @@ body {
 }
 @media (max-width: 768px) {
     .aviso-inicializacao { left: 12px; }
+}
+
+/* v1.2.7 — redistribuição horizontal para a barra lateral ampliada. */
+@media (min-width: 769px) {
+    .painel-quadro-jogador .col { padding-inline: clamp(5px, .6vw, 9px); }
+    #jogador #bio-jogador { height: auto; min-height: 35px; }
+}
+
+/* v1.3.0 — alinhamento visual do conteúdo entre colunas.
+   Não cria rolagem permanente; preserva os campos e o desenho do quadro. */
+@media (min-width: 769px) {
+    #jogador > .col,
+    #personagem > .col,
+    #inventario > .col {
+        scrollbar-gutter: auto;
+        overflow-y: auto;
+    }
+
+    /* A ficha se estende até o rodapé, sem esticar a fotografia. */
+    #jogador > .coluna-retrato > form,
+    #personagem > .coluna-retrato > form {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+    }
+    #jogador > .coluna-retrato .campos-texto-container,
+    #personagem > .coluna-retrato .campos-texto-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 auto;
+    }
+    #jogador > .coluna-retrato .grupo-campo:last-child {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 auto;
+    }
+    #jogador #bio-jogador {
+        flex: 1 0 auto;
+        height: auto;
+        min-height: 90px;
+        resize: vertical;
+    }
+    /* Distribui os campos do retrato de personagem sem mudar sua ordem. */
+    #personagem > .coluna-retrato .campos-texto-container {
+        justify-content: space-between;
+    }
+
+    /* A coluna central usa toda a altura e deixa o espaço livre entre grupos. */
+    #personagem > .col:not(.coluna-retrato):not(.double) {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    /* Os controles de rolagem ocupam a altura livre, mantendo os cartões juntos. */
+    #inventario > .inventario-rolagens {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    /* Evita uma segunda barra dentro da tabela antes de haver itens suficientes. */
+    #inventario .tabela-itens-rolagem {
+        scrollbar-gutter: auto;
+    }
+}
+
+/* v1.3.1 — cartões de rolagem e armas visíveis na abertura.
+   Evita que o espaço livre seja distribuído entre os cartões. */
+@media (min-width: 769px) {
+    #inventario > .inventario-rolagens {
+        justify-content: flex-start;
+        gap: clamp(7px, 1dvh, 11px);
+        padding-block: clamp(8px, 1.1dvh, 13px);
+    }
+    #inventario > .inventario-rolagens h2 {
+        font-size: clamp(17px, 1.5vw, 23px);
+        line-height: 1.15;
+        margin-bottom: 0;
+    }
+    #inventario > .inventario-rolagens .cartao-rolagem,
+    #inventario > .inventario-rolagens .cartao-arma {
+        flex: 0 0 auto;
+        padding: 7px 8px;
+        gap: 5px;
+    }
+    #inventario > .inventario-rolagens .campo-inventario {
+        min-height: 27px;
+        padding: 4px 6px;
+    }
+    #inventario > .inventario-rolagens .botao-rolar {
+        margin-top: 1px;
+        padding: 5px 8px;
+    }
+    #inventario > .inventario-rolagens .resultado-rolagem:empty {
+        min-height: 0;
+    }
+    #inventario > .inventario-rolagens .bonus-distancia {
+        gap: 2px;
+    }
+    #inventario > .inventario-rolagens .bonus-distancia span {
+        min-height: 20px;
+    }
+}
+
+/* v1.3.3 — preencher a altura útil com os próprios cartões, sem
+   criar espaços artificiais entre eles ou esconder conteúdo excedente. */
+@media (min-width: 769px) {
+    #inventario > .inventario-rolagens {
+        justify-content: flex-start;
+        gap: clamp(9px, 1.25dvh, 14px);
+    }
+
+    #inventario > .inventario-rolagens .cartao-rolagem,
+    #inventario > .inventario-rolagens .cartao-arma {
+        flex: 1 0 auto;
+        align-content: space-between;
+        padding: clamp(8px, 1.05dvh, 12px) 9px;
+        gap: clamp(5px, .7dvh, 8px);
+    }
+
+    /* Sem divisória entre os dados do Jogador e o Quadro. */
+    #jogador > .painel-quadro-jogador {
+        border-left: 0;
+    }
 }

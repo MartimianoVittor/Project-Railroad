@@ -492,3 +492,11 @@
         font-size: clamp(15px, min(1.6vw, 2.4vh), 21px);
     }
 }
+
+/* v1.2.7 — aproxima os nomes dos traços das gotas, sem alterar os marcadores. */
+@media (min-width: 769px) {
+    #personagem .grupo-tracos {
+        --largura-gota: clamp(23px, 1.95vw, 34px);
+        --intervalo-gota: clamp(1px, .18vw, 3px);
+    }
+}

@@ -29,7 +29,7 @@ assert.doesNotMatch(principal, /data-include="html\/sidebar\.html"/);
 assert.match(principal, /id="quadro-mobile" class="pagina-ficha"[^>]*><\/section>/);
 assert.match(navegacao, /function posicionarQuadro\(/);
 assert.match(navegacao, /destino\.append\(conteudo\)/);
-assert.match(estilos, /--largura-sidebar: 160px/);
+assert.match(estilos, /--largura-sidebar: 190px/);
 assert.match(estilos, /scrollbar-gutter: auto/);
 
 for (const arquivo of ['html/dialogs/fichas.html', 'html/dialogs/conta.html', 'html/dialogs/local.html'])

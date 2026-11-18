@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read = f => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
+const jogador = read('html/jogador.html');
+const personagem = read('html/personagem.html');
+const shell = read('css/shell.css');
+const sidebar = read('css/sidebar.css');
+assert.match(jogador, /<textarea[^>]*id="bio-jogador"/);
+assert.match(personagem, /<textarea[^>]*id="bio-personagem"/);
+assert.match(shell, /--largura-sidebar:\s*190px/);
+assert.match(sidebar, /width: calc\(100% - 14px\)/);
+assert.match(sidebar, /transform: translateX\(6px\)/);
+console.log('OK: áreas de texto e folga para deslocamento dos cartuchos.');
