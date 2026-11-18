@@ -73,6 +73,8 @@ export function criarGerenciadorFichas({
         // caso a configuração esteja ausente ou a conexão falhe.
         porId('entrar-google').disabled = false;
         porId('email-conta').textContent = usuario?.email || '';
+        if (typeof document.dispatchEvent === 'function' && typeof CustomEvent !== 'undefined')
+            document.dispatchEvent(new CustomEvent('railroad:auth', { detail: { autenticado: Boolean(usuario) } }));
 
         const identificacao = modoEdicao === 'local'
             ? `Local: ${fichaLocal?.titulo || 'sem ficha'}`

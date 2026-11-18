@@ -1,0 +1,20 @@
+/* Cartaz de entrada alinhado ao Escudo do Mestre; não interfere nas fichas. */
+#tela-entrada-jogador[hidden] { display: none !important; }
+body.entrada-pendente { padding-left: 0 !important; }
+body.entrada-pendente > .barra-lateral,
+body.entrada-pendente > #area-fichas,
+body.entrada-pendente > .navegacao-mobile,
+body.entrada-pendente > #acoes-mobile,
+body.entrada-pendente > #fundo-acoes-mobile { visibility: hidden !important; pointer-events: none !important; }
+.entrada-jogador { position: fixed; inset: 0; z-index: 110; display: grid; place-items: center; overflow-y: auto; padding: 24px 16px; background: radial-gradient(ellipse at center, #b48d57 0%, #6b4228 65%, #29180f 100%); }
+.entrada-jogador-cartaz { width: min(100%, 660px); padding: clamp(24px, 6vw, 58px); text-align: center; color: #382315; background: repeating-linear-gradient(0deg, transparent 0 32px, #6340210b 33px 34px), #f1dfb8; border: 7px double #65402b; outline: 3px solid #d7b37b; box-shadow: 0 14px 50px #1a0d08a8; }
+.entrada-jogador-ornamento { font: 26px 'Rye', Georgia, serif; margin: 0 0 12px; }
+.entrada-jogador-sobretitulo { font: bold 12px Georgia, serif; letter-spacing: .22em; }
+.entrada-jogador h1 { font: clamp(29px, 6vw, 53px)/1.2 'Rye', Georgia, serif; margin: 14px 0 20px; }
+.entrada-jogador h1 em { color: #863b25; font-style: normal; }
+.entrada-jogador-cartaz > p:not(.entrada-jogador-ornamento) { line-height: 1.55; }
+.entrada-jogador button { display: block; width: min(100%, 330px); min-height: 48px; margin: 14px auto 0; padding: 10px 16px; cursor: pointer; border-radius: 3px; font: 15px 'Rye', Georgia, serif; }
+.entrada-jogador-acao { color: #fff1d2; background: #57301d; border: 2px solid #29160e; box-shadow: 3px 4px 0 #9a714d; }
+.entrada-jogador-local { color: #57301d; background: transparent; border: 2px solid #8b6542; }
+.entrada-jogador button:focus-visible { outline: 3px solid #b45b2c; outline-offset: 3px; }
+#entrada-jogador-status { font-size: 12px; min-height: 20px; margin: 15px 0 0; }

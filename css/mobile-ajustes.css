@@ -1,0 +1,27 @@
+/* Cartões de rolagem transferidos para Personagem no celular. */
+@media (max-width: 768px) {
+  #personagem > .inventario-rolagens.rolagens-no-personagem {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box;
+  }
+  #personagem .inventario-rolagens .cartao-rolagem,
+  #personagem .inventario-rolagens .cartao-arma { flex: none !important; min-height: 0; max-width: 100%; box-sizing: border-box; }
+  #personagem .inventario-rolagens .arma-linha-nome { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  #personagem .inventario-rolagens .arma-municao { justify-self: start; }
+  #personagem .inventario-rolagens .bonus-distancias { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  #personagem .inventario-rolagens .bonus-distancia span { min-height: 0; }
+  #personagem .inventario-rolagens .municao-botao { min-height: 42px; min-width: 42px; }
+  #personagem .inventario-rolagens .municao-valor { width: 55px; min-height: 42px; font-size: 16px; }
+  #inventario .tabela-itens td.celula-local-item { grid-column: 1 / -1; min-width: 0; box-sizing: border-box; }
+  #inventario .celula-local-item .local-item-controles { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 18px; width: 100%; }
+  #inventario .celula-local-item .botao-local-item { flex: 0 0 56px; width: 56px; height: 56px; background-size: 44px 44px; }
+}
+@media (max-width: 370px) {
+  #personagem .inventario-rolagens .bonus-distancias { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
