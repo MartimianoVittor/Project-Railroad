@@ -1,0 +1,249 @@
+/* Identidade externa e navegação por páginas.
+   As fichas, seus campos e sua lógica permanecem nos estilos originais. */
+:root {
+    --largura-sidebar: 160px;
+    --fundo-pergaminho: #f4eccf;
+    --fundo-cartao: #fff7e5;
+    --borda-couro: #805c3e;
+}
+
+html { height: 100%; overflow: hidden; scroll-behavior: auto; }
+body {
+    height: 100dvh;
+    min-width: 320px;
+    padding-left: var(--largura-sidebar);
+    overflow: hidden;
+    background:
+        repeating-linear-gradient(135deg, transparent 0 19px, #5c381809 20px 21px),
+        var(--fundo-pergaminho);
+}
+
+/* Fragmentos de páginas são contêineres transparentes após a inclusão. */
+#area-fichas > [data-include] { display: contents; }
+
+/* O corpo não rola: cada página e suas colunas administram o excedente. */
+#area-fichas {
+    display: block;
+    width: 100%;
+    height: 100dvh;
+    min-width: 0;
+    padding: 6px;
+    overflow: hidden;
+}
+
+#jogador, #personagem, #inventario, #quadro-mobile {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    margin: 0;
+    border: 2px solid var(--borda-couro);
+    border-radius: 6px;
+    background: var(--fundo-cartao);
+    box-shadow: inset 0 0 0 4px #ead5b2, 0 4px 0 #6f4a2a21;
+}
+
+#jogador:not(.ativa),
+#personagem:not(.ativa),
+#inventario:not(.ativa),
+#quadro-mobile:not(.ativa) { display: none !important; }
+
+#jogador.ativa {
+    display: grid;
+    grid-template-columns: minmax(0, 27%) minmax(0, 73%);
+    align-items: stretch;
+}
+#personagem.ativa { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr); }
+#inventario.ativa { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
+#quadro-mobile.ativa { display: flex; flex-direction: column; }
+
+/* Aproveita toda a área útil, sem reservar espaço para barras inexistentes. */
+#jogador > .col,
+#personagem > .col,
+#inventario > .col {
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: auto;
+    overscroll-behavior: contain;
+}
+
+#jogador > .col {
+    padding: clamp(9px, 1.2vw, 17px);
+}
+
+#personagem > .col,
+#inventario > .col {
+    padding: clamp(7px, 1vw, 13px);
+}
+
+/* Jogador e quadro compartilham a página no desktop (27% / 73%). */
+.painel-quadro-jogador {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border-left: 1px solid #b99b74;
+}
+
+.painel-quadro-jogador .col {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: clamp(8px, 1vw, 14px);
+    overflow: hidden;
+}
+
+.painel-quadro-jogador .area-canvas {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* Compactação responsiva dos espaços externos, sem remover campos. */
+@media (min-width: 769px) {
+    #jogador .label-retrato,
+    #personagem .label-retrato {
+        width: 100%;
+        max-width: none;
+        margin-inline: 0;
+        margin-bottom: clamp(5px, 1vh, 12px);
+    }
+
+    #jogador .campos-texto-container,
+    #personagem .campos-texto-container {
+        gap: clamp(6px, .95vh, 12px);
+    }
+
+    #jogador .label-campo,
+    #personagem .label-campo {
+        font-size: clamp(14px, 1.15vw, 18px);
+    }
+
+    #jogador .grupo-campo input,
+    #jogador .grupo-campo textarea,
+    #personagem .grupo-campo input,
+    #personagem .grupo-campo textarea {
+        padding: 7px 9px;
+    }
+
+    #jogador #bio-jogador {
+        min-height: 70px;
+        height: clamp(85px, 17dvh, 150px);
+    }
+
+    #personagem .grupo-caveiras {
+        padding-block: clamp(5px, 1vh, 12px);
+    }
+
+    #personagem .linha-check { margin-bottom: clamp(5px, .9vh, 10px); }
+    #personagem .grupo-tracos .linha-traco { padding-bottom: 1px; }
+
+    #inventario .inventario-rolagens { gap: clamp(4px, .7vh, 8px); }
+    #inventario .cartao-rolagem,
+    #inventario .cartao-arma { padding: 7px; gap: 4px; }
+    #inventario .campo-inventario { min-height: 28px; padding: 4px 6px; }
+    #inventario .botao-rolar { padding: 6px 8px; }
+    #inventario .inventario-resumo { gap: 8px; }
+}
+
+#quadro-mobile > .col {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    padding: 16px;
+    overflow: hidden;
+}
+#quadro-mobile .quadro-tatico-container { flex: 1 1 auto; min-height: 0; }
+#quadro-mobile .area-canvas { flex: 1 1 auto; min-height: 0; }
+#quadro-mobile .dica-quadro { padding-block: 8px; }
+
+/* Os diálogos de gestão seguem os cartões do Mestre, sem afetar a ficha. */
+.painel-fichas {
+    background: #fff7e5;
+    border: 3px double #805c3e;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 4px #ead5b2, 0 18px 55px #321a0d55;
+}
+.painel-fichas .btn-oeste { background: #e1c990; color: #3d2314; border: 2px solid #5b3b22; }
+.painel-fichas .btn-oeste:hover { background: #f5dfa7; }
+.painel-fichas .btn-oeste-perigo { background: #8b252d; color: #fff4e2; border-color: #632027; }
+.painel-fichas .btn-oeste-perigo:hover { background: #6c1b23; }
+
+@media (max-width: 768px) {
+    :root { --largura-sidebar: 0px; }
+    html, body { width: 100%; height: 100dvh; overflow: hidden !important; }
+    body { padding: 0 !important; }
+    #area-fichas {
+        height: calc(100dvh - 70px - env(safe-area-inset-bottom, 0px));
+        padding: 8px;
+        overflow: hidden;
+    }
+    .painel-quadro-jogador { display: none; }
+    #jogador, #personagem, #inventario, #quadro-mobile {
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+        overscroll-behavior-y: contain;
+        scrollbar-gutter: auto;
+    }
+    #jogador.ativa, #personagem.ativa, #inventario.ativa,
+    #quadro-mobile.ativa { display: flex !important; flex-direction: column !important; }
+    #jogador > .col, #personagem > .col, #inventario > .col,
+    #quadro-mobile > .col {
+        flex: 0 0 auto;
+        height: auto !important;
+        min-height: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        padding: 12px !important;
+        scrollbar-gutter: auto;
+    }
+    #quadro-mobile > .col { min-height: calc(100dvh - 105px) !important; }
+    #quadro-mobile .area-canvas { min-height: 280px; }
+    .navegacao-mobile {
+        background: linear-gradient(180deg, #4e2c19 0%, #321c10 100%);
+        border-top: 3px double #bb9653;
+    }
+    .aba-mobile.ativa, .aba-mobile[aria-current='page'] {
+        color: #3d2314;
+        background: #d4af37;
+        border-radius: 5px;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    #area-fichas { height: calc(100dvh - 50px - env(safe-area-inset-bottom, 0px)); }
+}
+
+/* Erros de inicialização ficam visíveis mesmo com a página sem rolagem. */
+.aviso-inicializacao {
+    position: fixed;
+    z-index: 4000;
+    top: 12px;
+    left: calc(var(--largura-sidebar) + 12px);
+    right: 12px;
+    margin: 0;
+    padding: 14px 18px;
+    border: 2px solid #8b252d;
+    border-radius: 5px;
+    background: #fff0df;
+    color: #5b1818;
+    font: 700 14px/1.5 Georgia, serif;
+    box-shadow: 0 5px 18px #321a0d44;
+}
+@media (max-width: 768px) {
+    .aviso-inicializacao { left: 12px; }
+}

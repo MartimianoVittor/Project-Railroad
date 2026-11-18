@@ -5,114 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Smokum&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
-    <title>Railroad RPG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rye&family=Smokum&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css?v=1.2.5">
+    <title>Railroad RPG — Jogador</title>
 </head>
 <body>
-    <!-- Fragmentos carregados antes do JavaScript original. -->
-    <div id="slot-sidebar" data-include="html/sidebar.html"></div>
-    <section class="flex" id="jogador">
-        <div data-include="html/jogador.html" class="fragmento-coluna"></div>
-        <div data-include="html/quadro.html" class="fragmento-quadro"></div>
-    </section>
-    <section id="quadro-mobile" aria-label="Quadro tático"></section>
-    <div data-include="html/personagem.html"></div>
-    <div data-include="html/inventario.html"></div>
-    <nav class="navegacao-mobile" aria-label="Navegação principal no celular">
+    <!-- Barra lateral é parte fixa da aplicação: disponível antes dos fragmentos. -->
+    <aside class="barra-lateral" aria-label="Menu do jogador">
+        <div class="marca-jogador">
+            <strong class="logo">RAILROAD</strong>
+            <span class="subtitulo-marca">Jogador</span>
+        </div>
+    
+        <nav class="menu-navegacao" aria-label="Páginas da ficha">
+            <a href="#jogador" class="btn-nav ativa" data-aba="jogador" aria-current="page">Jogador</a>
+            <a href="#personagem" class="btn-nav" data-aba="personagem">Personagem</a>
+            <a href="#inventario" class="btn-nav" data-aba="inventario">Inventário</a>
+        </nav>
+    
+        <div class="acoes-ficha-aside">
+            <p class="identificacao-ficha" id="ficha-atual"></p>
+            <p class="status-salvamento" id="status-salvamento" role="status" aria-live="polite"></p>
+            <div class="divisor-aside" aria-hidden="true"></div>
+            <button type="button" id="btn-conta" class="btn-acao-lateral">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="8" r="3.5" />
+                    <path d="M5 20v-2a7 7 0 0 1 14 0v2" />
+                </svg>
+                <span>Conta</span>
+            </button>
+            <button type="button" id="btn-minhas-fichas" class="btn-acao-lateral">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M7 3h8l4 4v14H7z" />
+                    <path d="M15 3v5h4M10 12h6M10 16h6M4 7v14" />
+                </svg>
+                <span>Ficha</span>
+            </button>
+            <button type="button" id="btn-fichas-locais" class="btn-acao-lateral">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M3 7h7l2 2h9v11H3z" />
+                    <path d="M12 11v6m-3-3 3 3 3-3" />
+                </svg>
+                <span>Local</span>
+            </button>
+        </div>
+    </aside>
+
+    <main id="area-fichas" aria-label="Fichas do jogador">
+        <section id="jogador" class="pagina-ficha ativa" aria-label="Jogador e quadro de ideias">
+            <div data-include="html/jogador.html" class="fragmento-coluna"></div>
+            <div id="alvo-quadro-desktop" class="painel-quadro-jogador">
+                <div data-include="html/quadro.html" class="fragmento-quadro"></div>
+            </div>
+        </section>
+        <div data-include="html/personagem.html"></div>
+        <div data-include="html/inventario.html"></div>
+        <!-- O mesmo quadro é movido para cá apenas na versão mobile. -->
+        <section id="quadro-mobile" class="pagina-ficha" aria-label="Quadro de ideias"></section>
+    </main>
+
+    <nav class="navegacao-mobile" aria-label="Navegação da ficha no celular">
         <a href="#jogador" class="aba-mobile ativa" data-aba="jogador"><span aria-hidden="true">♟</span><span>Jogador</span></a>
         <a href="#personagem" class="aba-mobile" data-aba="personagem"><span aria-hidden="true">★</span><span>Personagem</span></a>
-        <a href="#quadro-mobile" class="aba-mobile" data-aba="quadro-mobile"><span aria-hidden="true">✎</span><span>Quadro</span></a>
         <a href="#inventario" class="aba-mobile" data-aba="inventario"><span aria-hidden="true">▤</span><span>Inventário</span></a>
-        <button type="button" class="aba-mobile" id="abrir-acoes-mobile" aria-expanded="false" aria-controls="acoes-mobile"><span aria-hidden="true">☰</span><span>Ficha</span></button>
+        <a href="#quadro-mobile" class="aba-mobile" data-aba="quadro-mobile"><span aria-hidden="true">✎</span><span>Quadro</span></a>
+        <button type="button" class="aba-mobile" id="abrir-acoes-mobile" aria-expanded="false" aria-controls="acoes-mobile"><span aria-hidden="true">☰</span><span>Ações</span></button>
     </nav>
     <div class="fundo-acoes-mobile" id="fundo-acoes-mobile" hidden></div>
     <div class="acoes-mobile" id="acoes-mobile" role="dialog" aria-label="Ações da ficha" aria-modal="true" hidden>
         <h2>Minha ficha</h2>
         <p class="identificacao-ficha" id="ficha-atual-mobile"></p>
         <p class="status-salvamento" id="status-salvamento-mobile" role="status" aria-live="polite"></p>
-        <button type="button" class="btn-oeste" id="fichas-mobile">Fichas online</button>
-        <button type="button" class="btn-oeste" id="locais-mobile">Fichas locais</button>
-        <button type="button" class="btn-oeste" id="apagar-mobile">Apagar ficha local</button>
+        <button type="button" class="btn-oeste" id="conta-mobile">Conta</button>
+        <button type="button" class="btn-oeste" id="fichas-mobile">Ficha</button>
+        <button type="button" class="btn-oeste" id="locais-mobile">Local</button>
         <button type="button" class="btn-oeste" id="fechar-acoes-mobile">Fechar</button>
     </div>
-    <!-- Painel único de autenticação e gerenciamento de personagens. -->
-    <dialog id="painel-fichas" class="painel-fichas" aria-labelledby="painel-fichas-titulo">
-        <header class="painel-fichas-cabecalho">
-            <div>
-                <h2 id="painel-fichas-titulo">Fichas online</h2>
-                <p>Personagens privados salvos no Supabase</p>
-            </div>
-            <button type="button" id="fechar-painel-fichas" class="fechar-painel-fichas" aria-label="Fechar painel">×</button>
-        </header>
-        <p id="mensagem-conta" class="mensagem-conta" role="status" aria-live="polite"></p>
-        <section id="conta-visitante" class="painel-fichas-secao">
-            <p>Entre com sua conta Google para criar e guardar várias fichas privadas.</p>
-            <p>Sua ficha local continuará disponível sem login. Ela não será enviada automaticamente.</p>
-            <button type="button" id="entrar-google" class="btn-oeste">Entrar com Google</button>
-        </section>
-        <section id="conta-autenticada" class="painel-fichas-secao" hidden>
-            <div class="identidade-conta">
-                <span id="email-conta"></span>
-                <button type="button" id="sair-google" class="btn-oeste">Sair da conta</button>
-            </div>
-            <form id="form-criar-ficha" class="form-criar-ficha">
-                <label for="nome-nova-ficha">Nova ficha de personagem</label>
-                <div class="form-criar-ficha-controles">
-                    <input id="nome-nova-ficha" name="nome" type="text" maxlength="120" placeholder="Nome da ficha" required>
-                    <button type="submit" class="btn-oeste">Criar ficha</button>
-                </div>
-            </form>
-            <button type="button" id="importar-ficha-local" class="btn-oeste">Importar minhas fichas locais (JSON)</button>
-            <input type="file" id="input-importar-online" accept=".json,application/json" hidden>
-            <p class="dica-fichas">Escolha no explorador um arquivo JSON para adicionar à sua conta. Repetir a importação não cria outra ficha.</p>
-            <h3>Personagens salvos</h3>
-            <ul id="lista-fichas" class="lista-fichas"></ul>
-            <p class="dica-fichas">Suas fichas continuam privadas. Somente uma ficha que você enviar a uma mesa poderá ser consultada pelo mestre daquela campanha.</p>
 
-            <section class="secao-convites-mesa" aria-labelledby="titulo-convites-mesa">
-                <header class="titulo-convites-mesa">
-                    <h3 id="titulo-convites-mesa">Convites de mesa</h3>
-                    <p class="dica-fichas">Os convites enviados por mestres aparecem aqui. Aceitar um convite não envia nenhuma ficha automaticamente.</p>
-                    <button type="button" id="atualizar-convites-mesa" class="btn-oeste">↻ Atualizar convites</button>
-                </header>
-                <div class="codigo-jogador-mesa">
-                    <div>
-                        <strong>Seu código de jogador</strong>
-                        <code id="codigo-jogador-mesas">—</code>
-                    </div>
-                    <button type="button" id="copiar-codigo-jogador" class="btn-oeste">Copiar código</button>
-                </div>
-                <ul id="lista-convites-mesas" class="lista-convites-mesas" aria-label="Convites recebidos de campanhas"></ul>
-            </section>
-        </section>
-    </dialog>
-    <dialog id="painel-locais" class="painel-fichas" aria-labelledby="painel-locais-titulo">
-        <header class="painel-fichas-cabecalho">
-            <div>
-                <h2 id="painel-locais-titulo">Fichas locais</h2>
-                <p>Arquivos e personagens salvos neste navegador</p>
-            </div>
-            <button type="button" id="fechar-painel-locais" class="fechar-painel-fichas" aria-label="Fechar fichas locais">×</button>
-        </header>
-        <p id="mensagem-locais" class="mensagem-conta" role="status" aria-live="polite"></p>
-        <form id="form-criar-local" class="form-criar-ficha">
-            <label for="nome-nova-local">Nova ficha local</label>
-            <div class="form-criar-ficha-controles">
-                <input id="nome-nova-local" type="text" maxlength="120" required placeholder="Nome da ficha">
-                <button type="submit" class="btn-oeste">Criar local</button>
-            </div>
-        </form>
-        <div class="acoes-gerenciamento-local">
-            <button type="button" id="exportar-json" class="btn-oeste">Exportar ficha aberta (JSON)</button>
-            <button type="button" id="importar-json-local" class="btn-oeste">Carregar arquivo JSON</button>
-            <input type="file" id="input-importar-local" accept=".json,application/json" hidden>
-        </div>
-        <h3>Salvas neste dispositivo</h3>
-        <ul id="lista-fichas-locais" class="lista-fichas"></ul>
-        <p class="dica-fichas">As fichas locais não são enviadas automaticamente à nuvem. Para enviar um arquivo, utilize Fichas online → Importar ficha JSON para a nuvem.</p>
-    </dialog>
-    <script src="js/mobile.js"></script>
-    <script src="js/includes.js"></script>
+    <div data-include="html/dialogs/fichas.html"></div>
+    <div data-include="html/dialogs/conta.html"></div>
+    <div data-include="html/dialogs/local.html"></div>
+
+    <script src="js/navegacao.js?v=1.2.5"></script>
+    <script src="js/includes.js?v=1.2.5"></script>
 </body>
 </html>

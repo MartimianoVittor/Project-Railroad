@@ -1,0 +1,35 @@
+<dialog id="painel-fichas" class="painel-fichas" aria-labelledby="painel-fichas-titulo">
+    <header class="painel-fichas-cabecalho">
+        <div>
+            <h2 id="painel-fichas-titulo">Fichas online</h2>
+            <p>Criar, abrir, renomear, duplicar ou excluir personagens.</p>
+        </div>
+        <form method="dialog" class="form-fechar-painel">
+            <button type="submit" id="fechar-painel-fichas" class="fechar-painel-fichas" aria-label="Fechar painel">×</button>
+        </form>
+    </header>
+
+    <p id="mensagem-fichas" class="mensagem-conta" role="status" aria-live="polite"></p>
+
+    <section id="fichas-visitante" class="painel-fichas-secao">
+        <p>Conecte-se à sua conta para gerenciar suas fichas online.</p>
+        <button type="button" id="abrir-conta-de-fichas" class="btn-oeste">Abrir Conta</button>
+    </section>
+
+    <section id="fichas-autenticadas" class="painel-fichas-secao" hidden>
+        <form id="form-criar-ficha" class="form-criar-ficha">
+            <label for="nome-nova-ficha">Nova ficha de personagem</label>
+            <div class="form-criar-ficha-controles">
+                <input id="nome-nova-ficha" name="nome" type="text" maxlength="120" placeholder="Nome da ficha" required>
+                <button type="submit" class="btn-oeste">Criar ficha</button>
+            </div>
+        </form>
+
+        <h3>Personagens salvos</h3>
+        <ul id="lista-fichas" class="lista-fichas"></ul>
+        <p class="dica-fichas">
+            Suas fichas continuam privadas. Somente uma ficha enviada a uma mesa
+            poderá ser consultada pelo mestre daquela campanha.
+        </p>
+    </section>
+</dialog>

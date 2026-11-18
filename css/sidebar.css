@@ -1,105 +1,165 @@
-/* BARRA LATERAL */
+/* Barra lateral do Jogador: mesma linguagem visual do Escudo do Mestre. */
 .barra-lateral {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--largura-sidebar);
-    height: 100vh;
-    background-color: #3D2314;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    padding: 30px 10px;
-    box-sizing: border-box;
+    inset: 0 auto 0 0;
     z-index: 1000;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: var(--largura-sidebar);
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 18px 9px 12px;
+    border-right: 5px double #bb9653;
+    background: linear-gradient(180deg, #4e2c19 0%, #321c10 100%);
+    box-shadow: 5px 0 18px #2712043d;
+    color: #f9e7b7;
+    font-family: Georgia, 'Times New Roman', serif;
 }
 
-.logo {
-    font-weight: bold;
-    font-size: 2.5rem;
-    letter-spacing: 2px;
-    color: #fff;
+.marca-jogador {
+    padding: 0 2px 13px;
+    margin-bottom: 13px;
+    border-bottom: 1px solid #997344;
     text-align: center;
-    margin-bottom: 40px;
+}
+
+.barra-lateral .logo {
+    display: block;
+    margin: 0;
+    color: #f9e7b7;
+    font: 400 clamp(1.03rem, 1.3vw, 1.3rem)/1.3 'Rye', Georgia, serif;
+    letter-spacing: .045em;
+}
+
+.subtitulo-marca {
+    display: block;
+    margin-top: 6px;
+    color: #e3bd72;
+    font: 1.16rem/1 'Smokum', Georgia, serif;
+    letter-spacing: .08em;
 }
 
 .menu-navegacao {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 4px;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
-.btn-nav {
-    color: #a0a5b5;
-    text-decoration: none;
-    padding: 14px 12px;
-    font-weight: bold;
-    font-size: 26px;
+.barra-lateral .btn-nav {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background: transparent;
+    color: #e8d3aa;
+    font: 400 .78rem/1.3 'Rye', Georgia, serif;
     text-align: left;
-    display: block;
-    position: relative;
-    z-index: 1;
-    transition: color 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    transition: color .16s, background .16s, border-color .16s;
 }
 
-.btn-nav::before,
-.btn-nav::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    height: 100%;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.barra-lateral .btn-nav::before,
+.barra-lateral .btn-nav::after { content: none; }
+.barra-lateral .btn-nav:hover {
+    color: #ffda73;
+    background: #ffffff16;
+    transform: none;
 }
-
-.btn-nav::before {
-    left: 0;
-    width: 65%;
-    background-color: #d4af37;
-    border-radius: 4px 0 0 4px;
-    border-left: 6px solid #a3821a;
-    box-shadow: inset 4px 0 0 #1e1e24;
-}
-
-.btn-nav::after {
-    left: 65%;
-    width: 30%;
-    background-color: #b87333;
-    border-radius: 0 100px 100px 0;
-    margin-left: 2px;
-}
-
-.btn-nav:hover {
-    color: #1e1e24;
-    transform: translateX(12px);
-}
-
-.btn-nav:hover::before,
-.btn-nav:hover::after {
-    opacity: 1;
+.barra-lateral .btn-nav.ativa,
+.barra-lateral .btn-nav[aria-current='page'] {
+    border-color: #cfac53;
+    background: #d4af37;
+    color: #3d2314;
+    box-shadow: inset 0 0 0 2px #fff1c04d, 0 3px 0 #1e100b;
 }
 
 .acoes-ficha-aside {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: auto;
+    gap: 8px;
     width: 100%;
+    min-height: 0;
+    margin-top: 0;
+    padding-top: 10px;
+    flex-shrink: 0;
 }
 
-.acoes-ficha-aside .btn-oeste {
+.acoes-ficha-aside .identificacao-ficha {
+    color: #f4dfb2;
+    font: 700 .76rem/1.4 Georgia, serif;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.acoes-ficha-aside .status-salvamento {
+    color: #d7ba89;
+    font: .73rem/1.4 Georgia, serif;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.divisor-aside { margin: 4px 0; border-top: 1px solid #997344; }
+
+/* Ações de gestão: identidade própria, ícones e estados acessíveis. */
+.btn-acao-lateral {
+    position: relative;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) 8px;
+    align-items: center;
+    column-gap: 7px;
+    min-height: 43px;
+    flex-shrink: 0;
     width: 100%;
-    text-align: center;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: #d4af37;
+    padding: 7px 8px;
+    border: 1px solid #c6a063;
+    border-left: 3px solid #d9b768;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #6c462b 0%, #4d2d1c 100%);
+    box-shadow: inset 0 1px #ffffff16, 0 2px 4px #160d0966;
+    color: #f9e7c2;
+    font: 700 .78rem/1.2 Georgia, serif;
+    letter-spacing: .025em;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, transform .15s ease;
 }
 
-#btn-apagar-ficha {
-    background-color: #8B252D;
+.btn-acao-lateral svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: #edce91;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-#btn-apagar-ficha:hover {
-    background-color: #641A20;
+.btn-acao-lateral::after {
+    content: '›';
+    color: #e5bf74;
+    font: 700 1.1rem/1 Georgia, serif;
 }
+
+.btn-acao-lateral:hover {
+    border-color: #f3cf83;
+    background: linear-gradient(180deg, #835634 0%, #5b3622 100%);
+    transform: translateX(2px);
+}
+
+.btn-acao-lateral:active { transform: translateX(0); }
+
+.btn-acao-lateral:focus-visible,
+.barra-lateral .btn-nav:focus-visible { outline: 3px solid #ffdb73; outline-offset: 2px; }

@@ -41,7 +41,9 @@
 .painel-fichas-cabecalho { justify-content: space-between; border-bottom: 2px solid #8d6748; padding-bottom: 12px; }
 .painel-fichas-cabecalho h2 { margin: 0; font: 27px 'Rye', serif; }
 .painel-fichas-cabecalho p { margin: 5px 0 0; }
+.form-fechar-painel { margin: 0; flex: 0 0 auto; align-self: flex-start; }
 .fechar-painel-fichas { border: 0; background: none; color: #3d2314; font: 32px/1 Georgia, serif; cursor: pointer; }
+.painel-fichas:not([open]) { display: none !important; }
 .painel-fichas-secao { margin-top: 18px; }
 .mensagem-conta { min-height: 20px; margin: 12px 0 0; font: 14px/1.4 Georgia, serif; }
 .mensagem-conta[data-erro="true"] { color: #8b252d; font-weight: bold; }

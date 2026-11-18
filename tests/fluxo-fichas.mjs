@@ -128,8 +128,12 @@ assert.equal(porId('painel-fichas').open, true, 'login abre gerenciamento online
 assert.equal(porId('conta-autenticada').hidden, false);
 assert.equal(formulario.personagem['nome-personagem'], 'Antigo local', 'migra ficha local existente');
 
+porId('btn-conta').click();
+assert.equal(porId('painel-conta').open, true, 'Conta abre painel independente para mesas e convites');
+assert.equal(porId('painel-fichas').open, false, 'Conta fecha painel Fichas');
 porId('btn-fichas-locais').click();
 assert.equal(porId('painel-locais').open, true, 'há painel local independente');
+assert.equal(porId('painel-conta').open, false, 'Local fecha painel Conta');
 assert.equal(porId('painel-fichas').open, false);
 assert.equal(porId('lista-fichas-locais').children.length, 1);
 
@@ -165,7 +169,7 @@ porId('btn-minhas-fichas').click();
 porId('input-importar-online').disparar('change', { target: { files: [arquivo], value: 'arquivo.json' } });
 await aguardar();
 assert.equal(linhas.length, 2, 'segunda importação idêntica não duplica');
-assert.match(porId('mensagem-conta').textContent, /já foi importada/);
+assert.match(porId('mensagem-locais').textContent, /já foi importada/);
 
 const antesDeApagar = structuredClone(linhas);
 await gestao.apagarLocalAtual();

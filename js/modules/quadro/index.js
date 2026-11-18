@@ -26,6 +26,10 @@ export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
     canvasAPI.ajustarTamanhoCanvas();
     if (!document.querySelector('.btn-oeste.ativo'))
         ferramentas.selecionarFerramenta('lapis', btnLapis);
+    window.addEventListener('railroad:pagina-alterada', (evento) => {
+        if (['jogador', 'quadro-mobile'].includes(evento.detail?.pagina))
+            requestAnimationFrame(canvasAPI.ajustarTamanhoCanvas);
+    });
     if ('ResizeObserver' in window)
         new ResizeObserver(canvasAPI.ajustarTamanhoCanvas).observe(zonaDrop);
     else

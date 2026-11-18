@@ -1,0 +1,40 @@
+<dialog id="painel-locais" class="painel-fichas" aria-labelledby="painel-locais-titulo">
+    <header class="painel-fichas-cabecalho">
+        <div>
+            <h2 id="painel-locais-titulo">Local e arquivos JSON</h2>
+            <p>Fichas salvas neste dispositivo, importação e exportação.</p>
+        </div>
+        <form method="dialog" class="form-fechar-painel">
+            <button type="submit" id="fechar-painel-locais" class="fechar-painel-fichas" aria-label="Fechar painel Local">×</button>
+        </form>
+    </header>
+
+    <p id="mensagem-locais" class="mensagem-conta" role="status" aria-live="polite"></p>
+
+    <form id="form-criar-local" class="form-criar-ficha">
+        <label for="nome-nova-local">Nova ficha local</label>
+        <div class="form-criar-ficha-controles">
+            <input id="nome-nova-local" type="text" maxlength="120" required placeholder="Nome da ficha">
+            <button type="submit" class="btn-oeste">Criar local</button>
+        </div>
+    </form>
+
+    <div class="acoes-gerenciamento-local">
+        <button type="button" id="exportar-json" class="btn-oeste">Salvar ficha aberta (.json)</button>
+        <button type="button" id="importar-json-local" class="btn-oeste">Importar ficha (.json)</button>
+        <input type="file" id="input-importar-local" accept=".json,application/json" hidden>
+    </div>
+
+    <div id="importar-json-online-container" class="acoes-gerenciamento-local" hidden>
+        <button type="button" id="importar-ficha-local" class="btn-oeste">Importar JSON para fichas online</button>
+        <input type="file" id="input-importar-online" accept=".json,application/json" hidden>
+    </div>
+
+    <h3>Salvas neste dispositivo</h3>
+    <ul id="lista-fichas-locais" class="lista-fichas"></ul>
+    <button type="button" id="btn-apagar-ficha" class="btn-oeste btn-oeste-perigo">Apagar ficha local aberta</button>
+    <p class="dica-fichas">
+        Fichas locais não são enviadas automaticamente à nuvem.
+        Para enviar um JSON à sua conta, use a opção de importação online acima.
+    </p>
+</dialog>

@@ -387,6 +387,14 @@
 
 }
 
+#inventario .local-item-controles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+}
+
 #inventario .tabela-itens .celula-local-item {
     text-align: center;
     vertical-align: middle;
@@ -433,13 +441,12 @@
         table-layout: fixed;
     }
 
-    #inventario .tabela-itens th:nth-child(1) { width: 6%; }  /* Chapéu */
-    #inventario .tabela-itens th:nth-child(2) { width: 6%; }  /* Alforge */
-    #inventario .tabela-itens th:nth-child(3) { width: 16%; } /* Item */
-    #inventario .tabela-itens th:nth-child(4) { width: 6%; }  /* Qtd. */
-    #inventario .tabela-itens th:nth-child(5) { width: 6%; }  /* Tam. */
-    #inventario .tabela-itens th:nth-child(6) { width: auto; } /* Descrição */
-    #inventario .tabela-itens th:nth-child(7) { width: 42px; } /* Remover */
+    #inventario .tabela-itens th:nth-child(1) { width: 110px; text-align: center; } /* Local */
+    #inventario .tabela-itens th:nth-child(2) { width: 18%; } /* Item */
+    #inventario .tabela-itens th:nth-child(3) { width: 8%; }  /* Qtd. */
+    #inventario .tabela-itens th:nth-child(4) { width: 8%; }  /* Tam. */
+    #inventario .tabela-itens th:nth-child(5) { width: auto; } /* Descrição */
+    #inventario .tabela-itens th:nth-child(6) { width: 42px; } /* Remover */
 
     #inventario .tabela-itens thead th {
         font-family: 'Rye', serif;

@@ -572,35 +572,6 @@
         color: #3d2314;
     }
 
-    #inventario .tabela-itens td:nth-child(1) {
-        grid-column: 1 / -1;
-    }
-
-    #inventario .tabela-itens td:nth-child(1)::before {
-        content: 'Item';
-    }
-
-    #inventario .tabela-itens td:nth-child(2)::before {
-        content: 'Quantidade';
-    }
-
-    #inventario .tabela-itens td:nth-child(3)::before {
-        content: 'Tamanho';
-    }
-
-    #inventario .tabela-itens td:nth-child(4) {
-        grid-column: 1 / -1;
-    }
-
-    #inventario .tabela-itens td:nth-child(4)::before {
-        content: 'Descrição';
-    }
-
-    #inventario .tabela-itens td:nth-child(5) {
-        grid-column: 1 / -1;
-        text-align: right;
-    }
-
     #inventario .tabela-itens input {
         width: 100%;
         max-width: 100%;
@@ -765,24 +736,6 @@
 
 /* Inventário mobile: itens em cartões e resumo abaixo da lista. */
 @media (max-width: 768px) {
-    #inventario .tabela-itens td:nth-child(5) {
-        grid-column: 1 / -1;
-        text-align: left;
-    }
-
-    #inventario .tabela-itens td:nth-child(5)::before {
-        content: 'Local do item';
-    }
-
-    #inventario .tabela-itens td:nth-child(6) {
-        grid-column: 1 / -1;
-        text-align: right;
-    }
-
-    #inventario .tabela-itens td:nth-child(6)::before {
-        content: none;
-    }
-
     #inventario .local-item-controles {
         justify-content: flex-start;
         gap: 10px;
@@ -807,41 +760,37 @@
 
 }
 
-/* ==========================================================
-   INVENTÁRIO MOBILE — MARCADORES NO INÍCIO DO CARTÃO
-   ========================================================== */
+/* Inventário mobile: a primeira célula agrupa chapéu e alforge. */
 @media (max-width: 768px) {
     #inventario .tabela-itens tr {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    #inventario .tabela-itens td:nth-child(1),
-    #inventario .tabela-itens td:nth-child(2) {
-        grid-column: span 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 5px;
+    #inventario .tabela-itens td:nth-child(1) {
+        grid-column: 1 / -1;
+        padding: 8px;
         border: 1px solid #a98763;
         border-radius: 4px;
         background: rgba(255, 247, 233, .45);
     }
 
-    #inventario .tabela-itens td:nth-child(1)::before { content: 'Personagem'; }
-    #inventario .tabela-itens td:nth-child(2)::before { content: 'Montaria'; }
-    #inventario .tabela-itens td:nth-child(3),
-    #inventario .tabela-itens td:nth-child(6) { grid-column: 1 / -1; }
-    #inventario .tabela-itens td:nth-child(3)::before { content: 'Item'; }
-    #inventario .tabela-itens td:nth-child(4)::before { content: 'Quantidade'; }
-    #inventario .tabela-itens td:nth-child(5)::before { content: 'Tamanho'; }
-    #inventario .tabela-itens td:nth-child(6)::before { content: 'Descrição'; }
-    #inventario .tabela-itens td:nth-child(7) {
+    #inventario .tabela-itens td:nth-child(1)::before { content: 'Local'; }
+    #inventario .tabela-itens td:nth-child(2) { grid-column: 1 / -1; }
+    #inventario .tabela-itens td:nth-child(2)::before { content: 'Item'; }
+    #inventario .tabela-itens td:nth-child(3)::before { content: 'Quantidade'; }
+    #inventario .tabela-itens td:nth-child(4)::before { content: 'Tamanho'; }
+    #inventario .tabela-itens td:nth-child(5) { grid-column: 1 / -1; }
+    #inventario .tabela-itens td:nth-child(5)::before { content: 'Descrição'; }
+    #inventario .tabela-itens td:nth-child(6) {
         grid-column: 1 / -1;
         text-align: right;
     }
-    #inventario .tabela-itens td:nth-child(7)::before { content: none; }
+    #inventario .tabela-itens td:nth-child(6)::before { content: none; }
+
+    #inventario .local-item-controles {
+        justify-content: flex-start;
+        gap: 12px;
+    }
 
     #inventario .botao-local-item {
         width: 48px;

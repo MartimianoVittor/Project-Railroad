@@ -59,11 +59,8 @@ function atualizarEspacoOcupado() {
             campo.value = String(totais[local]);
     }
 }
-/** Cria o marcador de localização, independente da imagem usada no CSS. */
-function criarCelulaLocal(item, local, icone, titulo) {
-    const celula = document.createElement('td');
-    celula.className = `celula-local-item celula-local-${local}`;
-
+/** Cria um botão para selecionar onde o item é carregado. */
+function criarBotaoLocal(item, local, icone, titulo) {
     const botao = document.createElement('button');
     botao.type = 'button';
     botao.className = `botao-local-item icone-${icone}`;
@@ -73,18 +70,33 @@ function criarCelulaLocal(item, local, icone, titulo) {
     botao.setAttribute('aria-pressed', String(item.local === local));
 
     botao.addEventListener('click', () => {
+        // Somente um local pode estar selecionado; clicar novamente desmarca.
         item.local = item.local === local ? '' : local;
-
-        // A localização, não a classe do ícone, define o estado salvo.
-        celula.parentElement?.querySelectorAll('.botao-local-item').forEach((controle) => {
-            controle.setAttribute('aria-pressed', String(controle.dataset.local === item.local));
-        });
-
+        botao.closest('.local-item-controles')?.querySelectorAll('.botao-local-item')
+            .forEach((controle) => {
+                controle.setAttribute('aria-pressed', String(controle.dataset.local === item.local));
+            });
         atualizarEspacoOcupado();
         agendarSalvamento();
     });
 
-    celula.append(botao);
+    return botao;
+}
+
+/** Os dois ícones compartilham a coluna Local, inclusive no mobile. */
+function criarCelulaLocal(item) {
+    const celula = document.createElement('td');
+    celula.className = 'celula-local-item';
+
+    const controles = document.createElement('div');
+    controles.className = 'local-item-controles';
+    controles.setAttribute('role', 'group');
+    controles.setAttribute('aria-label', 'Local do item');
+    controles.append(
+        criarBotaoLocal(item, 'jogador', 'chapeu', 'Chapéu: carregado pelo personagem'),
+        criarBotaoLocal(item, 'montaria', 'alforge', 'Alforge: carregado pela montaria')
+    );
+    celula.append(controles);
     return celula;
 }
 
@@ -133,8 +145,7 @@ function renderizarItens() {
     itens.forEach((item, indice) => {
         const linha = document.createElement('tr');
         linha.append(
-            criarCelulaLocal(item, 'jogador', 'chapeu', 'Chapéu: carregado pelo jogador'),
-            criarCelulaLocal(item, 'montaria', 'alforge', 'Alforge: carregado pela montaria'),
+            criarCelulaLocal(item),
             criarCelula(item, 'nome', 'Nome do item'),
             criarCelula(item, 'quantidade', 'Quantidade do item', 'number'),
             criarCelula(item, 'tamanho', 'Tamanho do item'),

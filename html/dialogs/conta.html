@@ -1,0 +1,47 @@
+<dialog id="painel-conta" class="painel-fichas" aria-labelledby="painel-conta-titulo">
+    <header class="painel-fichas-cabecalho">
+        <div>
+            <h2 id="painel-conta-titulo">Conta e mesas</h2>
+            <p>Conexão, convites e envio de fichas às campanhas.</p>
+        </div>
+        <form method="dialog" class="form-fechar-painel">
+            <button type="submit" id="fechar-painel-conta" class="fechar-painel-fichas" aria-label="Fechar conta">×</button>
+        </form>
+    </header>
+
+    <p id="mensagem-conta" class="mensagem-conta" role="status" aria-live="polite"></p>
+
+    <section id="conta-visitante" class="painel-fichas-secao">
+        <p>Entre com sua conta Google para participar de mesas e enviar fichas.</p>
+        <p>Suas fichas locais continuarão disponíveis sem login.</p>
+        <button type="button" id="entrar-google" class="btn-oeste">Entrar com Google</button>
+    </section>
+
+    <section id="conta-autenticada" class="painel-fichas-secao" hidden>
+        <div class="identidade-conta">
+            <span id="email-conta"></span>
+            <button type="button" id="sair-google" class="btn-oeste">Sair da conta</button>
+        </div>
+
+        <section class="secao-convites-mesa" aria-labelledby="titulo-convites-mesa">
+            <header class="titulo-convites-mesa">
+                <h3 id="titulo-convites-mesa">Convites de mesa</h3>
+                <p class="dica-fichas">
+                    Os convites enviados pelos mestres aparecem aqui.
+                    Aceitar um convite não compartilha nenhuma ficha automaticamente.
+                </p>
+                <button type="button" id="atualizar-convites-mesa" class="btn-oeste">↻ Atualizar convites</button>
+            </header>
+
+            <div class="codigo-jogador-mesa">
+                <div>
+                    <strong>Seu código de jogador</strong>
+                    <code id="codigo-jogador-mesas">—</code>
+                </div>
+                <button type="button" id="copiar-codigo-jogador" class="btn-oeste">Copiar código</button>
+            </div>
+
+            <ul id="lista-convites-mesas" class="lista-convites-mesas" aria-label="Convites recebidos de campanhas"></ul>
+        </section>
+    </section>
+</dialog>

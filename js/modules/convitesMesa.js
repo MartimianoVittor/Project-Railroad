@@ -73,7 +73,7 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
     function desenharFichasEnviadas(linha, convite) {
         const envios = convite.envios || [];
         const introducao = elemento('p', 'dica-fichas',
-            'Envie uma ou mais fichas online. O mestre poderá ler os dados completos da ficha, inclusive perfil do jogador, fotos e quadro, para decidir sua aprovação.');
+            'Envie uma ou mais fichas online. O mestre poderá consultar os dados compartilhados de Jogador, Personagem e Inventário. Seu quadro de ideias permanece privado.');
         linha.append(introducao);
 
         const enviadas = elemento('ul', 'lista-envios-mesa');
@@ -95,7 +95,7 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
         const disponiveis = fichasOnline.filter((ficha) => !idsEnviados.has(ficha.id));
         if (!disponiveis.length) {
             linha.append(elemento('p', 'dica-fichas',
-                'Não há outras fichas online disponíveis para enviar. Você pode criar ou importar outra acima.'));
+                'Não há outras fichas online disponíveis para enviar. Crie uma ficha em Fichas ou importe um JSON em Local.'));
             return;
         }
 

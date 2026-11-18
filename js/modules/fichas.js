@@ -24,6 +24,7 @@ export function criarGerenciadorFichas({
 }) {
     const porId = (id) => document.getElementById(id);
     const painelOnline = porId('painel-fichas');
+    const painelConta = porId('painel-conta');
     const painelLocal = porId('painel-locais');
     const fichaVazia = () => normalizarFicha({ versao: 3 });
     const chaveUltima = (uid) => `${PREFIXO_ULTIMA}:${uid}`;
@@ -43,22 +44,34 @@ export function criarGerenciadorFichas({
     let preparacaoLocal = null;
     let conexaoSupabase = null;
     let erroConexao = null;
+    let eventosRegistrados = false;
 
     function mensagem(id, texto, erro = false) {
         const elemento = porId(id);
+        if (!elemento) {
+            console.warn(`Railroad: área de mensagem ausente (#${id}).`);
+            return;
+        }
         elemento.textContent = texto;
         elemento.dataset.erro = String(erro);
     }
 
     function estadoSalvamento(texto) {
-        for (const id of ['status-salvamento', 'status-salvamento-mobile'])
-            porId(id).textContent = texto;
+        for (const id of ['status-salvamento', 'status-salvamento-mobile']) {
+            const elemento = porId(id);
+            if (elemento) elemento.textContent = texto;
+        }
     }
 
     function atualizarInterface() {
         porId('conta-visitante').hidden = Boolean(usuario);
         porId('conta-autenticada').hidden = !usuario;
-        porId('entrar-google').disabled = !configurado();
+        porId('fichas-visitante').hidden = Boolean(usuario);
+        porId('fichas-autenticadas').hidden = !usuario;
+        porId('importar-json-online-container').hidden = !usuario;
+        // Nunca desabilitar o login silenciosamente: um clique informa o motivo
+        // caso a configuração esteja ausente ou a conexão falhe.
+        porId('entrar-google').disabled = false;
         porId('email-conta').textContent = usuario?.email || '';
 
         const identificacao = modoEdicao === 'local'
@@ -75,6 +88,7 @@ export function criarGerenciadorFichas({
     function fecharPaineis() {
         if (painelOnline.open) painelOnline.close();
         if (painelLocal.open) painelLocal.close();
+        if (painelConta.open) painelConta.close();
     }
 
     function abrirOnline() {
@@ -83,15 +97,25 @@ export function criarGerenciadorFichas({
         if (usuario)
             void atualizarListaOnline();
         else
+            mensagem('mensagem-fichas', 'Abra Conta para entrar com Google e gerenciar suas fichas online.');
+    }
+
+    function abrirConta() {
+        fecharPaineis();
+        painelConta.showModal();
+        if (usuario) {
+            void atualizarListaOnline();
+        } else {
             mensagem('mensagem-conta', configurado()
-                ? (erroConexao || 'Entre com Google para acessar suas fichas privadas.')
-                : 'Configure o Supabase para usar o gerenciamento online.');
+                ? (erroConexao || 'Entre com Google para participar de mesas e enviar fichas.')
+                : 'Configure o Supabase para usar sua conta online.');
+        }
     }
 
     function abrirLocais() {
         fecharPaineis();
         desenharListaLocal();
-        mensagem('mensagem-locais', 'Estas fichas existem somente neste navegador.');
+        mensagem('mensagem-locais', 'Importe ou exporte arquivos JSON e gerencie fichas locais.');
         painelLocal.showModal();
     }
 
@@ -209,7 +233,8 @@ export function criarGerenciadorFichas({
             await acao();
         } catch (erro) {
             console.error('Railroad: erro na operação de fichas.', erro);
-            mensagem(painel === painelOnline ? 'mensagem-conta' : 'mensagem-locais',
+            mensagem(painel === painelConta ? 'mensagem-conta'
+                : painel === painelOnline ? 'mensagem-fichas' : 'mensagem-locais',
                 `Operação não concluída: ${erro.message}`, true);
         } finally {
             operacaoEmAndamento = false;
@@ -327,7 +352,7 @@ export function criarGerenciadorFichas({
         lista.replaceChildren();
         if (!fichas.length) {
             const item = document.createElement('li');
-            item.textContent = 'Nenhuma ficha online ainda. Crie ou importe uma acima.';
+            item.textContent = 'Nenhuma ficha online ainda. Crie uma ficha aqui ou importe um JSON em Local.';
             lista.append(item);
         }
         for (const ficha of fichas) {
@@ -344,15 +369,15 @@ export function criarGerenciadorFichas({
     async function atualizarListaOnline() {
         if (!usuario || !repositorioNuvem) return;
         const uid = usuario.id;
-        mensagem('mensagem-conta', 'Consultando fichas…');
+        mensagem('mensagem-fichas', 'Consultando fichas…');
         let fichas = [];
         try {
             fichas = await repositorioNuvem.listar();
             if (usuario?.id !== uid) return;
             desenharListaOnline(fichas);
-            mensagem('mensagem-conta', `${fichas.length} ficha(s) online na sua conta.`);
+            mensagem('mensagem-fichas', `${fichas.length} ficha(s) online na sua conta.`);
         } catch (erro) {
-            mensagem('mensagem-conta', `Falha ao listar fichas: ${erro.message}`, true);
+            mensagem('mensagem-fichas', `Falha ao listar fichas: ${erro.message}`, true);
         }
 
         if (usuario?.id !== uid) return;
@@ -448,7 +473,7 @@ export function criarGerenciadorFichas({
         );
         if (resultado.duplicada) {
             await atualizarListaOnline();
-            mensagem('mensagem-conta',
+            mensagem('mensagem-locais',
                 `A ficha "${resultado.registro.titulo}" já foi importada para esta conta. Nenhuma duplicata foi criada.`);
             return;
         }
@@ -536,7 +561,7 @@ export function criarGerenciadorFichas({
                 repositorioNuvem ??= criarRepositorioFichas(cliente);
                 painelConvites ??= criarPainelConvitesMesa({
                     repositorio: criarRepositorioMesas(cliente),
-                    executarAcao: (acao) => executar(painelOnline, acao),
+                    executarAcao: (acao) => executar(painelConta, acao),
                 });
                 erroConexao = null;
                 return conectado;
@@ -551,18 +576,24 @@ export function criarGerenciadorFichas({
     }
 
     async function entrarGoogle() {
-        mensagem('mensagem-conta', 'Preparando o login com Google…');
+        // O login não pode depender da migração do IndexedDB: se outra aba
+        // bloquear o banco, o clique precisa continuar funcionando.
+        mensagem('mensagem-conta', 'Conectando ao Google…');
+        const botao = porId('entrar-google');
+        botao.disabled = true;
         try {
-            await prepararArmazenamento();
-        } catch (erro) {
-            throw new Error('Falha ao preparar as fichas locais. Confira o armazenamento do navegador e recarregue.', { cause: erro });
+            const conexao = await conectarSupabase();
+            const { error } = await conexao.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: `${location.origin}${location.pathname}` },
+            });
+            if (error) throw error;
+            // A biblioteca normalmente redireciona a página. Caso o navegador
+            // bloqueie o redirecionamento, o usuário recebe orientação.
+            mensagem('mensagem-conta', 'Autenticação iniciada. Se a página não mudar, verifique se o navegador bloqueou o acesso ao Google.');
+        } finally {
+            botao.disabled = false;
         }
-
-        const conexao = await conectarSupabase();
-        const { error } = await conexao.auth.signInWithOAuth({
-            provider: 'google', options: { redirectTo: `${location.origin}${location.pathname}` },
-        });
-        if (error) throw error;
     }
 
     async function sairGoogle() {
@@ -575,19 +606,38 @@ export function criarGerenciadorFichas({
         fecharPaineis();
     }
 
+    /**
+     * Registra os controles disponíveis sem derrubar toda a interface quando
+     * algum fragmento HTML estiver desatualizado ou incompleto.
+     */
     function registrarEventos() {
-        porId('btn-minhas-fichas').addEventListener('click', abrirOnline);
-        porId('btn-fichas-locais').addEventListener('click', abrirLocais);
-        porId('btn-apagar-ficha').addEventListener('click', () => { void apagarLocalAtual(); });
-        porId('fechar-painel-fichas').addEventListener('click', fecharPaineis);
-        porId('fechar-painel-locais').addEventListener('click', fecharPaineis);
-        porId('entrar-google').addEventListener('click', () => { void executar(painelOnline, entrarGoogle); });
-        porId('sair-google').addEventListener('click', () => { void executar(painelOnline, sairGoogle); });
-        porId('atualizar-convites-mesa').addEventListener('click', () => {
-            void executar(painelOnline, atualizarListaOnline);
+        if (eventosRegistrados) return;
+        eventosRegistrados = true;
+
+        const ausentes = [];
+        const escutar = (id, evento, acao) => {
+            const elemento = porId(id);
+            if (!elemento) {
+                ausentes.push(id);
+                return;
+            }
+            elemento.addEventListener(evento, acao);
+        };
+
+        escutar('btn-minhas-fichas', 'click', abrirOnline);
+        escutar('btn-conta', 'click', abrirConta);
+        escutar('abrir-conta-de-fichas', 'click', abrirConta);
+        escutar('btn-fichas-locais', 'click', abrirLocais);
+        escutar('fechar-painel-fichas', 'click', fecharPaineis);
+        escutar('fechar-painel-conta', 'click', fecharPaineis);
+        escutar('fechar-painel-locais', 'click', fecharPaineis);
+        escutar('entrar-google', 'click', () => { void executar(painelConta, entrarGoogle); });
+        escutar('sair-google', 'click', () => { void executar(painelConta, sairGoogle); });
+        escutar('atualizar-convites-mesa', 'click', () => {
+            void executar(painelConta, atualizarListaOnline);
         });
-        porId('copiar-codigo-jogador').addEventListener('click', () => {
-            void executar(painelOnline, async () => {
+        escutar('copiar-codigo-jogador', 'click', () => {
+            void executar(painelConta, async () => {
                 if (!usuario) return;
                 if (navigator.clipboard?.writeText)
                     await navigator.clipboard.writeText(usuario.id);
@@ -597,14 +647,14 @@ export function criarGerenciadorFichas({
             });
         });
 
-        porId('form-criar-ficha').addEventListener('submit', (evento) => {
+        escutar('form-criar-ficha', 'submit', (evento) => {
             evento.preventDefault();
             void executar(painelOnline, async () => {
                 await criarOnline(porId('nome-nova-ficha').value);
                 porId('nome-nova-ficha').value = '';
             });
         });
-        porId('form-criar-local').addEventListener('submit', (evento) => {
+        escutar('form-criar-local', 'submit', (evento) => {
             evento.preventDefault();
             void executar(painelLocal, async () => {
                 await criarFichaLocal(porId('nome-nova-local').value);
@@ -612,18 +662,18 @@ export function criarGerenciadorFichas({
             });
         });
 
-        porId('exportar-json').addEventListener('click', () => {
+        escutar('exportar-json', 'click', () => {
             const dados = normalizarFicha(coletarFicha());
             const id = modoEdicao === 'local' ? fichaLocal?.id : fichaNuvem?.id;
-            // ID estável reconhece a mesma ficha mesmo depois de edições futuras.
             baixarFicha({ ...dados, railroadId: id });
         });
+
         for (const [botao, input, painel, importar] of [
             ['importar-json-local', 'input-importar-local', painelLocal, importarArquivoLocal],
-            ['importar-ficha-local', 'input-importar-online', painelOnline, importarArquivoOnline],
+            ['importar-ficha-local', 'input-importar-online', painelLocal, importarArquivoOnline],
         ]) {
-            porId(botao).addEventListener('click', () => porId(input).click());
-            porId(input).addEventListener('change', (evento) => {
+            escutar(botao, 'click', () => porId(input)?.click());
+            escutar(input, 'change', (evento) => {
                 const arquivo = evento.target.files?.[0];
                 evento.target.value = '';
                 if (arquivo) void executar(painel, () => importar(arquivo));
@@ -637,6 +687,17 @@ export function criarGerenciadorFichas({
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') salvarAoSair();
         });
+
+        if (ausentes.length) {
+            const ids = [...new Set(ausentes)];
+            console.warn('Railroad: controles ausentes no HTML:', ids);
+            mensagem(
+                'mensagem-conta',
+                `Alguns controles não foram encontrados: ${ids.map((id) => `#${id}`).join(', ')}. ` +
+                    'Atualize todos os arquivos HTML do projeto.',
+                true
+            );
+        }
     }
 
     async function iniciar() {
@@ -671,5 +732,5 @@ export function criarGerenciadorFichas({
         }
     }
 
-    return { iniciar, agendarSalvamento, salvarAgora, apagarLocalAtual };
+    return { iniciar, registrarEventos, agendarSalvamento, salvarAgora, apagarLocalAtual };
 }

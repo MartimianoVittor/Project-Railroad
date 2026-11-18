@@ -2,13 +2,25 @@ export function criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento }) {
     let primeiraMedicao = true;
     let versaoImagem = 0;
     let imagemPendente = null;
+    let imagemPronta = null;
+
+    function aplicarImagemCarregada() {
+        if (!imagemPronta || zonaDrop.clientWidth < 2 || zonaDrop.clientHeight < 2) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(imagemPronta, 0, 0, canvas.width, canvas.height);
+        imagemPronta = null;
+        imagemPendente = null;
+    }
     function ajustarTamanhoCanvas() {
         const larguraAnterior = canvas.width;
         const alturaAnterior = canvas.height;
-        const novaLargura = Math.max(1, Math.round(zonaDrop.clientWidth));
-        const novaAltura = Math.max(1, Math.round(zonaDrop.clientHeight));
+        // Não reduza a imagem a 1px quando a aba Quadro estiver oculta.
+        if (zonaDrop.clientWidth < 2 || zonaDrop.clientHeight < 2) return;
+        const novaLargura = Math.round(zonaDrop.clientWidth);
+        const novaAltura = Math.round(zonaDrop.clientHeight);
         if (novaLargura === larguraAnterior &&
             novaAltura === alturaAnterior) {
+            aplicarImagemCarregada();
             return;
         }
         const copia = document.createElement('canvas');
@@ -19,6 +31,7 @@ export function criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento }) {
         canvas.width = novaLargura;
         canvas.height = novaAltura;
         ctx.drawImage(copia, 0, 0, novaLargura, novaAltura);
+        aplicarImagemCarregada();
         if (primeiraMedicao)
             primeiraMedicao = false;
         else
@@ -28,15 +41,15 @@ export function criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento }) {
         // Ao trocar de personagem, ignora carregamentos atrasados da ficha anterior.
         const requisicao = ++versaoImagem;
         imagemPendente = typeof dataURL === 'string' && dataURL ? dataURL : null;
+        imagemPronta = null;
         if (!imagemPendente)
             return;
         const imagem = new Image();
         imagem.onload = () => {
             if (requisicao !== versaoImagem)
                 return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(imagem, 0, 0, canvas.width, canvas.height);
-            imagemPendente = null;
+            imagemPronta = imagem;
+            aplicarImagemCarregada();
         };
         imagem.onerror = () => {
             if (requisicao === versaoImagem)
