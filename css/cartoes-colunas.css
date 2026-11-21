@@ -1,0 +1,369 @@
+/* Railroad Jogador — atualização 31
+   Cada coluna é um cartão independente. O fundo aparece entre os cartões.
+   Nenhum conteúdo é cortado para simular ausência de rolagem: em telas baixas,
+   móveis e listas extensas, a página pode crescer verticalmente. */
+:root {
+    --rr-entre-cartoes: clamp(12px, 1.35vw, 21px);
+    --rr-margem-cartoes: clamp(10px, 1.35vw, 19px);
+    --rr-cartao-coluna: #fff7e5;
+    --rr-borda-coluna: #805c3e;
+}
+
+/* A textura continua sendo o fundo da aplicação, não dos painéis. */
+html {
+    height: auto;
+    min-height: 100%;
+    overflow-x: clip;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+body {
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: clip;
+    overflow-y: auto;
+    background:
+        repeating-linear-gradient(135deg, transparent 0 19px, #5c381819 20px 21px),
+        repeating-linear-gradient(15deg, transparent 0 91px, #9a71430e 92px 93px),
+        radial-gradient(ellipse at 20% 10%, #f8ecca, transparent 62%),
+        #e5d3ac;
+    scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#area-fichas::-webkit-scrollbar {
+    display: none;
+}
+#area-fichas {
+    box-sizing: border-box;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    padding: var(--rr-margem-cartoes);
+    scrollbar-width: none;
+}
+/* Páginas não são mais um cartão único; elas só organizam os cartões. */
+#jogador, #personagem, #inventario, #quadro-mobile {
+    width: 100%;
+    height: auto;
+    min-height: calc(100dvh - 2 * var(--rr-margem-cartoes));
+    max-height: none;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    gap: var(--rr-entre-cartoes);
+    align-items: stretch;
+}
+#jogador.ativa {
+    grid-template-columns: minmax(245px, 27fr) minmax(0, 73fr);
+}
+#personagem.ativa {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+}
+#inventario.ativa {
+    grid-template-columns: minmax(275px, 1fr) minmax(0, 2.8fr);
+}
+
+/* #jogador usa um wrapper de include com display:contents;
+   os seletores diretos anteriores não atingiam sua primeira coluna. */
+#jogador > .fragmento-coluna > .col,
+#jogador > .painel-quadro-jogador,
+#personagem > .col,
+#inventario > .col,
+#quadro-mobile > .col {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding: clamp(12px, 1.25vw, 18px);
+    border: 2px solid var(--rr-borda-coluna);
+    border-radius: 7px;
+    background: var(--rr-cartao-coluna);
+    box-shadow: inset 0 0 0 4px #ead5b2, 0 5px 0 #6f4a2a22;
+    overflow: visible;
+    scrollbar-width: none;
+    scrollbar-gutter: auto;
+}
+#jogador > .painel-quadro-jogador {
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid var(--rr-borda-coluna);
+}
+#jogador > .painel-quadro-jogador > .fragmento-quadro {
+    display: contents;
+}
+#jogador .painel-quadro-jogador > .fragmento-quadro > .col {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 500px;
+    height: auto;
+    padding: 0;
+    overflow: visible;
+}
+#jogador .painel-quadro-jogador .area-canvas {
+    flex: 1 1 auto;
+    min-height: 340px;
+}
+#jogador > .fragmento-coluna > .col::-webkit-scrollbar,
+#jogador > .painel-quadro-jogador::-webkit-scrollbar,
+#personagem > .col::-webkit-scrollbar,
+#inventario > .col::-webkit-scrollbar,
+#quadro-mobile > .col::-webkit-scrollbar,
+#inventario .tabela-itens-rolagem::-webkit-scrollbar,
+#personagem .grupo-tracos::-webkit-scrollbar {
+    display: none;
+}
+
+/* O conteúdo dita a altura real, mesmo quando um campo possui muito texto. */
+#jogador > .fragmento-coluna > .coluna-retrato > form,
+#personagem > .coluna-retrato > form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: auto;
+    gap: clamp(8px, 1vh, 12px);
+}
+#jogador .label-retrato,
+#personagem .label-retrato {
+    width: 100%;
+    max-width: min(100%, 220px);
+    margin: 0 auto clamp(8px, 1vh, 13px);
+}
+#jogador .campos-texto-container,
+#personagem .coluna-retrato .campos-texto-container {
+    gap: clamp(7px, 1.05vh, 12px);
+    justify-content: flex-start;
+    flex: 0 0 auto;
+}
+#jogador .label-campo,
+#personagem .label-campo {
+    font-size: clamp(13px, min(1.1vw, 2.3vh), 18px);
+}
+#jogador .grupo-campo input,
+#jogador .grupo-campo textarea,
+#personagem .grupo-campo input,
+#personagem .grupo-campo textarea {
+    padding: 7px 9px;
+}
+#jogador #bio-jogador {
+    flex: 0 0 auto;
+    height: clamp(115px, 20dvh, 210px);
+    min-height: 110px;
+    max-width: 100%;
+}
+#personagem #profissao-personagem,
+#personagem #lingua-personagem {
+    min-height: 55px;
+    height: clamp(58px, 9dvh, 78px);
+    resize: vertical;
+}
+#personagem > .col:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: clamp(10px, 1.5vh, 20px);
+}
+#personagem > .col:nth-child(2) > .grupo-caveiras {
+    flex: 1 0 auto;
+    min-height: 185px;
+    padding-block: clamp(8px, 1.2vh, 14px);
+    gap: clamp(8px, 1.35vh, 14px);
+}
+#personagem > .col:nth-child(2) > .campos-texto-container:last-child {
+    flex: 1 0 auto;
+    min-height: 0;
+}
+#personagem > .col:nth-child(2) > .campos-texto-container:last-child .grupo-campo {
+    min-height: 0;
+}
+#personagem #bio-personagem,
+#personagem > .col:nth-child(2) > .campos-texto-container:last-child #bio-personagem {
+    flex: 1 1 auto;
+    height: clamp(185px, 30dvh, 310px);
+    min-height: 185px;
+    resize: vertical;
+}
+#personagem > .col.double {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+}
+#personagem > .col.double .grupo-tracos {
+    flex: 1 0 auto;
+    display: grid;
+    grid-template-rows: auto repeat(12, minmax(37px, 1fr));
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+}
+#personagem .grupo-tracos .linha-traco {
+    min-height: 37px;
+    padding-block: 0 2px;
+}
+
+/* O cartão de inventário cresce somente com o conteúdo que possui. */
+#inventario.ativa { align-items: start; }
+#inventario > .col { align-self: start; }
+/* Inventário: não travar os itens em uma tabela com rolagem interna. */
+#inventario > .inventario-rolagens,
+#inventario > .inventario-itens {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+}
+#inventario > .inventario-rolagens {
+    justify-content: flex-start;
+    gap: clamp(8px, 1vh, 13px);
+}
+#inventario > .inventario-rolagens .cartao-rolagem,
+#inventario > .inventario-rolagens .cartao-arma {
+    flex: 0 0 auto;
+    align-content: start;
+}
+#inventario .tabela-itens-rolagem {
+    flex: 0 0 auto;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    scrollbar-width: none;
+}
+#inventario .inventario-resumo {
+    margin-top: auto;
+    background: transparent;
+}
+#inventario .tabela-itens td {
+    overflow-wrap: anywhere;
+}
+
+/* Telas intermediárias: reorganizar os cartões em vez de estreitar campos. */
+@media (min-width: 769px) and (max-width: 1160px) {
+    #personagem.ativa {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    #personagem > .col.double {
+        grid-column: 1 / -1;
+    }
+    #personagem > .col.double .grupo-tracos {
+        grid-template-rows: auto repeat(12, minmax(33px, auto));
+    }
+    #inventario.ativa {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #inventario > .inventario-rolagens {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-content: start;
+    }
+    #inventario > .inventario-rolagens > h2 {
+        grid-column: 1 / -1;
+    }
+}
+@media (min-width: 769px) and (max-width: 960px) {
+    #jogador.ativa {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #jogador .painel-quadro-jogador > .fragmento-quadro > .col {
+        min-height: 540px;
+    }
+}
+
+/* Mobile: cartões empilhados, com a textura aparecendo entre eles.
+   Não reintroduzir os contêineres de rolagem travados por altura fixa. */
+@media (max-width: 768px) {
+    html, body {
+        height: auto !important;
+        min-height: 100dvh;
+        overflow-x: clip !important;
+        overflow-y: auto !important;
+        scrollbar-width: none;
+    }
+    body {
+        padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    }
+    #area-fichas {
+        height: auto !important;
+        min-height: 0;
+        overflow: visible !important;
+        padding: 12px;
+    }
+    #jogador, #personagem, #inventario, #quadro-mobile {
+        height: auto !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        gap: 14px;
+    }
+    #jogador > .fragmento-coluna > .col,
+    #jogador > .painel-quadro-jogador,
+    #personagem > .col,
+    #inventario > .col,
+    #quadro-mobile > .col,
+    #inventario > .inventario-itens {
+        flex: 0 0 auto;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0;
+        max-height: none;
+        padding: 14px !important;
+        overflow: visible !important;
+        border: 2px solid var(--rr-borda-coluna) !important;
+        background: var(--rr-cartao-coluna);
+        border-radius: 7px;
+        box-shadow: inset 0 0 0 4px #ead5b2, 0 5px 0 #6f4a2a22;
+    }
+    #jogador > .painel-quadro-jogador { display: none !important; }
+    #jogador #bio-jogador,
+    #personagem #bio-personagem {
+        height: auto;
+        min-height: 150px;
+    }
+    #personagem > .col.double .grupo-tracos {
+        display: grid;
+        grid-template-rows: auto repeat(12, minmax(40px, auto));
+        height: auto;
+        overflow: visible;
+    }
+    #personagem > .col:nth-child(2) > .grupo-caveiras {
+        flex: 0 0 auto;
+        min-height: 0;
+    }
+    #inventario .tabela-itens-rolagem {
+        overflow: visible !important;
+    }
+    #quadro-mobile > .col {
+        min-height: calc(100dvh - 120px) !important;
+    }
+    #quadro-mobile .area-canvas {
+        flex: 1 1 auto;
+        min-height: 300px;
+    }
+}
+
+/* Atualização 32 — Inventário: cada cartão cobre toda a altura visível.
+   Mantém o conteúdo fluido: inventários longos aumentam a página, sem
+   barras de rolagem nas colunas nem corte de itens. */
+#inventario.ativa > .col {
+    box-sizing: border-box;
+    min-height: calc(100dvh - 2 * var(--rr-margem-cartoes));
+    height: auto;
+    max-height: none;
+    overflow: visible;
+}
+
+/* No celular, descontar a navegação fixa inferior e as margens da página. */
+@media (max-width: 768px) {
+    #inventario.ativa > .col,
+    #inventario.ativa > .inventario-itens {
+        min-height: max(420px, calc(100dvh - 74px - env(safe-area-inset-bottom, 0px) - 24px));
+    }
+}

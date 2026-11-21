@@ -244,9 +244,10 @@ export function criarGerenciadorFichas({
         }
     }
 
-    function criarBotao(texto, acao, painel, desabilitado = false) {
+    function criarBotao(texto, acao, painel, desabilitado = false, estilo = 'bege') {
         const botao = document.createElement('button');
         botao.type = 'button';
+        botao.className = `rr-botao-${estilo}`;
         botao.textContent = texto;
         botao.disabled = desabilitado;
         botao.addEventListener('click', () => { void executar(painel, acao); });
@@ -267,8 +268,8 @@ export function criarGerenciadorFichas({
         informacoes.append(titulo, data);
         const botoes = document.createElement('div');
         botoes.className = 'acoes-linha-ficha';
-        for (const [rotulo, acao, desabilitado] of acoes)
-            botoes.append(criarBotao(rotulo, acao, painel, desabilitado));
+        for (const [rotulo, acao, desabilitado, estilo] of acoes)
+            botoes.append(criarBotao(rotulo, acao, painel, desabilitado, estilo));
         linha.append(informacoes, botoes);
         return linha;
     }
@@ -279,10 +280,10 @@ export function criarGerenciadorFichas({
         for (const ficha of repositorioLocal.listar()) {
             const ativa = modoEdicao === 'local' && ficha.id === fichaLocal?.id;
             lista.append(desenharLinha(ficha, painelLocal, [
-                [ativa ? 'Aberta' : 'Abrir', () => abrirFichaLocal(ficha.id), ativa],
+                [ativa ? 'Aberta' : 'Abrir', () => abrirFichaLocal(ficha.id), ativa, 'amarelo'],
+                ['Duplicar', () => duplicarLocal(ficha), false, 'amarelo'],
                 ['Renomear', () => renomearLocal(ficha)],
-                ['Duplicar', () => duplicarLocal(ficha)],
-                ['Excluir local', () => excluirLocal(ficha)],
+                ['Excluir local', () => excluirLocal(ficha), false, 'vermelho'],
             ], ativa));
         }
     }
@@ -360,10 +361,10 @@ export function criarGerenciadorFichas({
         for (const ficha of fichas) {
             const ativa = modoEdicao === 'nuvem' && ficha.id === fichaNuvem?.id;
             lista.append(desenharLinha(ficha, painelOnline, [
-                [ativa ? 'Aberta' : 'Abrir', () => abrirFichaOnline(ficha.id), ativa],
+                [ativa ? 'Aberta' : 'Abrir', () => abrirFichaOnline(ficha.id), ativa, 'amarelo'],
+                ['Duplicar', () => duplicarOnline(ficha), false, 'amarelo'],
                 ['Renomear', () => renomearOnline(ficha)],
-                ['Duplicar', () => duplicarOnline(ficha)],
-                ['Excluir na nuvem', () => excluirOnline(ficha)],
+                ['Excluir na nuvem', () => excluirOnline(ficha), false, 'vermelho'],
             ], ativa));
         }
     }

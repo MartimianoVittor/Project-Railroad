@@ -35,8 +35,8 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
         });
     }
 
-    function criarBotao(rotulo, operacao) {
-        const botao = elemento('button', 'botao-mesa', rotulo);
+    function criarBotao(rotulo, operacao, estilo = 'bege') {
+        const botao = elemento('button', `botao-mesa rr-botao-${estilo}`, rotulo);
         botao.type = 'button';
         botao.addEventListener('click', () => acao(operacao));
         return botao;
@@ -57,8 +57,8 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
                 'O mestre convidou você para esta campanha. Aceitar não compartilha automaticamente nenhuma ficha.'));
             const controles = elemento('div', 'acoes-convite-mesa');
             controles.append(
-                criarBotao('Aceitar ingresso', () => repositorio.responderConvite(convite.convite_id, true)),
-                criarBotao('Recusar', () => repositorio.responderConvite(convite.convite_id, false)),
+                criarBotao('Aceitar ingresso', () => repositorio.responderConvite(convite.convite_id, true), 'marrom'),
+                criarBotao('Recusar', () => repositorio.responderConvite(convite.convite_id, false), 'vermelho'),
             );
             linha.append(controles);
         } else if (convite.status === 'aceito') {
@@ -86,7 +86,7 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
                     STATUS_ENVIO[envio.status] || 'Status desconhecido'),
             );
             item.append(informacao,
-                criarBotao('Retirar ficha', () => repositorio.retirarFicha(envio.envio_id)));
+                criarBotao('Retirar ficha', () => repositorio.retirarFicha(envio.envio_id), 'vermelho'));
             enviadas.append(item);
         }
         if (envios.length) linha.append(enviadas);

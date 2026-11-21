@@ -73,6 +73,8 @@
         if ((atualizarUrl || pagina !== paginaSolicitada) && location.hash !== `#${pagina}`)
             history.replaceState(null, '', `#${pagina}`);
         exibirAcoes(false);
+        // Com os cartões sem rolagem própria, voltar ao topo ao trocar de aba.
+        if (typeof window.scrollTo === 'function') window.scrollTo(0, 0);
         window.dispatchEvent(new CustomEvent('railroad:pagina-alterada', { detail: { pagina } }));
     }
 

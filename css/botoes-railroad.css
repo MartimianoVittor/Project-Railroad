@@ -1,0 +1,117 @@
+/* Railroad Jogador 27 — os quatro papéis dos botões do Mestre 26.
+ * O aspecto do menu cartucho, dos marcadores e das molduras permanece intacto.
+ */
+:root{
+ --rr-botao-marrom:#68452c;--rr-botao-marrom-hover:#805637;
+ --rr-botao-amarelo:#d4af37;--rr-botao-amarelo-hover:#ebc94c;
+ --rr-botao-vermelho:#8b252d;--rr-botao-vermelho-hover:#6c1b23;
+ --rr-botao-bege:#e1c990;--rr-botao-bege-hover:#f5dfa7;
+ --rr-botao-tinta:#3d2314;
+}
+/* Base bege: ações auxiliares e ferramentas inativas. Não altera navegação. */
+.painel-fichas .btn-oeste,
+.painel-fichas .acoes-linha-ficha button,
+.painel-fichas .botao-mesa,
+.barra-ferramentas .btn-oeste,
+.acoes-mobile .btn-oeste {
+ background:var(--rr-botao-bege);color:var(--rr-botao-tinta);
+ border:2px solid #5b3b22;border-radius:5px;
+ box-shadow:inset 0 1px 0 #fff1ce;
+ font-family:Georgia,serif;font-weight:700;
+ transition:background-color .16s ease,filter .16s ease;
+}
+.painel-fichas .btn-oeste:hover:not(:disabled),
+.painel-fichas .acoes-linha-ficha button:hover:not(:disabled),
+.painel-fichas .botao-mesa:hover:not(:disabled),
+.barra-ferramentas .btn-oeste:hover:not(:disabled),
+.acoes-mobile .btn-oeste:hover:not(:disabled) {background:var(--rr-botao-bege-hover)}
+/* Amarelo: criar/adicionar. Destaque da ferramenta do quadro selecionada. */
+.painel-fichas .form-criar-ficha button[type="submit"],
+#inventario #adicionar-item,
+.barra-ferramentas .btn-oeste.ativo,
+.painel-fichas .rr-botao-amarelo {
+ background:var(--rr-botao-amarelo);color:var(--rr-botao-tinta);
+ border-color:#6f4c21;box-shadow:inset 0 1px 0 #ffed95;
+}
+.painel-fichas .form-criar-ficha button[type="submit"]:hover:not(:disabled),
+#inventario #adicionar-item:hover:not(:disabled),
+.barra-ferramentas .btn-oeste.ativo:hover:not(:disabled),
+.painel-fichas .rr-botao-amarelo:hover:not(:disabled){background:var(--rr-botao-amarelo-hover)}
+/* Marrom: confirmar, salvar, rolar, ajustar (+/-) e enviar ao mestre. */
+#inventario .botao-rolar:not(#adicionar-item),
+#personagem .botao-rolar,
+#inventario .municao-botao,#personagem .municao-botao,
+.painel-fichas .botao-mesa-destaque,
+.painel-fichas .rr-botao-marrom,
+#exportar-json,
+.entrada-jogador .entrada-jogador-acao {
+ background:var(--rr-botao-marrom);color:#fff2d9;
+ border:2px solid #3e2517;box-shadow:inset 0 1px 0 #a37a53;
+}
+#inventario .botao-rolar:not(#adicionar-item):hover:not(:disabled),
+#personagem .botao-rolar:hover:not(:disabled),
+#inventario .municao-botao:hover:not(:disabled),#personagem .municao-botao:hover:not(:disabled),
+.painel-fichas .botao-mesa-destaque:hover:not(:disabled),
+.painel-fichas .rr-botao-marrom:hover:not(:disabled),
+#exportar-json:hover:not(:disabled),
+.entrada-jogador .entrada-jogador-acao:hover:not(:disabled){background:var(--rr-botao-marrom-hover)}
+/* Vermelho: sair, excluir, remover, recusar e limpar; mantém tamanho original. */
+.painel-fichas #sair-google,
+.painel-fichas #btn-apagar-ficha,
+.barra-ferramentas #btn-limpar,
+.painel-fichas .btn-oeste-perigo,
+.barra-ferramentas .btn-perigo,
+.painel-fichas .rr-botao-vermelho,
+#inventario .botao-remover-item{
+ background:var(--rr-botao-vermelho);color:#fff4e2;
+ border-color:#632027;box-shadow:inset 0 1px 0 #b35d5d;
+}
+.painel-fichas #sair-google:hover:not(:disabled),
+.painel-fichas #btn-apagar-ficha:hover:not(:disabled),
+.barra-ferramentas #btn-limpar:hover:not(:disabled),
+.painel-fichas .btn-oeste-perigo:hover:not(:disabled),
+.painel-fichas .rr-botao-vermelho:hover:not(:disabled),
+#inventario .botao-remover-item:hover:not(:disabled){background:var(--rr-botao-vermelho-hover)}
+/* O menu, os ícones de local e os marcadores têm semântica própria. */
+:is(.painel-fichas,.barra-ferramentas,#inventario,#personagem) button:focus-visible,
+.barra-ferramentas label.btn-oeste:focus-visible{
+ outline:3px solid #ab6c21;outline-offset:2px;
+}
+.painel-fichas button:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.7)}
+@media(prefers-reduced-motion:reduce){
+ .painel-fichas button,.barra-ferramentas .btn-oeste{transition:none}
+}
+
+/* Atualização 29 — hierarquia das ações nas janelas Fichas e Local. */
+.painel-fichas .acoes-linha-ficha .rr-botao-amarelo,
+.painel-fichas .acoes-linha-ficha .rr-botao-amarelo:hover:not(:disabled){
+ background:var(--rr-botao-amarelo);
+ color:var(--rr-botao-tinta);
+ border-color:#6f4c21;
+ box-shadow:inset 0 1px 0 #ffed95;
+}
+.painel-fichas .acoes-linha-ficha .rr-botao-amarelo:hover:not(:disabled){
+ background:var(--rr-botao-amarelo-hover);
+}
+.painel-fichas .acoes-linha-ficha .rr-botao-vermelho{
+ background:var(--rr-botao-vermelho);
+ color:#fff4e2;
+ border-color:#632027;
+ box-shadow:inset 0 1px 0 #b35d5d;
+}
+.painel-fichas .acoes-linha-ficha .rr-botao-vermelho:hover:not(:disabled){
+ background:var(--rr-botao-vermelho-hover);
+}
+.painel-fichas #exportar-json,
+.painel-fichas #importar-json-local,
+.painel-fichas #importar-ficha-local{
+ background:var(--rr-botao-marrom);
+ color:#fff2d9;
+ border:2px solid #3e2517;
+ box-shadow:inset 0 1px 0 #a37a53;
+}
+.painel-fichas #exportar-json:hover:not(:disabled),
+.painel-fichas #importar-json-local:hover:not(:disabled),
+.painel-fichas #importar-ficha-local:hover:not(:disabled){
+ background:var(--rr-botao-marrom-hover);
+}

@@ -12,3 +12,9 @@
 
 @import url("./entrada.css");
 @import url("./mobile-ajustes.css");
+
+/* Padrão de botões compartilhado com o Railroad Mestre (atualização 26). */
+@import url("./botoes-railroad.css");
+
+/* Cartões separados e layout fluido, sem barras de rolagem internas. */
+@import url("./cartoes-colunas.css");

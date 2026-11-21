@@ -500,3 +500,57 @@
         --intervalo-gota: clamp(1px, .18vw, 3px);
     }
 }
+
+/* Atualização 28 — texto livre e distribuição vertical da ficha de Personagem.
+   A coluna central cresce sem modificar as dimensões dos marcadores nem
+   impedir a rolagem vertical independente prevista no layout original. */
+#personagem #profissao-personagem,
+#personagem #lingua-personagem{
+ display:block;width:100%;min-height:72px;height:76px;
+ padding:9px 11px;box-sizing:border-box;resize:vertical;
+ line-height:1.45;overflow-wrap:anywhere;
+}
+#personagem #bio-personagem{
+ display:block;width:100%;min-height:260px;
+ line-height:1.5;resize:vertical;box-sizing:border-box;
+}
+@media(min-width:769px){
+ #personagem > .col:nth-child(2){
+  display:flex;flex-direction:column;gap:clamp(10px,1.6vh,20px);
+ }
+ #personagem > .col:nth-child(2) > .campos-texto-container:first-child{flex:0 0 auto}
+ #personagem > .col:nth-child(2) > .grupo-caveiras{
+  flex:1 1 240px;min-height:185px;display:flex;flex-direction:column;
+  justify-content:space-evenly;gap:clamp(8px,1.4vh,20px);
+  padding:clamp(8px,1.5vh,16px) 0;
+ }
+ #personagem > .col:nth-child(2) > .grupo-caveiras .linha-check{
+  flex:1 1 auto;min-height:36px;margin:0;
+ }
+ #personagem > .col:nth-child(2) > .campos-texto-container:last-child{
+  flex:1 1 265px;min-height:285px;
+ }
+ #personagem > .col:nth-child(2) > .campos-texto-container:last-child .grupo-campo{
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0;
+ }
+ #personagem > .col:nth-child(2) > .campos-texto-container:last-child #bio-personagem{
+  flex:1 1 auto;height:100%;min-height:230px;
+ }
+}
+@media(max-width:768px){
+ #personagem #profissao-personagem,#personagem #lingua-personagem{min-height:75px}
+ #personagem #bio-personagem{min-height:270px}
+ #personagem .grupo-caveiras{padding-block:18px}
+ #personagem .grupo-caveiras .linha-check{margin-bottom:clamp(15px,3vh,25px)}
+}
+
+/* Atualização 30 — oculta somente a barra visual nas colunas de Personagem.
+   A rolagem continua disponível por roda do mouse, touchpad e toque. */
+#personagem > .col {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scrollbar-gutter: auto;
+}
+#personagem > .col::-webkit-scrollbar {
+    display: none;
+}
