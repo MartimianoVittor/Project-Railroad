@@ -6,7 +6,7 @@
  */
 import { normalizarFicha } from './core/validacao.js';
 import { baixarFicha, interpretarArquivo } from './core/importExport.js';
-import { criarGerenciadorFichas } from './modules/fichas.js?v=1.4.8';
+import { criarGerenciadorFichas } from './modules/fichas.js?v=1.4.16';
 
 let modulos = null;
 let quadro = null;
@@ -50,7 +50,7 @@ async function iniciar() {
             import('./modules/personagem.js?v=1.2.5'),
             import('./modules/inventario.js?v=1.2.5'),
             import('./modules/quadro/index.js?v=1.4.5'),
-            import('./modules/personalizacao.js?v=1.4.14'),
+            import('./modules/personalizacao.js?v=1.4.16'),
         ]);
 
         visual.iniciarPersonalizacao();

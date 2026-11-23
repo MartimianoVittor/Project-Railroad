@@ -129,6 +129,7 @@ assert.equal(porId('conta-autenticada').hidden, false);
 assert.equal(formulario.personagem['nome-personagem'], 'Antigo local', 'migra ficha local existente');
 
 porId('btn-conta').click();
+await aguardar();
 assert.equal(porId('painel-conta').open, true, 'Conta abre painel independente para mesas e convites');
 assert.equal(porId('painel-fichas').open, false, 'Conta fecha painel Fichas');
 porId('btn-fichas-locais').click();
@@ -147,6 +148,7 @@ await gestao.salvarAgora();
 assert.equal(linhas.length, 0, 'edições locais não são enviadas para o Supabase');
 
 porId('btn-minhas-fichas').click();
+await aguardar();
 porId('nome-nova-ficha').value = 'Pistoleiro online';
 porId('form-criar-ficha').disparar('submit', { preventDefault() {} });
 await aguardar();
@@ -158,6 +160,7 @@ const arquivo = { text: async () => JSON.stringify(normalizarFicha({
     inventario: { itens: [{ nome: 'Corda', local: 'montaria' }] },
 })) };
 porId('btn-minhas-fichas').click();
+await aguardar();
 porId('importar-ficha-local').click();
 assert.equal(porId('input-importar-online').clicks, 1, 'botão abre explorador JSON');
 porId('input-importar-online').disparar('change', { target: { files: [arquivo], value: 'arquivo.json' } });
@@ -166,6 +169,7 @@ assert.equal(linhas.length, 2, 'importou o JSON como nova ficha online');
 assert.equal(formulario.inventario.itens[0].local, 'montaria');
 
 porId('btn-minhas-fichas').click();
+await aguardar();
 porId('input-importar-online').disparar('change', { target: { files: [arquivo], value: 'arquivo.json' } });
 await aguardar();
 assert.equal(linhas.length, 2, 'segunda importação idêntica não duplica');

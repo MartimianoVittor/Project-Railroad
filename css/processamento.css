@@ -1,0 +1,20 @@
+.rr-processamento {
+    position: fixed; inset: 0; margin: auto; width: min(340px, calc(100% - 32px));
+    box-sizing: border-box; padding: 24px; text-align: center;
+    background: #493020; color: #fff0d2; border: 3px solid #bd9148;
+    border-radius: 8px; box-shadow: 0 5px 0 #20150d; z-index: 9999;
+}
+.rr-processamento::backdrop { background: rgba(25, 16, 10, .65); }
+.rr-processamento p { color: inherit; font-weight: bold; margin: 14px 0 8px; }
+.rr-processamento small { color: #e4cba4; }
+.rr-roda { width: 64px; height: 64px; margin: auto; border-radius: 50%; border: 5px solid #c49a50; box-sizing: border-box; background: radial-gradient(circle, #d9a738 0 13%, #342217 14% 20%, transparent 21%), repeating-conic-gradient(#c49a50 0deg 9deg, #291a11 9deg 45deg); border-top-color: #fff0c3; animation: rr-girar 1.4s linear infinite; }
+.rr-sincronizando::before { content: ''; display: inline-block; width: .8em; height: .8em; margin-right: .4em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: rr-girar 1s linear infinite; }
+@keyframes rr-girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .rr-roda, .rr-sincronizando::before { animation: none; } }
+
+/* O diálogo nativo ocupa a camada superior, acima dos demais painéis. */
+dialog.rr-processamento[open] { display: block !important; visibility: visible; opacity: 1; height: fit-content; max-height: calc(100dvh - 24px); }
+dialog.rr-processamento:not([open]), .rr-aviso-processamento[hidden] { display: none !important; }
+.rr-aviso-processamento { display: flex; align-items: center; gap: 8px; position: fixed; right: 12px; bottom: 12px; z-index: 9998; padding: 8px 12px; background: #493020; color: #fff0d2; border: 2px solid #bd9148; border-radius: 5px; font: bold 13px Georgia, serif; pointer-events: none; }
+.rr-aviso-processamento .rr-roda { width: 22px; height: 22px; border-width: 2px; margin: 0; flex: none; }
+@media (max-width: 900px) { .rr-aviso-processamento { bottom: calc(85px + env(safe-area-inset-bottom, 0px)); } }

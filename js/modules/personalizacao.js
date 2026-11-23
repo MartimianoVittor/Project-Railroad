@@ -1,3 +1,4 @@
+import { comProcessamento } from '../utils/processamento.js?v=1.4.16';
 import { obterSupabase } from '../services/supabaseClient.js';
 import { criarRepositorioPreferencias } from '../services/preferenciasRepository.js';
 
@@ -282,7 +283,7 @@ export function iniciarPersonalizacao(armazenamento = null) {
         status.textContent = id ? 'Carregando preferências da conta…' : '';
         if (!id) return;
         try {
-            const remoto = await (await repositorio()).carregar(id);
+            const remoto = await comProcessamento('Carregando preferências…', async () => (await repositorio()).carregar(id));
             if (atual !== geracao) return;
             confirmadas = remoto ? validarPreferencias(remoto) : { ...PADRAO };
             preferencias = { ...confirmadas };
@@ -323,7 +324,7 @@ export function iniciarPersonalizacao(armazenamento = null) {
         atualizarControles();
         status.textContent = 'Salvando…';
         try {
-            if (id) await (await repositorio()).salvar(id, escolhas);
+            if (id) await comProcessamento('Salvando preferências…', async () => (await repositorio()).salvar(id, escolhas));
             else {
                 if (!armazenamento) throw new Error('Armazenamento local bloqueado');
                 armazenamento.setItem(CHAVE, JSON.stringify(escolhas));

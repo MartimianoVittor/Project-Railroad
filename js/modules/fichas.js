@@ -1,3 +1,4 @@
+import { comProcessamento } from '../utils/processamento.js?v=1.4.16';
 import { supabaseConfigurado } from '../config/supabase.js';
 import { obterSupabase } from '../services/supabaseClient.js';
 import { criarRepositorioFichas } from '../services/fichasRepository.js';
@@ -97,7 +98,7 @@ export function criarGerenciadorFichas({
         fecharPaineis();
         painelOnline.showModal();
         if (usuario)
-            void atualizarListaOnline();
+            void executar(painelOnline, atualizarListaOnline, 'Carregando fichas…');
         else
             mensagem('mensagem-fichas', 'Abra Conta para entrar com Google e gerenciar suas fichas online.');
     }
@@ -106,7 +107,7 @@ export function criarGerenciadorFichas({
         fecharPaineis();
         painelConta.showModal();
         if (usuario) {
-            void atualizarListaOnline();
+            void executar(painelConta, atualizarListaOnline, 'Atualizando convites…');
         } else {
             mensagem('mensagem-conta', configurado()
                 ? (erroConexao || 'Entre com Google para participar de mesas e enviar fichas.')
@@ -143,6 +144,10 @@ export function criarGerenciadorFichas({
     }
 
     async function salvarAgora() {
+        return comProcessamento('Salvando ficha…', persistirAgora, { bloquear: false });
+    }
+
+    async function persistirAgora() {
         clearTimeout(timerLocal);
         alteracaoPendente = false;
 
@@ -190,7 +195,7 @@ export function criarGerenciadorFichas({
 
             const envio = filaEnvios.then(() => repositorioNuvem.salvar(id, rascunho.dados));
             filaEnvios = envio.catch(() => {});
-            await envio;
+            await comProcessamento('Salvando ficha…', () => envio, { bloquear: false });
             if (lerRascunho(uid, id)?.token === rascunho.token) {
                 repositorioLocal.apagarRascunho(uid, id);
                 await repositorioLocal.flush();
@@ -227,12 +232,12 @@ export function criarGerenciadorFichas({
         return sincronizar();
     }
 
-    async function executar(painel, acao) {
+    async function executar(painel, acao, texto = 'Processando…') {
         if (operacaoEmAndamento) return;
         operacaoEmAndamento = true;
         painel.setAttribute('aria-busy', 'true');
         try {
-            await acao();
+            await comProcessamento(texto, acao);
         } catch (erro) {
             console.error('Railroad: erro na operação de fichas.', erro);
             mensagem(painel === painelConta ? 'mensagem-conta'
@@ -250,7 +255,7 @@ export function criarGerenciadorFichas({
         botao.className = `rr-botao-${estilo}`;
         botao.textContent = texto;
         botao.disabled = desabilitado;
-        botao.addEventListener('click', () => { void executar(painel, acao); });
+        botao.addEventListener('click', () => { void executar(painel, acao, ({ Abrir: 'Carregando ficha…', Duplicar: 'Duplicando ficha…', Renomear: 'Renomeando ficha…', 'Excluir na nuvem': 'Excluindo ficha…', 'Excluir local': 'Excluindo ficha local…', Excluir: 'Excluindo ficha…' })[texto] || 'Processando ficha…'); });
         return botao;
     }
 
@@ -564,7 +569,7 @@ export function criarGerenciadorFichas({
                 repositorioNuvem ??= criarRepositorioFichas(cliente);
                 painelConvites ??= criarPainelConvitesMesa({
                     repositorio: criarRepositorioMesas(cliente),
-                    executarAcao: (acao) => executar(painelConta, acao),
+                    executarAcao: (acao, texto) => executar(painelConta, acao, texto),
                 });
                 erroConexao = null;
                 return conectado;
@@ -634,10 +639,10 @@ export function criarGerenciadorFichas({
         escutar('fechar-painel-fichas', 'click', fecharPaineis);
         escutar('fechar-painel-conta', 'click', fecharPaineis);
         escutar('fechar-painel-locais', 'click', fecharPaineis);
-        escutar('entrar-google', 'click', () => { void executar(painelConta, entrarGoogle); });
-        escutar('sair-google', 'click', () => { void executar(painelConta, sairGoogle); });
+        escutar('entrar-google', 'click', () => { void executar(painelConta, entrarGoogle, 'Conectando à conta…'); });
+        escutar('sair-google', 'click', () => { void executar(painelConta, sairGoogle, 'Encerrando sessão…'); });
         escutar('atualizar-convites-mesa', 'click', () => {
-            void executar(painelConta, atualizarListaOnline);
+            void executar(painelConta, atualizarListaOnline, 'Atualizando convites…');
         });
         escutar('copiar-codigo-jogador', 'click', () => {
             void executar(painelConta, async () => {
@@ -655,14 +660,14 @@ export function criarGerenciadorFichas({
             void executar(painelOnline, async () => {
                 await criarOnline(porId('nome-nova-ficha').value);
                 porId('nome-nova-ficha').value = '';
-            });
+            }, 'Criando ficha…');
         });
         escutar('form-criar-local', 'submit', (evento) => {
             evento.preventDefault();
             void executar(painelLocal, async () => {
                 await criarFichaLocal(porId('nome-nova-local').value);
                 porId('nome-nova-local').value = '';
-            });
+            }, 'Criando ficha local…');
         });
 
         escutar('exportar-json', 'click', () => {
@@ -679,7 +684,7 @@ export function criarGerenciadorFichas({
             escutar(input, 'change', (evento) => {
                 const arquivo = evento.target.files?.[0];
                 evento.target.value = '';
-                if (arquivo) void executar(painel, () => importar(arquivo));
+                if (arquivo) void executar(painel, () => importar(arquivo), 'Importando ficha…');
             });
         }
 
@@ -706,7 +711,7 @@ export function criarGerenciadorFichas({
     async function iniciar() {
         registrarEventos();
         try {
-            await prepararArmazenamento();
+            await comProcessamento('Preparando Railroad…', prepararArmazenamento);
         } catch (erro) {
             console.error('Falha ao preparar as fichas locais.', erro);
             estadoSalvamento('Falha no armazenamento local; exporte suas fichas JSON');
@@ -715,19 +720,19 @@ export function criarGerenciadorFichas({
         if (!configurado()) return;
 
         try {
-            cliente = await conectarSupabase();
+            cliente = await comProcessamento('Conectando ao banco…', conectarSupabase);
             cliente.auth.onAuthStateChange((evento, sessao) => {
                 if (evento === 'SIGNED_OUT' && usuario)
                     queueMicrotask(() => { modoVisitante(); fecharPaineis(); });
                 else if (evento === 'SIGNED_IN' && usuario && sessao?.user?.id !== usuario.id)
-                    queueMicrotask(() => { void modoAutenticado(sessao.user); });
+                    queueMicrotask(() => { void comProcessamento('Carregando conta…', () => modoAutenticado(sessao.user)); });
             });
-            const { data: sessao, error: erroSessao } = await cliente.auth.getSession();
+            const { data: sessao, error: erroSessao } = await comProcessamento('Verificando conta…', () => cliente.auth.getSession());
             if (erroSessao) throw erroSessao;
             if (!sessao.session) return;
-            const { data, error } = await cliente.auth.getUser();
+            const { data, error } = await comProcessamento('Verificando conta…', () => cliente.auth.getUser());
             if (error) throw error;
-            if (data.user) await modoAutenticado(data.user);
+            if (data.user) await comProcessamento('Carregando conta…', () => modoAutenticado(data.user));
         } catch (erro) {
             console.warn('Supabase indisponível; a ficha local continuará funcionando.', erro);
             estadoSalvamento('Nuvem indisponível; você pode continuar no modo local');

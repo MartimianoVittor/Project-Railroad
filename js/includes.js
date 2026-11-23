@@ -87,7 +87,7 @@
         }
 
         window.dispatchEvent(new Event('railroad:fragmentos-carregados'));
-        await import('./main.js?v=1.4.14');
+        await import('./main.js?v=1.4.16');
     } catch (erro) {
         avisoInicializacao(`Não foi possível iniciar o Railroad: ${erro.message}`);
     }

@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { iniciarProcessamento, comProcessamento } from '../js/utils/processamento.js';
+const status = { textContent: '' };
+const classes = new Set();
+const dialog = { open: false, setAttribute(){}, addEventListener(){}, querySelector(){return status;}, showModal(){this.open=true;}, close(){this.open=false;} };
+globalThis.document = { body:{append(){}}, createElement:()=>dialog, querySelectorAll:()=>[{classList:{toggle(c,v){if(v)classes.add(c);else classes.delete(c);}}}] };
+const a = iniciarProcessamento('Carregando ficha…');
+const b = iniciarProcessamento('Salvando preferências…');
+assert.equal(dialog.open,true); assert.equal(status.textContent,'Salvando preferências…');
+a(); assert.equal(dialog.open,true); b(); assert.equal(dialog.open,false);
+const c = iniciarProcessamento('Salvando ficha…',{bloquear:false});
+assert.equal(dialog.open,false); assert.equal(classes.has('rr-sincronizando'),true); c(); assert.equal(classes.size,0);
+await assert.rejects(comProcessamento('Falha',async()=>{throw Error('rede');})); assert.equal(dialog.open,false);
+assert.equal(await comProcessamento('Teste',async()=>42),42); assert.equal(dialog.open,false);
+console.log('OK: concorrência, salvamento discreto, conclusão e falha.');

@@ -28,17 +28,17 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
         codigoJogador.textContent = '—';
     }
 
-    function acao(operacao) {
+    function acao(operacao, texto = 'Processando convite…') {
         void executarAcao(async () => {
             await operacao();
             if (usuarioId) await atualizar(usuarioId, fichasOnline);
-        });
+        }, texto);
     }
 
     function criarBotao(rotulo, operacao, estilo = 'bege') {
         const botao = elemento('button', `botao-mesa rr-botao-${estilo}`, rotulo);
         botao.type = 'button';
-        botao.addEventListener('click', () => acao(operacao));
+        botao.addEventListener('click', () => acao(operacao, rotulo === 'Retirar ficha' ? 'Retirando ficha…' : 'Processando convite…'));
         return botao;
     }
 
@@ -119,7 +119,7 @@ export function criarPainelConvitesMesa({ repositorio, executarAcao }) {
         formulario.addEventListener('submit', (evento) => {
             evento.preventDefault();
             if (!seletor.value) return;
-            acao(() => repositorio.enviarFicha(convite.convite_id, seletor.value));
+            acao(() => repositorio.enviarFicha(convite.convite_id, seletor.value), 'Enviando ficha…');
         });
         linha.append(formulario);
     }
