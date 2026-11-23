@@ -20,6 +20,7 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 
 - [X] **Sistema Próprio de RPG V1.0:** mecânicas, atributos, características e regras desenvolvidas especialmente para o Railroad.
 - [x] **Interface Temática:** identidade visual inspirada no Velho Oeste.
+- [x] **Personalização:** modifique os estilos de molduras bordas e planos de fundo.
 - [x] **Perfil do Jogador com Campo de Colagens:** perfil completo para o jogador que permita a colagem de inspirações anotações e temas.
 - [x] **Fichas Dinâmicas:** criação e edição de fichas de personagens diretamente pelo site.
 - [x] **Atualização em Tempo Real:** informações das fichas atualizadas dinamicamente conforme as alterações realizadas.
@@ -62,6 +63,3 @@ versão do mestre e campanhas em desenvolvimento confira o repositório "http://
 **Prepare seu cavalo, carregue seu revólver.**
 
 
-### Preferências visuais por conta
-
-Antes de publicar a atualização 1.4.8, execute `supabase/migrations/20261123_preferencias_visuais.sql` no SQL Editor do mesmo projeto Supabase. A tabela usa RLS por `auth.uid()`. A aparência é independente das fichas; usuários autenticados salvam no banco e visitantes salvam no navegador. Uma conta sem registro começa com o tema padrão (preferências antigas locais permanecem no modo visitante). Fechar a janela sem salvar descarta a prévia.
