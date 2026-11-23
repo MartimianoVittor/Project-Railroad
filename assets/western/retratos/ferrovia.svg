@@ -1,0 +1,8 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+<path d="M 36 18 L 204 18 L 222 36 L 222 204 L 204 222 L 36 222 L 18 204 L 18 36 Z" fill="#3b281c" stroke="#1f140c" stroke-width="3.5"></path>
+<path d="M 42 26 L 198 26 L 214 42 L 214 198 L 198 214 L 42 214 L 26 198 L 26 42 Z" fill="none" stroke="#d9a738" stroke-width="2.5"></path>
+<rect fill="#e8d6b3" height="152" rx="6" stroke="#1f140c" stroke-width="3" width="152" x="44" y="44"></rect>
+<rect fill="none" height="140" stroke="#785328" stroke-dasharray="4 3" stroke-width="1.5" width="140" x="50" y="50"></rect>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="11" text-anchor="middle" x="120" y="116">SUA IMAGEM</text>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="11" text-anchor="middle" x="120" y="131">AQUI</text>
+</svg>

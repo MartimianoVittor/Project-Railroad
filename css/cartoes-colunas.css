@@ -277,7 +277,7 @@ body::-webkit-scrollbar,
 /* Mobile: cartões empilhados, com a textura aparecendo entre eles.
    Não reintroduzir os contêineres de rolagem travados por altura fixa. */
 @media (max-width: 768px) {
-    html, body {
+    html {
         height: auto !important;
         min-height: 100dvh;
         overflow-x: clip !important;
@@ -285,13 +285,17 @@ body::-webkit-scrollbar,
         scrollbar-width: none;
     }
     body {
-        padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+        height: auto !important;
+        min-height: 100dvh;
+        overflow: visible !important;
+        padding: 0 !important;
     }
     #area-fichas {
         height: auto !important;
         min-height: 0;
         overflow: visible !important;
-        padding: 12px;
+        /* A barra fixa não participa do fluxo; reservar espaço no conteúdo. */
+        padding: 12px 12px calc(90px + env(safe-area-inset-bottom, 0px));
     }
     #jogador, #personagem, #inventario, #quadro-mobile {
         height: auto !important;

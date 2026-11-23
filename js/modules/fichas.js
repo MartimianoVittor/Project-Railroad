@@ -74,7 +74,7 @@ export function criarGerenciadorFichas({
         porId('entrar-google').disabled = false;
         porId('email-conta').textContent = usuario?.email || '';
         if (typeof document.dispatchEvent === 'function' && typeof CustomEvent !== 'undefined')
-            document.dispatchEvent(new CustomEvent('railroad:auth', { detail: { autenticado: Boolean(usuario) } }));
+            document.dispatchEvent(new CustomEvent('railroad:auth', { detail: { autenticado: Boolean(usuario), usuarioId: usuario?.id ?? null } }));
 
         const identificacao = modoEdicao === 'local'
             ? `Local: ${fichaLocal?.titulo || 'sem ficha'}`

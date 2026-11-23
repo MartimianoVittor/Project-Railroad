@@ -6,7 +6,7 @@
  */
 import { normalizarFicha } from './core/validacao.js';
 import { baixarFicha, interpretarArquivo } from './core/importExport.js';
-import { criarGerenciadorFichas } from './modules/fichas.js?v=1.2.5';
+import { criarGerenciadorFichas } from './modules/fichas.js?v=1.4.8';
 
 let modulos = null;
 let quadro = null;
@@ -45,13 +45,15 @@ async function iniciar() {
     fichas.registrarEventos();
 
     try {
-        const [jogador, personagem, inventario, moduloQuadro] = await Promise.all([
+        const [jogador, personagem, inventario, moduloQuadro, visual] = await Promise.all([
             import('./modules/jogador.js?v=1.2.5'),
             import('./modules/personagem.js?v=1.2.5'),
             import('./modules/inventario.js?v=1.2.5'),
-            import('./modules/quadro/index.js?v=1.2.5'),
+            import('./modules/quadro/index.js?v=1.4.5'),
+            import('./modules/personalizacao.js?v=1.4.14'),
         ]);
 
+        visual.iniciarPersonalizacao();
         modulos = { jogador, personagem, inventario };
         quadro = moduloQuadro.iniciarQuadro({
             agendarSalvamento,

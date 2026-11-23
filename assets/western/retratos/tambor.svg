@@ -1,0 +1,17 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+<circle cx="120" cy="120" fill="#594a3e" r="102" stroke="#1f140c" stroke-width="3.5"></circle>
+<circle cx="120" cy="120" fill="none" r="92" stroke="#d9a738" stroke-dasharray="8 6" stroke-width="2"></circle>
+<g fill="#2b211a" stroke="#1f140c" stroke-width="2.5">
+<circle cx="120" cy="30" r="10"></circle>
+<circle cx="198" cy="75" r="10"></circle>
+<circle cx="198" cy="165" r="10"></circle>
+<circle cx="120" cy="210" r="10"></circle>
+<circle cx="42" cy="165" r="10"></circle>
+<circle cx="42" cy="75" r="10"></circle>
+</g>
+<circle cx="120" cy="120" fill="#d9a738" r="68" stroke="#1f140c" stroke-width="3"></circle>
+<circle cx="120" cy="120" fill="#e8d6b3" r="60" stroke="#1f140c" stroke-width="2.5"></circle>
+<circle cx="120" cy="120" fill="none" r="55" stroke="#785328" stroke-dasharray="4 3" stroke-width="1.5"></circle>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="11" text-anchor="middle" x="120" y="116">SUA IMAGEM</text>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="11" text-anchor="middle" x="120" y="131">AQUI</text>
+</svg>

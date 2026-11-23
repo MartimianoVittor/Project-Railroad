@@ -6,7 +6,7 @@ const index = ler('index.html');
 const html = [
     index,
     ...[
-        'html/jogador.html', 'html/personagem.html', 'html/inventario.html',
+        'html/jogador.html', 'html/personagem.html', 'html/inventario.html', 'html/personalizacao.html',
         'html/quadro.html', 'html/dialogs/conta.html',
         'html/dialogs/fichas.html', 'html/dialogs/local.html',
     ].map(ler),
@@ -37,9 +37,9 @@ for (const painel of ['conta', 'fichas', 'locais']) {
 const carregador = ler('js/includes.js');
 assert.match(carregador, /Promise\.allSettled/);
 assert.match(carregador, /cache: 'no-store'/);
-assert.match(carregador, /v=1\.2\.5/);
+assert.match(carregador, /v=1\.4\.1/);
 assert.match(ler('js/main.js'), /fichas\.registrarEventos\(\)/);
 assert.match(ler('js/main.js'), /await Promise\.all/);
-assert.match(index, /js\/navegacao\.js\?v=1\.2\.5/);
+assert.match(index, /js\/navegacao\.js\?v=1\.4\.0/);
 
 console.log('OK: IDs únicos, botões presentes e painéis conectados ao JavaScript.');

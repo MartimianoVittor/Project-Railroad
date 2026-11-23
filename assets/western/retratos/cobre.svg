@@ -1,0 +1,14 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#b85628" height="204" rx="10" stroke="#1f140c" stroke-width="3.5" width="204" x="18" y="18"></rect>
+<rect fill="#d9a738" height="184" rx="6" stroke="#1f140c" stroke-width="2.5" width="184" x="28" y="28"></rect>
+<rect fill="#e8d6b3" height="164" rx="4" stroke="#1f140c" stroke-width="3" width="164" x="38" y="38"></rect>
+<rect fill="none" height="152" stroke="#785328" stroke-dasharray="5 4" stroke-width="1.5" width="152" x="44" y="44"></rect>
+<g fill="#f2cf6b" stroke="#1f140c" stroke-width="2">
+<circle cx="28" cy="28" r="5"></circle>
+<circle cx="212" cy="28" r="5"></circle>
+<circle cx="28" cy="212" r="5"></circle>
+<circle cx="212" cy="212" r="5"></circle>
+</g>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="12" text-anchor="middle" x="120" y="116">SUA IMAGEM</text>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="12" text-anchor="middle" x="120" y="132">AQUI</text>
+</svg>

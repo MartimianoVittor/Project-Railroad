@@ -5,8 +5,7 @@
  * dependem de uma segunda requisição para aparecerem.
  */
 (async () => {
-    const VERSAO = '1.2.5';
-    const alvos = [...document.querySelectorAll('[data-include]')];
+    const VERSAO = '1.4.10';
     const dialogosEssenciais = new Set([
         'html/dialogs/conta.html',
         'html/dialogs/fichas.html',
@@ -15,7 +14,7 @@
 
     const componentesObrigatorios = {
         'index.html': ['btn-conta', 'btn-minhas-fichas', 'btn-fichas-locais'],
-        'html/dialogs/conta.html': ['painel-conta', 'entrar-google', 'mensagem-conta'],
+        'html/dialogs/conta.html': ['painel-conta', 'entrar-google', 'mensagem-conta', 'personalizacao'],
         'html/dialogs/fichas.html': ['painel-fichas', 'abrir-conta-de-fichas'],
         'html/dialogs/local.html': ['painel-locais', 'exportar-json'],
     };
@@ -25,6 +24,7 @@
         'html/personagem.html': ['nome-personagem'],
         'html/inventario.html': ['rolagem-traco'],
         'html/quadro.html': ['quadro-rpg'],
+        'html/personalizacao.html': ['rr-opcoes-botoes', 'rr-opcoes-retratos-jogador', 'rr-opcoes-fundos-cartao', 'rr-restaurar-aparencia'],
     };
 
     function avisoInicializacao(texto) {
@@ -37,35 +37,39 @@
     }
 
     try {
-        // Requisita os fragmentos em paralelo, mas um erro em uma página não
-        // impede que os controles da conta sejam inicializados.
-        const resultados = await Promise.allSettled(alvos.map(async (alvo) => {
-            const caminho = alvo.dataset.include;
-            const resposta = await fetch(`${caminho}?v=${VERSAO}`, { cache: 'no-store' });
-            if (!resposta.ok)
-                throw new Error(`Não foi possível carregar ${caminho} (HTTP ${resposta.status})`);
-            return { alvo, caminho, html: await resposta.text() };
-        }));
-
+        // Os diálogos podem conter fragmentos aninhados (Conta → Personalização).
+        // Carrega os arquivos por níveis, sem duplicar nós ou repetir uma requisição.
         const falhas = [];
-        for (const resultado of resultados) {
-            if (resultado.status === 'fulfilled') {
-                const { alvo, html } = resultado.value;
-                alvo.innerHTML = html;
-            } else {
-                falhas.push(resultado.reason.message);
-            }
+        let essenciaisAusentes = false;
+        for (let nivel = 0; nivel < 5; nivel += 1) {
+            const alvos = [...document.querySelectorAll('[data-include]')];
+            if (!alvos.length) break;
+            const resultados = await Promise.allSettled(alvos.map(async (alvo) => {
+                const caminho = alvo.dataset.include;
+                const resposta = await fetch(`${caminho}?v=${VERSAO}`, { cache: 'no-store' });
+                if (!resposta.ok)
+                    throw new Error(`Não foi possível carregar ${caminho} (HTTP ${resposta.status})`);
+                return { alvo, caminho, html: await resposta.text() };
+            }));
+            resultados.forEach((resultado, indice) => {
+                const alvo = alvos[indice];
+                const caminho = alvo.dataset.include;
+                // Descarta o marcador após a tentativa para não criar ciclos.
+                alvo.removeAttribute('data-include');
+                if (resultado.status === 'fulfilled') {
+                    alvo.innerHTML = resultado.value.html;
+                } else {
+                    falhas.push(resultado.reason.message);
+                    if (dialogosEssenciais.has(caminho)) essenciaisAusentes = true;
+                }
+            });
         }
-
-        if (falhas.length) {
-            const essenciaisAusentes = alvos.some((alvo, indice) =>
-                resultados[indice].status === 'rejected'
-                && dialogosEssenciais.has(alvo.dataset.include)
-            );
-            if (essenciaisAusentes)
-                throw new Error(`Falha ao carregar os painéis: ${falhas.join('; ')}`);
+        if (document.querySelector('[data-include]'))
+            throw new Error('Excesso de níveis em fragmentos HTML aninhados.');
+        if (essenciaisAusentes)
+            throw new Error(`Falha ao carregar os painéis: ${falhas.join('; ')}`);
+        if (falhas.length)
             avisoInicializacao(`Uma página não pôde ser carregada: ${falhas.join('; ')}`);
-        }
 
         for (const [caminho, ids] of Object.entries(componentesObrigatorios)) {
             const ausentes = ids.filter((id) => !document.getElementById(id));
@@ -83,7 +87,7 @@
         }
 
         window.dispatchEvent(new Event('railroad:fragmentos-carregados'));
-        await import('./main.js?v=1.2.5');
+        await import('./main.js?v=1.4.14');
     } catch (erro) {
         avisoInicializacao(`Não foi possível iniciar o Railroad: ${erro.message}`);
     }

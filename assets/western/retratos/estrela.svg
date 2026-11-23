@@ -1,0 +1,23 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="6" id="hachura-xerife" patterntransform="rotate(-45)" patternunits="userSpaceOnUse" width="6">
+<line stroke="#1f140c" stroke-opacity="0.24" stroke-width="1.3" x1="0" x2="0" y1="0" y2="6"></line>
+</pattern>
+</defs>
+<polygon fill="#d9a738" points="120,12 146,66 208,66 177,120 208,174 146,174 120,228 94,174 32,174 63,120 32,66 94,66" stroke="#1f140c" stroke-linejoin="round" stroke-width="3.5"></polygon>
+<polygon fill="url(#hachura-xerife)" points="120,12 146,66 208,66 177,120 208,174 146,174 120,228 94,174 32,174 63,120 32,66 94,66"></polygon>
+<g fill="#f2cf6b" stroke="#1f140c" stroke-width="2.5">
+<circle cx="120" cy="12" r="6.5"></circle>
+<circle cx="208" cy="66" r="6.5"></circle>
+<circle cx="208" cy="174" r="6.5"></circle>
+<circle cx="120" cy="228" r="6.5"></circle>
+<circle cx="32" cy="174" r="6.5"></circle>
+<circle cx="32" cy="66" r="6.5"></circle>
+</g>
+<!-- Medalhão ampliado (r=64) -->
+<circle cx="120" cy="120" fill="#b85628" r="70" stroke="#1f140c" stroke-width="3"></circle>
+<circle cx="120" cy="120" fill="#e8d6b3" r="64" stroke="#1f140c" stroke-width="3"></circle>
+<circle cx="120" cy="120" fill="none" r="59" stroke="#785328" stroke-dasharray="4 3" stroke-width="1.5"></circle>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="11" text-anchor="middle" x="120" y="116">SUA IMAGEM</text>
+<text fill="#3b2614" font-family="'Rye', serif" font-size="11" text-anchor="middle" x="120" y="131">AQUI</text>
+</svg>

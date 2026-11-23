@@ -1,7 +1,7 @@
 import { criarGerenciadorElementos } from './elementos.js';
 import { criarFerramentas } from './ferramentas.js';
 import { criarCanvas } from './canvas.js';
-import { iniciarDesenho } from './desenho.js';
+import { iniciarDesenho } from './desenho.js?v=1.4.5';
 import { iniciarImagens } from './imagens.js';
 export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
     const canvas = document.getElementById('quadro-rpg');

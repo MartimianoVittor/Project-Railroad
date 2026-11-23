@@ -35,5 +35,5 @@ export function restaurarJogador(ficha) {
     }
     const foto = document.getElementById('foto-jogador');
     if (foto)
-        foto.src = (typeof ficha.fotoPerfil === 'string' && ficha.fotoPerfil && !ficha.fotoPerfil.startsWith('blob:')) ? ficha.fotoPerfil : 'assets/imgs/fundoCinza.jpg';
+        foto.src = (typeof ficha.fotoPerfil === 'string' && ficha.fotoPerfil && !ficha.fotoPerfil.startsWith('blob:')) ? ficha.fotoPerfil : 'assets/imgs/retrato-vazio.svg';
 }

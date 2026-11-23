@@ -28,11 +28,15 @@ export function iniciarDesenho({ canvas, ctx, zonaDrop, obterModo, obterPosicaoN
         ctx.lineWidth = modoAtualProxy() === 'borracha' ? 20 : 3;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.strokeStyle = modoAtualProxy() === 'borracha'
-            ? '#fcf8f2'
-            : (seletorCor ? seletorCor.value : '#000000');
+        // Apagar pixels, em vez de pintar com a antiga cor do fundo.
+        ctx.save();
+        ctx.globalCompositeOperation = modoAtualProxy() === 'borracha' ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = modoAtualProxy() === 'borracha' ? '#000000' : (seletorCor ? seletorCor.value : '#000000');
         ctx.lineTo(x, y);
         ctx.stroke();
+        ctx.restore();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
     });
     function finalizarDesenho() {
         if (!desenhando)

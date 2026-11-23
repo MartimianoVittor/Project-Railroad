@@ -1,0 +1,63 @@
+<div class="rr-personalizacao-conteudo">
+    <div class="rr-editor-visual">
+        <aside class="rr-previa" aria-label="Prévia em tempo real">
+            <h3>Prévia em tempo real</h3>
+            <div class="rr-previa-tela" data-previa="fundoTela">
+                <nav class="rr-previa-nav" aria-label="Exemplo de navegação">
+                    <span class="rr-botao" data-previa="botao">Jogador</span>
+                    <span class="rr-botao rr-previa-ativa" data-previa="botao">Personagem</span>
+                    <span class="rr-botao" data-previa="botao">Inventário</span>
+                </nav>
+                <div class="rr-previa-cartao rr-moldura-alvo rr-leitura-automatica" data-previa="cartao">
+                    <div class="rr-previa-retratos">
+                        <div><div class="rr-retrato" data-previa="retratoJogador"></div><p>Jogador</p></div>
+                        <div><div class="rr-retrato" data-previa="retratoPersonagem"></div><p>Personagem</p></div>
+                    </div>
+                    <h4>Ficha de exemplo</h4>
+                    <label>Nome <input type="text" readonly value="Personagem" /></label>
+                    <label>Anotações <textarea readonly rows="2">Uma aventura no Oeste.</textarea></label>
+                    <div class="rr-previa-icones" aria-label="Exemplos de ícones do inventário">
+                        <span class="rr-icone-inventario icone-chapeu" aria-hidden="true"></span>
+                        <span class="rr-icone-inventario icone-chapeu" data-cheio="true" aria-hidden="true"></span>
+                        <span class="rr-icone-inventario icone-alforge" aria-hidden="true"></span>
+                        <span class="rr-icone-inventario icone-alforge" data-cheio="true" aria-hidden="true"></span>
+                    </div>
+                    <div class="cartao-rolagem">Rolagens · exemplo de painel</div>
+                    <div class="area-canvas rr-previa-quadro">Quadro de ideias</div>
+                </div>
+            </div>
+        </aside>
+    <div class="rr-personalizacao-secoes">
+        <fieldset class="rr-grupo-visual" id="rr-opcoes-botoes">
+            <legend>Botões temáticos</legend>
+            <p>Aplica-se somente aos três botões de navegação: Jogador, Personagem e Inventário. Os demais botões mantêm o visual original.</p>
+            <div class="rr-opcoes-visuais" data-opcoes="botao"></div>
+        </fieldset>
+        <fieldset class="rr-grupo-visual" id="rr-opcoes-retratos-jogador">
+            <legend>Retrato do jogador</legend>
+            <p>Moldura da fotografia na aba Jogador.</p>
+            <div class="rr-opcoes-visuais rr-opcoes-retratos" data-opcoes="retratoJogador"></div>
+        </fieldset>
+        <fieldset class="rr-grupo-visual" id="rr-opcoes-retratos-personagem">
+            <legend>Retrato do personagem</legend>
+            <p>Moldura independente da fotografia na aba Personagem.</p>
+            <div class="rr-opcoes-visuais rr-opcoes-retratos" data-opcoes="retratoPersonagem"></div>
+        </fieldset>
+        <fieldset class="rr-grupo-visual" id="rr-opcoes-fundos-tela">
+            <legend>Fundo de tela</legend>
+            <p>Textura aplicada ao espaço ao redor dos cartões.</p>
+            <div class="rr-opcoes-visuais" data-opcoes="fundoTela"></div>
+        </fieldset>
+        <fieldset class="rr-grupo-visual" id="rr-opcoes-fundos-cartao">
+            <legend>Fundo dos cartões</legend>
+            <p>Textura aplicada apenas aos cartões. O contraste de títulos, textos e campos se ajusta automaticamente a cada fundo, sem configuração adicional.</p>
+            <div class="rr-opcoes-visuais" data-opcoes="fundoCartao"></div>
+        </fieldset>
+        <fieldset class="rr-grupo-visual" id="rr-opcoes-bordas">
+            <legend>Bordas dos cartões</legend>
+            <p>Escolha o acabamento das bordas sem alterar o fundo selecionado.</p>
+            <div class="rr-opcoes-visuais" data-opcoes="borda"></div>
+        </fieldset>
+    </div>
+</div>
+</div>

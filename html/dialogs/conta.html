@@ -1,8 +1,8 @@
 <dialog id="painel-conta" class="painel-fichas" aria-labelledby="painel-conta-titulo">
     <header class="painel-fichas-cabecalho">
         <div>
-            <h2 id="painel-conta-titulo">Conta e mesas</h2>
-            <p>Conexão, convites e envio de fichas às campanhas.</p>
+            <h2 id="painel-conta-titulo">Conta</h2>
+            <p>Configurações visuais, conexão e mesas de campanha.</p>
         </div>
         <form method="dialog" class="form-fechar-painel">
             <button type="submit" id="fechar-painel-conta" class="fechar-painel-fichas" aria-label="Fechar conta">×</button>
@@ -11,15 +11,30 @@
 
     <p id="mensagem-conta" class="mensagem-conta" role="status" aria-live="polite"></p>
 
+    <dialog id="personalizacao" class="painel-fichas rr-configuracoes-visuais" aria-labelledby="rr-personalizacao-titulo">
+        <header class="painel-fichas-cabecalho">
+            <h2 id="rr-personalizacao-titulo">Personalização visual</h2>
+            <div class="rr-acoes-personalizacao">
+                <button type="button" id="rr-restaurar-aparencia" class="btn-oeste">Restaurar padrão</button>
+                <button type="button" id="rr-salvar-aparencia" class="btn-oeste">Salvar</button>
+                <button type="button" id="rr-fechar-aparencia" class="fechar-painel-fichas" aria-label="Fechar personalização">×</button>
+            </div>
+        </header>
+        <p id="rr-status-aparencia" class="rr-status-aparencia" role="status" aria-live="polite"></p>
+        <div class="rr-personalizacao-corpo" data-include="html/personalizacao.html"></div>
+    </dialog>
+
     <section id="conta-visitante" class="painel-fichas-secao">
         <p>Entre com sua conta Google para participar de mesas e enviar fichas.</p>
         <p>Suas fichas locais continuarão disponíveis sem login.</p>
+        <button type="button" data-abrir-personalizacao class="btn-oeste" aria-haspopup="dialog">Personalizar</button>
         <button type="button" id="entrar-google" class="btn-oeste">Entrar com Google</button>
     </section>
 
     <section id="conta-autenticada" class="painel-fichas-secao" hidden>
         <div class="identidade-conta">
             <span id="email-conta"></span>
+            <button type="button" id="abrir-personalizacao" class="btn-oeste" data-abrir-personalizacao aria-haspopup="dialog">Personalizar</button>
             <button type="button" id="sair-google" class="btn-oeste">Sair da conta</button>
         </div>
 

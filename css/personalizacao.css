@@ -1,0 +1,800 @@
+/* Railroad Jogador — integração com Railroad_Kit_Western(2).html.
+   O kit-western.css contém os desenhos originais. Este arquivo cuida somente
+   do encaixe, dos estados de seleção e da compatibilidade com as fichas. */
+
+/* As configurações ficam dentro do diálogo Conta, e não em uma página de jogo. */
+#painel-conta { width: min(920px, calc(100% - 24px)); }
+#personalizacao.rr-configuracoes-visuais {
+    width: min(1180px, calc(100% - 24px));
+    max-height: 90dvh;
+    padding: 18px;
+}
+#personalizacao .rr-personalizacao-conteudo { color: #382518; }
+#personalizacao .painel-fichas-cabecalho { flex-wrap: wrap; }
+#personalizacao .rr-acoes-personalizacao { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+#personalizacao .rr-acoes-personalizacao button:disabled { opacity: .6; cursor: wait; }
+#personalizacao input:focus-visible + .rr-amostra { outline: 3px solid #bd792a; outline-offset: 4px; }
+#personalizacao .rr-status-aparencia { min-height: 18px; font: 13px/1.4 Georgia,serif; color: #6a4523; }
+#personalizacao .rr-personalizacao-secoes { display: grid; gap: 14px; }
+#personalizacao .rr-grupo-visual {
+    min-width: 0; padding: 14px; margin: 0;
+    border: 1px solid #b49670; border-radius: 5px; background: #fff8e8;
+}
+#personalizacao .rr-grupo-visual legend {
+    padding: 0 8px; font: 15px 'Rye', Georgia,serif; color: #3d2314;
+}
+#personalizacao .rr-grupo-visual > p { margin: 0 0 12px; font: 13px/1.45 Georgia,serif; }
+#personalizacao .rr-opcoes-visuais {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    gap: 11px;
+}
+#personalizacao .rr-opcao-visual {
+    position: relative; display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between; gap: 9px;
+    cursor: pointer; padding: 15px 7px 11px; min-width: 0;
+    background: #f8ebd0; border: 2px solid #c4a77e; border-radius: 6px;
+}
+#personalizacao .rr-opcao-visual:hover { border-color: #76512c; }
+#personalizacao .rr-opcao-visual.selecionada {
+    border-color: #976126; outline: 2px solid #d6ae58; background: #fff0c9;
+}
+#personalizacao .rr-opcao-visual input {
+    position: absolute; right: 6px; top: 6px; z-index: 2;
+    width: 16px; height: 16px; accent-color: #845222; margin: 0;
+}
+#personalizacao .rr-opcao-nome {
+    font: bold 12px/1.25 Georgia, serif; color: #382518; text-align: center;
+}
+#personalizacao .rr-amostra {
+    position: relative; display: grid; place-items: center; flex-shrink: 0;
+    min-width: 0; width: 100%; max-width: 170px; height: 82px;
+    box-sizing: border-box; text-align: center; overflow-wrap: anywhere;
+}
+#personalizacao .rr-amostra-botao {
+    max-width: 180px; height: 54px; font: 13px 'Rye', Georgia,serif;
+    color: #392619; background: #e6cf9c;
+    border: 2px solid #68422b; border-radius: 5px;
+}
+#personalizacao .rr-amostra-botao.rr-botao {
+    display: inline-grid; border: 0; background: transparent;
+    --rr-altura: 52px; filter: none; width: 100%; max-width: 100%;
+    min-inline-size: min(100%, var(--rr-largura-minima));
+    padding: calc(var(--rr-h) * .2) var(--rr-espaco-direito) calc(var(--rr-h) * .2) var(--rr-espaco-esquerdo);
+    color: var(--rr-legenda); text-shadow: var(--rr-sombra-do-texto, none);
+    font: 600 12px/1.12 'Rye',Georgia,serif;
+}
+#personalizacao .rr-amostra-retrato {
+    width: min(100%, 136px); max-width: 136px; height: auto;
+    aspect-ratio: 1; overflow: visible; background: #cdb58a;
+    border: 2px solid #98734a; border-radius: 4px;
+    color: #42301c; font: 12px/1.3 Georgia,serif;
+}
+#personalizacao .rr-amostra-retrato.rr-retrato {
+    display: block; border: 0; border-radius: 0;
+    background: var(--rr-desenho) center/100% 100% no-repeat;
+    width: min(100%, 136px); height: auto;
+    --rr-tamanho: 136px;
+}
+#personalizacao .rr-amostra-retrato .rr-retrato__foto { pointer-events: none; }
+#personalizacao .rr-amostra-fundo {
+    color: #f9e6b7; text-shadow: 0 1px 2px #130c08;
+    font: 12px 'Rye', Georgia,serif; border: 1px solid #7b5d42; border-radius: 4px;
+}
+#personalizacao .rr-amostra-borda {
+    background: #f6e2bf; color: #392318;
+    font: 13px 'Rye', Georgia,serif; border: 2px solid #805c3e; border-radius: 5px;
+}
+/* Elementos do kit aplicados às fotografias reais, sem alterar arquivos de foto. */
+:is(#jogador,#personagem) .label-retrato.rr-retrato {
+    --rr-tamanho: 100%; display: block; width: 100%; max-width: 250px;
+    aspect-ratio: 1; position: relative; overflow: visible;
+    background: var(--rr-desenho) center / 100% 100% no-repeat !important;
+}
+:is(#jogador,#personagem) .label-retrato.rr-retrato > .circulo-interno.rr-retrato__foto {
+    display: block; position: absolute; flex: none;
+    inset: var(--rr-janela) !important;
+    width: var(--rr-foto-largura) !important;
+    height: var(--rr-foto-altura) !important;
+    max-width: none; aspect-ratio: auto !important;
+    padding: 0; margin: 0; border: 0 !important;
+    border-radius: var(--rr-raio, 0) !important;
+    clip-path: var(--rr-recorte, none); overflow: hidden;
+}
+:is(#jogador,#personagem) .label-retrato.rr-retrato > .circulo-interno > .imagem-exibida {
+    display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit;
+}
+#jogador .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/fundoCinza.jpg"],
+#personagem .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.png"] {
+    opacity: 0 !important;
+}
+/* As únicas peças temáticas são as três abas principais na barra lateral.
+   Retém os desenhos originais do kit (cartucho ou faca), sem mudar as ações. */
+@media (min-width: 769px) {
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav {
+        --rr-altura: 41px;
+        --rr-fonte-tamanho: 11px;
+        box-sizing: border-box;
+        display: inline-grid;
+        place-items: center;
+        position: relative;
+        isolation: isolate;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 43px;
+        height: 43px;
+        padding: calc(var(--rr-h) * .18) var(--rr-espaco-direito)
+                 calc(var(--rr-h) * .18) var(--rr-espaco-esquerdo);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        color: var(--rr-legenda);
+        font: 600 var(--rr-fonte-tamanho)/1.15 'Rye',Georgia,serif;
+        letter-spacing: 0;
+        text-align: center;
+        text-shadow: var(--rr-sombra-do-texto, none);
+        text-decoration: none;
+        white-space: normal;
+        overflow-wrap: normal;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        border: solid transparent;
+        border-width: 0 var(--rr-ponta-direita) 0 var(--rr-ponta-esquerda);
+        border-image-source: var(--rr-desenho);
+        border-image-slice: var(--rr-recortes) fill;
+        border-image-repeat: round stretch;
+        filter: var(--rr-filtro,brightness(1)) drop-shadow(0 3px 0 #26190fd9);
+        pointer-events: none;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav .cartucho-svg {
+        display: none;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav .cartucho-texto {
+        width: 100%;
+        min-width: 0;
+        transform: none;
+        white-space: normal;
+        line-height: 1.15;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:is(:hover,.ativa,[aria-current='page']) {
+        background: transparent;
+        box-shadow: none;
+        border: 0;
+        color: var(--rr-legenda);
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:hover {
+        --rr-filtro: brightness(1.08);
+        transform: translateX(2px);
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:is(.ativa,[aria-current='page']) {
+        --rr-filtro: brightness(1);
+        transform: translate(2px, -2px);
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:focus-visible {
+        outline: 3px solid #f7da86;
+        outline-offset: 3px;
+    }
+}
+@media (max-width: 768px) {
+    #personalizacao.rr-configuracoes-visuais { padding: 0 10px 10px; }
+    #personalizacao .rr-opcoes-visuais { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    #personalizacao .rr-grupo-visual { padding: 11px 7px; }
+    #personalizacao .rr-amostra-retrato.rr-retrato { width: min(100%, 120px); }
+    #personalizacao .rr-amostra-botao.rr-botao { --rr-altura: 45px; font-size: 10px; }
+}
+@media (max-width: 370px) {
+    #personalizacao .rr-opcoes-visuais { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #personalizacao .rr-opcao-visual { transition: none; }
+}
+
+/* Fundo dos cartões: pergaminho — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--pergaminho,
+#personagem .rr-moldura-alvo.rr-fundo--pergaminho,
+#inventario .rr-moldura-alvo.rr-fundo--pergaminho,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--pergaminho {
+  background-color: #dfd0b4 !important;
+  background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 7px,
+      rgba(31, 20, 12, 0.06) 7px,
+      rgba(31, 20, 12, 0.06) 8.5px
+    ),
+    radial-gradient(circle at 50% 50%, transparent 55%, rgba(122, 92, 54, 0.28) 100%) !important;
+}
+
+/* Fundo dos cartões: tabua — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--tabua,
+#personagem .rr-moldura-alvo.rr-fundo--tabua,
+#inventario .rr-moldura-alvo.rr-fundo--tabua,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--tabua {
+  background-color: #6b472b !important;
+  background-image: repeating-linear-gradient(
+      0deg,
+      #1f140c 0px,
+      #1f140c 3px,
+      #7d5434 3px,
+      #7d5434 7px,
+      #6b472b 7px,
+      #6b472b 44px,
+      #593a22 44px,
+      #593a22 48px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(31, 20, 12, 0.14) 6px,
+      rgba(31, 20, 12, 0.14) 7.5px
+    ) !important;
+}
+
+/* Fundo dos cartões: couro — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--couro,
+#personagem .rr-moldura-alvo.rr-fundo--couro,
+#inventario .rr-moldura-alvo.rr-fundo--couro,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--couro {
+  background-color: #382518 !important;
+  background-image: radial-gradient(rgba(217, 167, 56, 0.14) 1.5px, transparent 1.5px),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(20, 12, 7, 0.35) 8px,
+      rgba(20, 12, 7, 0.35) 10px
+    ) !important;
+}
+
+/* Fundo dos cartões: mapa-topografico — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--mapa-topografico,
+#personagem .rr-moldura-alvo.rr-fundo--mapa-topografico,
+#inventario .rr-moldura-alvo.rr-fundo--mapa-topografico,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--mapa-topografico {
+  background-color: #d6c39c !important;
+  background-image: repeating-radial-gradient(
+      circle at 20% 30%,
+      transparent 0,
+      transparent 18px,
+      rgba(74, 52, 31, 0.16) 18px,
+      rgba(74, 52, 31, 0.16) 19.5px
+    ),
+    repeating-radial-gradient(
+      circle at 80% 75%,
+      transparent 0,
+      transparent 22px,
+      rgba(74, 52, 31, 0.14) 22px,
+      rgba(74, 52, 31, 0.14) 23.5px
+    ) !important;
+}
+
+/* Fundo dos cartões: latao — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--latao,
+#personagem .rr-moldura-alvo.rr-fundo--latao,
+#inventario .rr-moldura-alvo.rr-fundo--latao,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--latao {
+  background-color: #d9a738 !important;
+  background-image: linear-gradient(180deg, rgba(242, 212, 121, 0.45) 0%, transparent 30%, rgba(166, 118, 24, 0.4) 100%),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(31, 20, 12, 0.14) 6px,
+      rgba(31, 20, 12, 0.14) 7.5px
+    ) !important;
+}
+
+/* Fundo dos cartões: terracota — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--terracota,
+#personagem .rr-moldura-alvo.rr-fundo--terracota,
+#inventario .rr-moldura-alvo.rr-fundo--terracota,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--terracota {
+  background-color: #9e4823 !important;
+  background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 6px,
+      rgba(31, 20, 12, 0.2) 6px,
+      rgba(31, 20, 12, 0.2) 7.5px
+    ),
+    radial-gradient(circle at 50% 50%, rgba(217, 115, 67, 0.25) 0%, rgba(54, 21, 8, 0.35) 100%) !important;
+}
+
+/* Fundo dos cartões: ferrovia — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--ferrovia,
+#personagem .rr-moldura-alvo.rr-fundo--ferrovia,
+#inventario .rr-moldura-alvo.rr-fundo--ferrovia,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--ferrovia {
+  background-color: #453529 !important;
+  background-image: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 16px,
+      #261c14 16px,
+      #261c14 24px
+    ),
+    linear-gradient(
+      180deg,
+      transparent 22%,
+      #1f140c 22%,
+      #1f140c 25%,
+      #9c8d7d 25%,
+      #9c8d7d 29%,
+      #1f140c 29%,
+      #1f140c 32%,
+      transparent 32%,
+      transparent 68%,
+      #1f140c 68%,
+      #1f140c 71%,
+      #9c8d7d 71%,
+      #9c8d7d 75%,
+      #1f140c 75%,
+      #1f140c 78%,
+      transparent 78%
+    ) !important;
+}
+
+/* Fundo dos cartões: jornal — mesmos valores do kit. */
+#jogador .rr-moldura-alvo.rr-fundo--jornal,
+#personagem .rr-moldura-alvo.rr-fundo--jornal,
+#inventario .rr-moldura-alvo.rr-fundo--jornal,
+#quadro-mobile .rr-moldura-alvo.rr-fundo--jornal {
+  background-color: #e6dac3 !important;
+  background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 5px,
+      rgba(31, 20, 12, 0.08) 5px,
+      rgba(31, 20, 12, 0.08) 6px
+    ),
+    linear-gradient(90deg, transparent 49%, rgba(31, 20, 12, 0.14) 49%, rgba(31, 20, 12, 0.14) 51%, transparent 51%) !important;
+}
+
+/* Borda latonada · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--latonada,
+#personalizacao .rr-amostra-borda.rr-borda--latonada {
+  border: 3px solid #1f140c !important;
+  outline: 3px solid #d9a738 !important;
+  outline-offset: -6px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 0 #1f140c, inset 0 0 0 8px rgba(217, 167, 56, 0.14) !important;
+}
+
+/* Cartaz duplo · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--cartaz,
+#personalizacao .rr-amostra-borda.rr-borda--cartaz {
+  border: 4px double #d9a738 !important;
+  outline: 2px solid #1f140c !important;
+  border-radius: 3px !important;
+  box-shadow: 0 4px 0 #1f140c !important;
+}
+
+
+/* Borda de ferrovia · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--ferrovia,
+#personalizacao .rr-amostra-borda.rr-borda--ferrovia {
+  border: 3px solid #b85628 !important;
+  outline: 2px dashed #e6b84c !important;
+  outline-offset: -6px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 0 #1f140c !important;
+}
+
+/* Cantoneiras de cobre · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--cantoneiras,
+#personalizacao .rr-amostra-borda.rr-borda--cantoneiras {
+  position: relative !important;
+  border: 2px solid #6e4e2e !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 0 #1f140c !important;
+}
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--cantoneiras::after,
+#personalizacao .rr-amostra-borda.rr-borda--cantoneiras::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  background-image:
+    linear-gradient(135deg, #b85628 12px, transparent 12px),
+    linear-gradient(225deg, #b85628 12px, transparent 12px),
+    linear-gradient(45deg, #b85628 12px, transparent 12px),
+    linear-gradient(315deg, #b85628 12px, transparent 12px) !important;
+  background-position: top left, top right, bottom left, bottom right !important;
+  background-size: 20px 20px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Costura de sela · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--costura,
+#personalizacao .rr-amostra-borda.rr-borda--costura {
+  border: 3px solid #4a2c16 !important;
+  outline: 2px dashed #c99732 !important;
+  outline-offset: -7px !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 0 0 4px #29180c, 0 4px 0 #1f140c !important;
+}
+
+/* Moldura chanfrada · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--chanfrada,
+#personalizacao .rr-amostra-borda.rr-borda--chanfrada {
+  border: 3px solid #d9a738 !important;
+  clip-path: polygon(
+    12px 0%, calc(100% - 12px) 0%,
+    100% 12px, 100% calc(100% - 12px),
+    calc(100% - 12px) 100%, 12px 100%,
+    0% calc(100% - 12px), 0% 12px
+  ) !important;
+  box-shadow: inset 0 0 0 2px #1f140c !important;
+}
+
+/* Filete dourado · kit-assets-western-v2.html */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--filete,
+#personalizacao .rr-amostra-borda.rr-borda--filete {
+  border: 1px solid #d9a738 !important;
+  outline: 3px solid #1f140c !important;
+  outline-offset: -4px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 3px 0 #1f140c !important;
+}
+
+/* Leitura automática por textura: a paleta muda junto com o fundo escolhido.
+   Nenhuma preferência adicional é necessária e o estilo padrão é preservado. */
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--pergaminho {
+    --rr-leitura-texto: #342519;
+    --rr-leitura-titulo: #512b16;
+    --rr-leitura-suave: #5f422d;
+    --rr-leitura-campo: #fffaf0;
+    --rr-leitura-campo-texto: #2c2016;
+    --rr-leitura-borda: #71533a;
+    --rr-leitura-painel: rgba(255, 251, 238, .43);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--tabua {
+    --rr-leitura-texto: #fff2d9;
+    --rr-leitura-titulo: #ffe1a6;
+    --rr-leitura-suave: #f4dec0;
+    --rr-leitura-campo: #38271c;
+    --rr-leitura-campo-texto: #fff4e1;
+    --rr-leitura-placeholder: #e1c7a8;
+    --rr-gota-vazia: url('../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #d3a46f;
+    --rr-leitura-painel: rgba(33, 20, 12, .65);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--couro {
+    --rr-leitura-texto: #fff1d4;
+    --rr-leitura-titulo: #f5d18e;
+    --rr-leitura-suave: #e7cdac;
+    --rr-leitura-campo: #241a13;
+    --rr-leitura-campo-texto: #fff2dc;
+    --rr-leitura-placeholder: #dec5a5;
+    --rr-gota-vazia: url('../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #c79a5d;
+    --rr-leitura-painel: rgba(17, 12, 9, .54);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--mapa-topografico {
+    --rr-leitura-texto: #34291b;
+    --rr-leitura-titulo: #49301b;
+    --rr-leitura-suave: #59462c;
+    --rr-leitura-campo: #fcf6e6;
+    --rr-leitura-campo-texto: #2e2318;
+    --rr-leitura-borda: #685338;
+    --rr-leitura-painel: rgba(255, 250, 232, .45);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--latao {
+    --rr-leitura-texto: #291e0e;
+    --rr-leitura-titulo: #44250d;
+    --rr-leitura-suave: #51371a;
+    --rr-leitura-campo: #fff8df;
+    --rr-leitura-campo-texto: #2b2016;
+    --rr-leitura-borda: #5f4018;
+    --rr-leitura-painel: rgba(255, 247, 213, .43);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--terracota {
+    --rr-leitura-texto: #fff7e9;
+    --rr-leitura-titulo: #ffebc1;
+    --rr-leitura-suave: #ffe0c9;
+    --rr-leitura-campo: #542619;
+    --rr-leitura-campo-texto: #fff3e7;
+    --rr-leitura-placeholder: #f1c7ad;
+    --rr-gota-vazia: url('../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #edc0a3;
+    --rr-leitura-painel: rgba(46, 17, 10, .55);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--ferrovia {
+    --rr-leitura-texto: #fff2dd;
+    --rr-leitura-titulo: #ffe0a4;
+    --rr-leitura-suave: #eee0cb;
+    --rr-leitura-campo: #29221b;
+    --rr-leitura-campo-texto: #fff6e6;
+    --rr-leitura-placeholder: #d8c5ad;
+    --rr-gota-vazia: url('../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #d2ab77;
+    --rr-leitura-painel: rgba(22, 15, 10, .72);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--jornal {
+    --rr-leitura-texto: #2b241b;
+    --rr-leitura-titulo: #382319;
+    --rr-leitura-suave: #534233;
+    --rr-leitura-campo: #fffaf0;
+    --rr-leitura-campo-texto: #2a2018;
+    --rr-leitura-borda: #6e5140;
+    --rr-leitura-painel: rgba(255, 251, 239, .60);
+}
+
+.rr-moldura-alvo.rr-leitura-automatica {
+    color: var(--rr-leitura-texto);
+    color-scheme: light;
+}
+/* Respeitar os estilos de botões, marcadores e avisos com identidade própria. */
+.rr-moldura-alvo.rr-leitura-automatica :is(h1,h2,h3,h4,h5,h6,legend,.label-campo,.nome-traco,.cabecalho-tracos) {
+    color: var(--rr-leitura-titulo) !important;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(p,label:not(.marcador-dado),small,.resultado-rolagem,.bonus-distancia,.linha-check) {
+    color: var(--rr-leitura-texto) !important;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(.arma-municao-titulo,.texto-ajuda,.texto-secundario) {
+    color: var(--rr-leitura-suave) !important;
+}
+/* Textos inseridos/editados ficam sobre uma superfície uniforme e opaca. */
+.rr-moldura-alvo.rr-leitura-automatica :is(input[type='text'],input[type='number'],input[type='search'],input:not([type]),textarea,select) {
+    background: var(--rr-leitura-campo) !important;
+    color: var(--rr-leitura-campo-texto) !important;
+    border-color: var(--rr-leitura-borda) !important;
+    caret-color: var(--rr-leitura-campo-texto);
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(input[type='text'],input[type='number'],input[type='search'],input:not([type]),textarea,select)::placeholder {
+    color: var(--rr-leitura-placeholder, #685647) !important;
+    opacity: 1;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(input[type='text'],input[type='number'],input[type='search'],input:not([type]),textarea,select):focus-visible {
+    outline: 2px solid var(--rr-leitura-borda);
+    outline-offset: 1px;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(.cartao-rolagem,.cartao-arma,.barra-ferramentas) {
+    background-color: var(--rr-leitura-painel) !important;
+    border-color: var(--rr-leitura-borda) !important;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(.grupo-tracos,.grupo-caveiras) {
+    color: var(--rr-leitura-texto);
+}
+
+/* A janela vazia mostra a ilustração de referência da moldura. */
+.rr-retrato > .rr-retrato__foto:has(> img[src$="Placeholder.png"]),
+.rr-retrato > .rr-retrato__foto:has(> img[src$="fundoCinza.jpg"]) { background: transparent !important; }
+#personalizacao .rr-amostra-botao.rr-botao { --rr-altura: 35px; }
+
+.rr-retrato .imagem-exibida[src$="Placeholder.png"],
+.rr-retrato .imagem-exibida[src$="fundoCinza.jpg"] { opacity: 0 !important; }
+
+.rr-retrato > .rr-retrato__foto:has(> img[src$="retrato-vazio.svg"]) { background: transparent !important; }
+
+/* Marcadores legíveis sem alterar os estados dos checkboxes. */
+#personagem .rr-leitura-automatica .check-caveira {
+    background-color: var(--rr-leitura-texto) !important;
+}
+#personagem .rr-leitura-automatica .marcador-dado-visual {
+    background-image: var(--rr-gota-vazia, url('../assets/icons/gota-contorno.svg'));
+    color: var(--rr-leitura-texto);
+}
+#personagem .rr-leitura-automatica .marcador-dado .check-tracos:checked + .marcador-dado-visual {
+    background-image: var(--rr-gota-cheia, url('../assets/icons/gota-preenchida.svg'));
+    color: var(--rr-gota-numero-cheio, #fff4e1);
+}
+
+/* A superfície do quadro acompanha os campos editáveis em desktop e mobile. */
+.rr-moldura-alvo.rr-leitura-automatica .area-canvas {
+    background-color: var(--rr-leitura-campo) !important;
+    background-image: none !important;
+    border-color: var(--rr-leitura-borda);
+}
+#jogador .painel-quadro-jogador > .fragmento-quadro > .col {
+    background: transparent;
+}
+#quadro-rpg { background: transparent; }
+
+/* Prévia isolada: reutiliza as mesmas variantes do kit e paletas dos cartões. */
+/* Cabeçalho e prévia fixos; somente a lista de opções possui rolagem. */
+#personalizacao.rr-configuracoes-visuais[open] {
+    box-sizing: border-box;
+    height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#personalizacao > header, #personalizacao > .rr-status-aparencia { flex: none; }
+#personalizacao > .rr-personalizacao-corpo, #personalizacao .rr-personalizacao-conteudo {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+}
+#personalizacao .rr-editor-visual {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    grid-template-rows: minmax(0, 1fr); gap: 14px;
+}
+#personalizacao .rr-personalizacao-secoes {
+    min-height: 0; min-width: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; grid-auto-rows: max-content;
+    align-content: start; padding: 4px 8px 8px 4px;
+}
+#personalizacao .rr-previa { min-width: 0; min-height: 0; background: #f4eccf; padding: 4px; display: flex; flex-direction: column; }
+#personalizacao .rr-previa h3 { margin: 0 0 6px; font-size: 15px; }
+.rr-previa-tela { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 8px; border: 1px solid #6b4630; border-radius: 6px; }
+.rr-previa-nav { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; justify-items: center; margin-bottom: 6px; }
+.rr-previa-nav .rr-botao { --rr-altura: 30px; font-size: 10px; width: 100%; min-inline-size: 0; }
+.rr-previa-nav .rr-previa-ativa { transform: translate(2px,-2px); }
+.rr-previa-cartao { flex: 1; min-height: 0; align-content: space-evenly; padding: 12px; display: grid; gap: 5px; min-width: 0; font-size: 12px; }
+.rr-previa-cartao h4, .rr-previa-cartao p { margin: 0; }
+.rr-previa-cartao label { display: grid; gap: 2px; }
+.rr-previa-cartao :is(input,textarea) { width: 100%; box-sizing: border-box; padding: 4px; border: 1px solid; border-radius: 3px; font-size: 12px; min-height: 0; }
+.rr-previa-cartao textarea { height: 32px; resize: none; }
+.rr-previa-retratos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; }
+.rr-previa-retratos .rr-retrato { --rr-tamanho: 100%; width: 100%; max-width: min(155px, 19dvh); margin: auto; }
+.rr-previa-icones { display: flex; gap: 4px; }
+.rr-previa-icones span { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+.rr-previa-cartao .cartao-rolagem, .rr-previa-quadro { padding: 5px; border: 1px solid var(--rr-leitura-borda); border-radius: 4px; box-sizing: border-box; }
+@media (max-width: 700px) {
+    #personalizacao.rr-configuracoes-visuais[open] { height: 96dvh; max-height: 96dvh; padding: 8px; }
+    #personalizacao .painel-fichas-cabecalho { gap: 4px; padding-bottom: 5px; }
+    #personalizacao .painel-fichas-cabecalho h2 { font-size: 18px; }
+    #personalizacao .rr-editor-visual { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0, 1.1fr) minmax(0, 1fr); gap: 6px; }
+    .rr-previa-nav .rr-botao { --rr-altura: 25px; font-size: 8px; }
+    .rr-previa-cartao { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 9px; gap: 4px; }
+    .rr-previa-retratos, .rr-previa-cartao h4, .rr-previa-icones { grid-column: 1 / -1; }
+    .rr-previa-retratos .rr-retrato { max-width: min(64px, 9dvh); }
+    .rr-previa-cartao textarea { height: 26px; }
+}
+@media (max-height: 620px) {
+    .rr-previa-retratos .rr-retrato { max-width: 44px; }
+    .rr-previa-cartao { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3px; padding: 8px; }
+    .rr-previa-retratos, .rr-previa-cartao h4, .rr-previa-icones { grid-column: 1 / -1; }
+    .rr-previa-cartao textarea { height: 26px; }
+    .rr-previa-nav { margin-bottom: 4px; }
+}
+/* Ícones preservam os estados preenchido/contorno em todas as paletas. */
+.rr-leitura-automatica .rr-icone-inventario.icone-chapeu { background-image: url("../assets/icons/chapeu-contorno.svg"); }
+.rr-leitura-automatica:is(.rr-fundo--tabua,.rr-fundo--couro,.rr-fundo--terracota,.rr-fundo--ferrovia,.rr-fundo--aco-envelhecido) :is(.botao-local-item.icone-chapeu, .rr-icone-inventario.icone-chapeu) { background-image: url("../assets/icons/chapeu-contorno-claro.svg") !important; }
+.rr-leitura-automatica .rr-icone-inventario.icone-chapeu[data-cheio="true"] { background-image: url("../assets/icons/chapeu-preenchido.svg"); }
+.rr-leitura-automatica:is(.rr-fundo--tabua,.rr-fundo--couro,.rr-fundo--terracota,.rr-fundo--ferrovia,.rr-fundo--aco-envelhecido) :is(.botao-local-item.icone-chapeu[aria-pressed="true"], .rr-icone-inventario.icone-chapeu[data-cheio="true"]) { background-image: url("../assets/icons/chapeu-preenchido-claro.svg") !important; }
+.rr-leitura-automatica .rr-icone-inventario.icone-alforge { background-image: url("../assets/icons/alforge-contorno.svg"); }
+.rr-leitura-automatica:is(.rr-fundo--tabua,.rr-fundo--couro,.rr-fundo--terracota,.rr-fundo--ferrovia,.rr-fundo--aco-envelhecido) :is(.botao-local-item.icone-alforge, .rr-icone-inventario.icone-alforge) { background-image: url("../assets/icons/alforge-contorno-claro.svg") !important; }
+.rr-leitura-automatica .rr-icone-inventario.icone-alforge[data-cheio="true"] { background-image: url("../assets/icons/alforge-preenchido.svg"); }
+.rr-leitura-automatica:is(.rr-fundo--tabua,.rr-fundo--couro,.rr-fundo--terracota,.rr-fundo--ferrovia,.rr-fundo--aco-envelhecido) :is(.botao-local-item.icone-alforge[aria-pressed="true"], .rr-icone-inventario.icone-alforge[data-cheio="true"]) { background-image: url("../assets/icons/alforge-preenchido-claro.svg") !important; }
+
+/* Novos estilos: integração com os cartões e a prévia. */
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-fundo--aco-envelhecido {
+  background-color: #444743 !important;
+  background-image: repeating-linear-gradient(0deg, transparent 0 5px, rgba(255,255,255,.07) 5px 6px), linear-gradient(135deg, #737570, #444743) !important;
+}
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--ornamental,
+#personalizacao .rr-amostra-borda.rr-borda--ornamental,
+#personalizacao .rr-previa-cartao.rr-borda--ornamental {
+  border: 3px solid #4a2c16 !important;
+  outline: 1px solid #b58b39 !important;
+  outline-offset: -7px !important;
+  border-radius: 3px !important;
+  box-shadow: 0 4px 0 #1f140c !important;
+  position: relative !important;
+}
+:is(#jogador,#personagem,#inventario,#quadro-mobile) .rr-moldura-alvo.rr-borda--ferro-rebitado,
+#personalizacao .rr-amostra-borda.rr-borda--ferro-rebitado,
+#personalizacao .rr-previa-cartao.rr-borda--ferro-rebitado {
+  border: 8px solid #55504a !important;
+  outline: 1px solid #1f140c !important;
+  outline-offset: -9px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 0 #1f140c !important;
+  position: relative !important;
+}
+
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--aco-envelhecido {
+    --rr-leitura-texto: #fff3db;
+    --rr-leitura-titulo: #fff3db;
+    --rr-leitura-suave: #f5e8ce;
+    --rr-leitura-campo: #292e2d;
+    --rr-leitura-campo-texto: #fff3db;
+    --rr-leitura-placeholder: #d5d2c7;
+    --rr-gota-vazia: url('../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #b5b8ae;
+    --rr-leitura-painel: rgba(30, 34, 32, .60);
+}
+
+@media (max-width: 700px) {
+    #personalizacao .rr-previa-cartao { align-content: start; }
+    #personalizacao .rr-previa-tela { padding: 5px; }
+}
+
+/* Mobile: miniaturas em duas colunas; a prévia permanece exclusiva do desktop. */
+@media (max-width: 768px) {
+    #personalizacao.rr-configuracoes-visuais[open] {
+        position: fixed; inset: 0; margin: 0;
+        width: 100%; max-width: 100%; height: 100dvh; max-height: 100dvh;
+        border-radius: 0;
+        padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    }
+    #personalizacao .painel-fichas-cabecalho { display: grid; grid-template-columns: minmax(0,1fr); gap: 4px; padding-bottom: 5px; }
+    #personalizacao .painel-fichas-cabecalho h2 { font-size: 18px; }
+    #personalizacao .rr-acoes-personalizacao { display: grid; grid-template-columns: 1fr 1fr 44px; width: 100%; margin: 0; gap: 6px; }
+    #personalizacao .rr-acoes-personalizacao button { min-height: 44px; padding: 5px; }
+    #personalizacao .rr-status-aparencia { margin: 2px 0; min-height: 0; }
+    #personalizacao .rr-status-aparencia:empty { display: none; }
+    #personalizacao .rr-previa { display: none; }
+    #personalizacao .rr-editor-visual { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr); gap: 0; }
+    #personalizacao .rr-personalizacao-secoes {
+        overflow-y: auto; overflow-x: hidden; touch-action: pan-y;
+        overscroll-behavior: contain; padding: 4px 6px 16px 3px; gap: 9px;
+        min-height: 0; align-content: start; grid-auto-rows: max-content;
+    }
+    #personalizacao .rr-opcoes-visuais { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    #personalizacao .rr-grupo-visual { padding: 10px; }
+    #personalizacao .rr-opcao-visual { min-height: 72px; padding: 16px 5px 8px; }
+    #personalizacao .rr-amostra-retrato.rr-retrato { width: min(100%, 96px); }
+    #personalizacao .rr-amostra-fundo, #personalizacao .rr-amostra-borda { height: 58px; }
+    #painel-conta .identidade-conta { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    #painel-conta .identidade-conta span { grid-column: 1 / -1; }
+    #painel-conta .identidade-conta button, #painel-conta #conta-visitante button { min-height: 44px; }
+}
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 600px) {
+    #personalizacao .painel-fichas-cabecalho { display: flex; flex-wrap: nowrap; gap: 6px; }
+    #personalizacao .rr-acoes-personalizacao { display: flex; width: auto; margin-left: auto; flex-wrap: nowrap; }
+}
+
+/* Inventário mobile: superfícies internas seguem a paleta do cartão,
+   inclusive os rótulos gerados pela tabela responsiva. */
+@media (max-width: 768px) {
+    #inventario .inventario-itens.rr-leitura-automatica :is(.tabela-itens tbody tr, .inventario-resumo) {
+        box-sizing: border-box;
+        background: var(--rr-leitura-painel);
+        border-color: var(--rr-leitura-borda);
+        color: var(--rr-leitura-texto);
+        border-radius: 5px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .tabela-itens td::before,
+    #inventario .inventario-itens.rr-leitura-automatica .inventario-resumo-campo span {
+        color: var(--rr-leitura-texto);
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .tabela-itens td.celula-local-item {
+        background: var(--rr-leitura-campo);
+        border-color: var(--rr-leitura-borda);
+        padding: 8px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .celula-local-item::before {
+        color: var(--rr-leitura-campo-texto);
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .botao-local-item[aria-pressed="true"] {
+        outline: 1px solid var(--rr-leitura-borda);
+        outline-offset: -2px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .botao-local-item:focus-visible {
+        outline: 2px solid var(--rr-leitura-borda);
+        outline-offset: 2px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .botao-remover-item {
+        background: var(--rr-leitura-campo);
+        color: var(--rr-leitura-campo-texto);
+        border: 1px solid var(--rr-leitura-borda);
+        min-height: 44px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .inventario-resumo {
+        margin-top: 16px;
+        padding: 12px;
+        gap: 12px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .inventario-resumo-campo input[readonly] {
+        font-weight: bold;
+        border-style: dashed;
+    }
+}

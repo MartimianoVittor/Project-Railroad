@@ -40,7 +40,7 @@ export function restaurarPersonagem(dados) {
     restaurarMarcadores(personagem.marcadores);
     const foto = document.getElementById('foto-personagem');
     if (foto)
-        foto.src = (typeof personagem.foto === 'string' && personagem.foto && !personagem.foto.startsWith('blob:')) ? personagem.foto : 'assets/imgs/imagemPersonagemPlaceholder.png';
+        foto.src = (typeof personagem.foto === 'string' && personagem.foto && !personagem.foto.startsWith('blob:')) ? personagem.foto : 'assets/imgs/retrato-vazio.svg';
 }
 export function observarPersonagem(agendar) {
     for (const id of CAMPOS) {
