@@ -1,4 +1,4 @@
-import { normalizarInventario } from '../dominio/inventario.js?v=1.4.18';
+import { normalizarInventario } from '../dominio/inventario.js?v=1.4.19';
 
 export function validarFicha(dados) {
     if (!dados || typeof dados !== 'object' || Array.isArray(dados)) throw new Error('Ficha inválida.');

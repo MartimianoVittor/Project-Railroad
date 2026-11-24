@@ -1,4 +1,4 @@
-import { SUPABASE, supabaseConfigurado } from '../config/supabase.js?v=1.4.18';
+import { SUPABASE, supabaseConfigurado } from '../config/supabase.js?v=1.4.19';
 
 let clientePromise;
 
@@ -11,7 +11,7 @@ export function obterSupabase() {
         .then(({ createClient }) => createClient(
             SUPABASE.url.trim(),
             SUPABASE.publishableKey.trim(),
-            { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+            { auth: { storageKey: 'railroad-jogador-auth-v1', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
         ))
         .catch((erro) => {
             clientePromise = null;

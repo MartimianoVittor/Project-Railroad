@@ -1,6 +1,6 @@
-import { abrirBancoLocal } from './bancoLocal.js?v=1.4.18';
-import { migrarArmazenamentoAntigo } from './migracaoFichasLocais.js?v=1.4.18';
-import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.18';
+import { abrirBancoLocal } from './bancoLocal.js?v=1.4.19';
+import { migrarArmazenamentoAntigo } from './migracaoFichasLocais.js?v=1.4.19';
+import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.19';
 
 const chaveRascunho = (uid, id) => `${PREFIXO_RASCUNHO}${uid}:${id}`;
 

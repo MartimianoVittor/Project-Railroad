@@ -1,9 +1,9 @@
-import { porId } from '../../utils/dom.js?v=1.4.18';
-import { criarCanvas } from './canvas.js?v=1.4.18';
-import { iniciarDesenho } from './desenho.js?v=1.4.18';
-import { criarGerenciadorElementos } from './elementos.js?v=1.4.18';
-import { criarFerramentas } from './ferramentas.js?v=1.4.18';
-import { iniciarImagens } from './imagens.js?v=1.4.18';
+import { porId } from '../../utils/dom.js?v=1.4.19';
+import { criarCanvas } from './canvas.js?v=1.4.19';
+import { iniciarDesenho } from './desenho.js?v=1.4.19';
+import { criarGerenciadorElementos } from './elementos.js?v=1.4.19';
+import { criarFerramentas } from './ferramentas.js?v=1.4.19';
+import { iniciarImagens } from './imagens.js?v=1.4.19';
 
 function lerItem(container) {
     const { tipo } = container.dataset;

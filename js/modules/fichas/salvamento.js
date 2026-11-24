@@ -1,4 +1,4 @@
-import { comProcessamento } from '../../utils/processamento.js?v=1.4.18';
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.19';
 
 const ESPERA_LOCAL_MS = 250;
 const ESPERA_NUVEM_MS = 1200;

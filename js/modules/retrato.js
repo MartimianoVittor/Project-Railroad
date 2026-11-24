@@ -1,5 +1,5 @@
-import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.18';
-import { porId } from '../utils/dom.js?v=1.4.18';
+import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.19';
+import { porId } from '../utils/dom.js?v=1.4.19';
 
 const RETRATO_VAZIO = 'assets/imgs/retrato-vazio.svg';
 

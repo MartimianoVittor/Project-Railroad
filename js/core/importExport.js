@@ -1,4 +1,4 @@
-import { normalizarFicha, validarArquivoFicha } from './validacao.js?v=1.4.18';
+import { normalizarFicha, validarArquivoFicha } from './validacao.js?v=1.4.19';
 /** Remove caracteres incompatíveis com nomes de arquivo, preservando acentos. */
 function nomeParaArquivo(valor, alternativa) {
     const nome = String(valor ?? '')

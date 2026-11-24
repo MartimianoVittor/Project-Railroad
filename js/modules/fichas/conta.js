@@ -1,8 +1,8 @@
-import { porId } from '../../utils/dom.js?v=1.4.18';
-import { comProcessamento } from '../../utils/processamento.js?v=1.4.18';
-import { criarRepositorioFichas } from '../../services/fichasRepository.js?v=1.4.18';
-import { criarRepositorioMesas } from '../../services/mesasRepository.js?v=1.4.18';
-import { criarPainelConvitesMesa } from '../convitesMesa.js?v=1.4.18';
+import { porId } from '../../utils/dom.js?v=1.4.19';
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.19';
+import { criarRepositorioFichas } from '../../services/fichasRepository.js?v=1.4.19';
+import { criarRepositorioMesas } from '../../services/mesasRepository.js?v=1.4.19';
+import { criarPainelConvitesMesa } from '../convitesMesa.js?v=1.4.19';
 
 export function criarConta({ estado, paineis, configurado, conectar, aoMudarConta, concluirSalvamento }) {
     let conexao;
