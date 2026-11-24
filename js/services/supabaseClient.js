@@ -1,4 +1,4 @@
-import { SUPABASE, supabaseConfigurado } from '../config/supabase.js?v=1.4.19';
+import { SUPABASE, supabaseConfigurado } from '../config/supabase.js?v=1.4.21';
 
 let clientePromise;
 

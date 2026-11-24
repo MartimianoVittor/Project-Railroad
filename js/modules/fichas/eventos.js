@@ -1,4 +1,4 @@
-import { porId } from '../../utils/dom.js?v=1.4.19';
+import { porId } from '../../utils/dom.js?v=1.4.21';
 
 export function registrarEventosFicha({
     estado, paineis, salvamento, conta, locais, online,

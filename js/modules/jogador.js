@@ -1,5 +1,5 @@
-import { porId } from '../utils/dom.js?v=1.4.19';
-import { criarRetrato } from './retrato.js?v=1.4.19';
+import { porId } from '../utils/dom.js?v=1.4.21';
+import { criarRetrato } from './retrato.js?v=1.4.21';
 
 const retrato = criarRetrato('jogador');
 const CAMPOS = [['nome-jogador', 'nome'], ['apelido-jogador', 'apelido'], ['bio-jogador', 'bio']];

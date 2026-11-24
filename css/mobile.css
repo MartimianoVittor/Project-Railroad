@@ -1,5 +1,5 @@
 /* Componentes do layout móvel, na ordem da cascata. */
-@import url("./mobile/estrutura.css?v=1.4.19");
-@import url("./mobile/navegacao.css?v=1.4.19");
-@import url("./mobile/inventario.css?v=1.4.19");
-@import url("./mobile/cartoes.css?v=1.4.19");
+@import url("./mobile/estrutura.css?v=1.4.21");
+@import url("./mobile/navegacao.css?v=1.4.21");
+@import url("./mobile/inventario.css?v=1.4.21");
+@import url("./mobile/cartoes.css?v=1.4.21");

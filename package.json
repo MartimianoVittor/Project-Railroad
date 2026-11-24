@@ -7,5 +7,5 @@
     "versionar": "node scripts/versionar.mjs",
     "preparar:publicacao": "node scripts/limpar-residuos-mestre.mjs && node scripts/versionar.mjs && npm test"
   },
-  "version": "1.4.19"
+  "version": "1.4.21"
 }

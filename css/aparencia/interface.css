@@ -9,7 +9,7 @@
     max-height: 90dvh;
     padding: 18px;
 }
-#personalizacao .rr-personalizacao-conteudo { color: #382518; }
+#personalizacao .rr-personalizacao-conteudo { color: inherit; }
 #personalizacao .painel-fichas-cabecalho { flex-wrap: wrap; }
 #personalizacao .rr-acoes-personalizacao { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
 #personalizacao .rr-acoes-personalizacao button:disabled { opacity: .6; cursor: wait; }

@@ -4,10 +4,10 @@
  * Os controles de Conta, Ficha e Local são registrados antes do carregamento
  * dos módulos de jogo. Um erro em uma área da ficha não bloqueia os painéis.
  */
-import { criarEditorFicha } from './core/editorFicha.js?v=1.4.19';
-import { normalizarFicha } from './core/validacao.js?v=1.4.19';
-import { baixarFicha, interpretarArquivo } from './core/importExport.js?v=1.4.19';
-import { criarGerenciadorFichas } from './modules/fichas.js?v=1.4.19';
+import { criarEditorFicha } from './core/editorFicha.js?v=1.4.21';
+import { normalizarFicha } from './core/validacao.js?v=1.4.21';
+import { baixarFicha, interpretarArquivo } from './core/importExport.js?v=1.4.21';
+import { criarGerenciadorFichas } from './modules/fichas.js?v=1.4.21';
 
 let editor;
 let fichas;
@@ -30,14 +30,14 @@ async function iniciar() {
     fichas.registrarEventos();
 
     try {
-        const aparencia = import('./modules/personalizacao.js?v=1.4.19')
+        const aparencia = import('./modules/personalizacao.js?v=1.4.21')
             .then((modulo) => modulo.iniciarPersonalizacao())
             .catch((erro) => console.warn('Railroad: não foi possível aplicar a aparência.', erro));
         const [jogador, personagem, inventario, moduloQuadro] = await Promise.all([
-            import('./modules/jogador.js?v=1.4.19'),
-            import('./modules/personagem.js?v=1.4.19'),
-            import('./modules/inventario.js?v=1.4.19'),
-            import('./modules/quadro/index.js?v=1.4.19'),
+            import('./modules/jogador.js?v=1.4.21'),
+            import('./modules/personagem.js?v=1.4.21'),
+            import('./modules/inventario.js?v=1.4.21'),
+            import('./modules/quadro/index.js?v=1.4.21'),
         ]);
 
         for (const id of ['nome-jogador', 'nome-personagem', 'tracos-personagem', 'rolagem-traco', 'lista-itens', 'quadro-rpg']) {

@@ -1,4 +1,4 @@
-import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.19';
+import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.21';
 export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obterPosicaoNoQuadro }) {
     let geracao = 0;
     async function inserirImagemMovel(arquivo, posX = 30, posY = 30) {

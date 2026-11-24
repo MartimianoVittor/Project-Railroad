@@ -1,6 +1,6 @@
-import { porId } from '../../utils/dom.js?v=1.4.19';
-import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.19';
-import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.19';
+import { porId } from '../../utils/dom.js?v=1.4.21';
+import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.21';
+import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.21';
 
 export const chaveUltima = (uid) => `railroad_ultima_ficha:${uid}`;
 

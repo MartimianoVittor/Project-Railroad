@@ -1,5 +1,5 @@
-import { CHAVE_STORAGE } from '../core/storage.js?v=1.4.19';
-import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.19';
+import { CHAVE_STORAGE } from '../core/storage.js?v=1.4.21';
+import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.21';
 
 const CHAVE_INDICE_ANTIGO = 'railroad_fichas_locais_v1';
 const CHAVE_MIGRADA_ANTIGA = 'railroad_ficha_legada_migrada_v1';

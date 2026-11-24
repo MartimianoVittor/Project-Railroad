@@ -13,36 +13,36 @@ dialog.painel-fichas.rr-moldura-alvo .painel-fichas-cabecalho {
     border-color: var(--rr-leitura-borda);
     color: var(--rr-leitura-texto);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(h2,h3,h4,strong,.rr-opcao-nome) {
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(h2,h3,h4,strong,.rr-opcao-nome) {
     color: var(--rr-leitura-titulo);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(p,label,small,.dica-fichas,.informacoes-ficha small,
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(p,label,small,.dica-fichas,.informacoes-ficha small,
         .envio-mesa small,.mensagem-conta) {
     color: var(--rr-leitura-texto);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(.fechar-painel-fichas) {
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(.fechar-painel-fichas) {
     color: var(--rr-leitura-titulo);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(input:not([type=radio]):not([type=checkbox]),textarea,select) {
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(input:not([type=radio]):not([type=checkbox]),textarea,select) {
     background: var(--rr-leitura-campo);
     color: var(--rr-leitura-campo-texto);
     border-color: var(--rr-leitura-borda);
     caret-color: var(--rr-leitura-campo-texto);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(input,textarea)::placeholder {
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(input,textarea)::placeholder {
     color: var(--rr-leitura-placeholder,var(--rr-leitura-suave));
     opacity: 1;
 }
-dialog.painel-fichas.rr-moldura-alvo :is(.linha-ficha,.cartao-convite-mesa,
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(.linha-ficha,.cartao-convite-mesa,
     .codigo-jogador-mesa,.envio-mesa,.status-mesa) {
     background: var(--rr-leitura-painel);
     border-color: var(--rr-leitura-borda);
     color: var(--rr-leitura-texto);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(.dica-fichas,.status-mesa,.informacoes-ficha small) {
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(.dica-fichas,.status-mesa,.informacoes-ficha small) {
     color: var(--rr-leitura-suave);
 }
-dialog.painel-fichas.rr-moldura-alvo :is(.form-criar-ficha input,.seletor-ficha-mesa) {
+dialog.painel-fichas.rr-moldura-alvo:not(#personalizacao) :is(.form-criar-ficha input,.seletor-ficha-mesa) {
     color: var(--rr-leitura-campo-texto);
 }
 dialog.painel-fichas.rr-moldura-alvo .btn-oeste-perigo {
@@ -56,4 +56,114 @@ dialog.painel-fichas.rr-moldura-alvo .btn-oeste-perigo {
 }
 @media (max-width: 700px) {
     dialog.painel-fichas.rr-moldura-alvo { padding: 12px; }
+}
+
+/* Personalização: a janela usa as MESMAS variáveis do cartão escolhido.
+   Os grupos não devem criar cartões brancos sobre a textura western. */
+#personalizacao.rr-configuracoes-visuais[open] {
+    isolation: isolate;
+    overflow: hidden;
+}
+#personalizacao .rr-personalizacao-conteudo,
+#personalizacao .rr-editor-visual { min-width: 0; min-height: 0; }
+#personalizacao .rr-editor-visual {
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+    gap: 14px;
+    align-items: stretch;
+}
+#personalizacao .rr-personalizacao-secoes {
+    box-sizing: border-box;
+    padding: 18px 10px 18px 5px;
+    scroll-padding-top: 18px;
+    scrollbar-gutter: stable;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+/* Evita fundos e contornos retangulares extras sobre a borda escolhida. */
+#personalizacao.rr-leitura-automatica .rr-grupo-visual {
+    box-sizing: border-box;
+    margin: 0;
+    min-width: 0;
+    padding: 14px 12px 12px;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    outline: none !important;
+    color: var(--rr-leitura-texto) !important;
+}
+#personalizacao.rr-leitura-automatica .rr-grupo-visual + .rr-grupo-visual {
+    border-top: 1px solid var(--rr-leitura-borda) !important;
+    padding-top: 20px;
+}
+#personalizacao.rr-leitura-automatica .rr-grupo-visual legend {
+    display: table;
+    max-width: 100%;
+    padding: 0 8px;
+    background: transparent !important;
+    color: var(--rr-leitura-titulo) !important;
+    font: 15px/1.45 'Rye', Georgia, serif;
+    white-space: normal;
+}
+#personalizacao.rr-leitura-automatica .rr-grupo-visual > p {
+    color: var(--rr-leitura-suave) !important;
+    font: 13px/1.5 Georgia, serif;
+    margin: 2px 0 12px;
+}
+#personalizacao .rr-opcoes-visuais { gap: 10px; }
+/* Opções acompanham a superfície do tema, sem quadrados brancos fixos. */
+#personalizacao.rr-leitura-automatica .rr-opcao-visual {
+    background: var(--rr-leitura-painel) !important;
+    color: var(--rr-leitura-texto) !important;
+    border: 1px solid var(--rr-leitura-borda) !important;
+    border-radius: 5px;
+    box-shadow: none !important;
+    outline: none;
+    padding: 14px 8px 10px;
+}
+#personalizacao.rr-leitura-automatica .rr-opcao-visual.selecionada,
+#personalizacao.rr-leitura-automatica .rr-opcao-visual:has(input:checked) {
+    border: 2px solid var(--rr-leitura-titulo) !important;
+    background: var(--rr-leitura-painel) !important;
+}
+#personalizacao.rr-leitura-automatica .rr-opcao-visual:focus-within {
+    outline: 2px solid var(--rr-leitura-titulo);
+    outline-offset: 2px;
+}
+#personalizacao.rr-leitura-automatica .rr-opcao-nome {
+    color: var(--rr-leitura-texto) !important;
+    font: 700 12px/1.35 Georgia, serif;
+}
+/* A prévia usa suas próprias variantes; o invólucro não cria outra moldura. */
+#personalizacao.rr-leitura-automatica .rr-previa {
+    box-sizing: border-box;
+    padding: 10px;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    color: var(--rr-leitura-texto) !important;
+}
+#personalizacao.rr-leitura-automatica .rr-previa > h3 {
+    color: var(--rr-leitura-titulo) !important;
+    font: 15px/1.4 'Rye', Georgia, serif;
+    margin-bottom: 8px;
+}
+/* O conteúdo de exemplo precisa manter a paleta do fundo de sua própria amostra,
+   não a paleta da janela externa. */
+#personalizacao .rr-previa-cartao :is(h4) {
+    color: var(--rr-leitura-titulo) !important;
+}
+#personalizacao .rr-previa-cartao :is(p, label) {
+    color: var(--rr-leitura-texto) !important;
+}
+#personalizacao .rr-previa-cartao :is(input, textarea) {
+    background: var(--rr-leitura-campo) !important;
+    color: var(--rr-leitura-campo-texto) !important;
+    border-color: var(--rr-leitura-borda) !important;
+}
+@media (max-width: 768px) {
+    #personalizacao .rr-editor-visual { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    #personalizacao .rr-personalizacao-secoes { padding: 18px 8px 16px 4px; }
+    #personalizacao .rr-grupo-visual { padding: 12px 9px; }
 }

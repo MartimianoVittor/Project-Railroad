@@ -1,9 +1,9 @@
-import { porId } from '../../utils/dom.js?v=1.4.19';
-import { criarCanvas } from './canvas.js?v=1.4.19';
-import { iniciarDesenho } from './desenho.js?v=1.4.19';
-import { criarGerenciadorElementos } from './elementos.js?v=1.4.19';
-import { criarFerramentas } from './ferramentas.js?v=1.4.19';
-import { iniciarImagens } from './imagens.js?v=1.4.19';
+import { porId } from '../../utils/dom.js?v=1.4.21';
+import { criarCanvas } from './canvas.js?v=1.4.21';
+import { iniciarDesenho } from './desenho.js?v=1.4.21';
+import { criarGerenciadorElementos } from './elementos.js?v=1.4.21';
+import { criarFerramentas } from './ferramentas.js?v=1.4.21';
+import { iniciarImagens } from './imagens.js?v=1.4.21';
 
 function lerItem(container) {
     const { tipo } = container.dataset;
@@ -47,6 +47,7 @@ export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
         criarElementoTexto: elementos.criarElementoTexto, selecionarItem: elementos.selecionarItem,
         seletorCor: porId('seletor-cor'),
     });
+    porId('btn-imagem')?.addEventListener('click', () => porId('upload-mapa')?.click());
     const cancelarImagensPendentes = iniciarImagens({
         zonaDrop, uploadMapa: porId('upload-mapa'), obterPosicaoNoQuadro,
         criarElementoImagem: elementos.criarElementoImagem,
