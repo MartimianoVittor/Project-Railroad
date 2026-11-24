@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="64" viewBox="0 0 180 64">
+    <defs>
+        <pattern height="7" id="hachura-cartucho-jogador" patternTransform="rotate(-45)" patternUnits="userSpaceOnUse" width="7">
+            <path d="M0 0V7" stroke="#1f140c" stroke-opacity=".32" stroke-width="1.5"/>
+        </pattern>
+        <pattern height="7" id="hachura-cartucho-jogador-ativa-jogador" patternTransform="rotate(-45)" patternUnits="userSpaceOnUse" width="7">
+            <path d="M0 0V7" stroke="#f5d376" stroke-opacity=".23" stroke-width="1.5"/>
+        </pattern>
+        <clipPath id="recorte-cartucho-jogador">
+            <path d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z"/>
+        </clipPath>
+    </defs>
+    <g clip-path="url(#recorte-cartucho-jogador)">
+        <path d="M0 0H129V64H0Z" fill="#deb043"/>
+        <path d="M129 0H180V64H129Z" fill="#bd5a2b"/>
+        <path d="M0 0H129V16H0Z" fill="#edd074"/>
+        <path d="M129 0H180V16H129Z" fill="#d67849"/>
+        <path d="M0 43H129V64H0Z" fill="#b88725"/>
+        <path d="M129 43H180V64H129Z" fill="#8d3c1c"/>
+        <path d="M0 43H180V64H0Z" fill="url(#hachura-cartucho-jogador)"/>
+        <path d="M129 0V64" fill="none" stroke="#1f140c" stroke-width="3"/>
+        <path d="M12 0H18V64H12Z" fill="#1f140c"/>
+    </g>
+    <path d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" fill="none" stroke="#1f140c" stroke-width="3"/>
+</svg>

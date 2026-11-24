@@ -1,0 +1,88 @@
+/* Base dos retratos. Ajuste --rr-tamanho e --rr-foco no elemento. */
+.rr-retrato {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  width: var(--rr-tamanho, 240px);
+  max-width: 100%;
+  aspect-ratio: 1;
+  border: 0;
+  padding: 0;
+  background: var(--rr-desenho) center / 100% 100% no-repeat;
+  filter: drop-shadow(0 3px 0 #301e1159);
+}
+.rr-retrato > .rr-retrato__foto {
+  position: absolute;
+  display: block;
+  inset: var(--rr-janela);
+  width: var(--rr-foto-largura);
+  height: var(--rr-foto-altura);
+  max-width: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  border-radius: var(--rr-raio, 0);
+  clip-path: var(--rr-recorte, none);
+  background-color: var(--rr-papel, #dfd0b4);
+  object-fit: cover;
+  object-position: var(--rr-foco, 50% 50%);
+}
+
+/* Estrela de xerife · kit-consolidado-melhores-versoes.html */
+.rr-retrato--estrela-de-xerife {
+  --rr-janela: 23.95833% auto auto 23.95833%;
+  --rr-foto-largura: 52.08333%;
+  --rr-foto-altura: 52.08333%;
+  --rr-raio: 50%;
+  --rr-desenho: url("../../assets/western/kit/estrela-de-xerife.svg");
+}
+
+/* Cartaz de procurado · kit-consolidado-melhores-versoes.html */
+.rr-retrato--cartaz-de-procurado {
+  --rr-janela: 26.45833% auto auto 15.62500%;
+  --rr-foto-largura: 68.75000%;
+  --rr-foto-altura: 48.75000%;
+  --rr-raio: 0;
+  --rr-recorte: polygon(9% 0, 91% 0, 100% 12.7%, 100% 87.3%, 91% 100%, 9% 100%, 0 87.3%, 0 12.7%);
+  --rr-papel: #cbb794;
+  --rr-desenho: url("../../assets/western/kit/cartaz-de-procurado.svg");
+}
+
+/* Camafeu de latão · kit-consolidado-melhores-versoes.html */
+.rr-retrato--camafeu-de-latao {
+  --rr-janela: 22.29167% auto auto 22.29167%;
+  --rr-foto-largura: 55.41667%;
+  --rr-foto-altura: 55.41667%;
+  --rr-raio: 50%;
+  --rr-desenho: url("../../assets/western/kit/camafeu-de-latao.svg");
+}
+
+/* Moldura de latão · kit-consolidado-melhores-versoes.html */
+.rr-retrato--moldura-de-latao {
+  --rr-janela: 14.89583% auto auto 14.89583%;
+  --rr-foto-largura: 70.20833%;
+  --rr-foto-altura: 70.20833%;
+  --rr-raio: 2.6%;
+  --rr-desenho: url("../../assets/western/kit/moldura-de-latao.svg");
+}
+
+/* Tambor de revólver · kit-assets-western-v3.html */
+.rr-retrato--tambor-de-revolver {
+  --rr-janela: 25.52083% auto auto 25.52083%;
+  --rr-foto-largura: 48.95833%;
+  --rr-foto-altura: 48.95833%;
+  --rr-raio: 50%;
+  --rr-papel: #e8d6b3;
+  --rr-desenho: url("../../assets/western/kit/tambor-de-revolver.svg");
+}
+
+/* Placa de ferrovia · kit-assets-western-v3.html */
+.rr-retrato--placa-de-ferrovia {
+  --rr-janela: 18.95833% auto auto 18.95833%;
+  --rr-foto-largura: 62.08333%;
+  --rr-foto-altura: 62.08333%;
+  --rr-raio: 3.1%;
+  --rr-papel: #e8d6b3;
+  --rr-desenho: url("../../assets/western/kit/placa-de-ferrovia.svg");
+}

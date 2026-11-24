@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <circle cx="120" cy="120" r="102" fill="#594a3e" stroke="#1f140c" stroke-width="3.5"/>
+    <circle cx="120" cy="120" r="92" fill="none" stroke="#d9a738" stroke-width="2" stroke-dasharray="8 6"/>
+    <g fill="#2b211a" stroke="#1f140c" stroke-width="2.5">
+        <circle cx="120" cy="30" r="10"/>
+        <circle cx="198" cy="75" r="10"/>
+        <circle cx="198" cy="165" r="10"/>
+        <circle cx="120" cy="210" r="10"/>
+        <circle cx="42" cy="165" r="10"/>
+        <circle cx="42" cy="75" r="10"/>
+    </g>
+    <circle cx="120" cy="120" r="68" fill="#d9a738" stroke="#1f140c" stroke-width="3"/>
+    <circle cx="120" cy="120" r="60" fill="#e8d6b3" stroke="#1f140c" stroke-width="2.5"/>
+    <circle cx="120" cy="120" r="55" fill="none" stroke="#785328" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="120" y="116" text-anchor="middle" font-family="Rye, Georgia, serif" font-size="11" fill="#3b2614">SUA IMAGEM</text>
+    <text x="120" y="131" text-anchor="middle" font-family="Rye, Georgia, serif" font-size="11" fill="#3b2614">AQUI</text>
+</svg>

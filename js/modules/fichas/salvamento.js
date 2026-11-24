@@ -1,0 +1,178 @@
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.18';
+
+const ESPERA_LOCAL_MS = 250;
+const ESPERA_NUVEM_MS = 1200;
+
+export function criarSalvamento({ estado, coletarFicha, repositorioLocal, informar }) {
+    let timerLocal;
+    let timerNuvem;
+    let versaoEdicao = 0;
+    let pendente = false;
+    let filaEnvios = Promise.resolve();
+    let timerRetentativa;
+    let tentativas = 0;
+    const conflitos = new Set();
+
+    function contextoAtual() {
+        return {
+            modo: estado.modoEdicao, uid: estado.usuario?.id, conta: estado.geracaoConta,
+            id: estado.modoEdicao === 'local' ? estado.fichaLocal?.id : estado.fichaNuvem?.id,
+        };
+    }
+
+    function aindaAberta(contexto) {
+        const atual = contextoAtual();
+        return atual.id === contexto.id && atual.modo === contexto.modo && atual.conta === contexto.conta;
+    }
+
+    function programarEnvio() {
+        const contexto = contextoAtual();
+        clearTimeout(timerNuvem);
+        clearTimeout(timerRetentativa);
+        timerNuvem = setTimeout(() => { if (aindaAberta(contexto)) void sincronizar(contexto); }, ESPERA_NUVEM_MS);
+    }
+
+    function salvarAgora() {
+        clearTimeout(timerLocal);
+        const contexto = contextoAtual();
+        if (!contexto.id) return Promise.resolve(false);
+        const versao = versaoEdicao;
+        pendente = false;
+        return comProcessamento('Salvando ficha…', async () => {
+            try {
+                const dados = coletarFicha();
+                if (contexto.modo === 'local') estado.fichaLocal = repositorioLocal.salvar(contexto.id, dados);
+                else repositorioLocal.gravarRascunho(contexto.uid, contexto.id, dados);
+                await repositorioLocal.flush();
+                if (aindaAberta(contexto) && versao === versaoEdicao) {
+                    if (contexto.modo === 'local') informar('Ficha salva neste navegador');
+                    else {
+                        informar('Alterações locais; sincronizando…');
+                        programarEnvio();
+                    }
+                }
+                return true;
+            } catch (erro) {
+                console.error('Não foi possível salvar a ficha no navegador.', erro);
+                if (aindaAberta(contexto)) {
+                    pendente = true;
+                    informar('Falha no salvamento local; faça um backup JSON');
+                }
+                return false;
+            }
+        }, { bloquear: false });
+    }
+
+    function agendarSalvamento() {
+        versaoEdicao++;
+        pendente = true;
+        clearTimeout(timerLocal);
+        timerLocal = setTimeout(() => void salvarAgora(), ESPERA_LOCAL_MS);
+    }
+
+    function identificador(contexto) { return `${contexto.uid}:${contexto.id}`; }
+
+    function programarRetentativa(contexto) {
+        if (!aindaAberta(contexto) || conflitos.has(identificador(contexto)) || tentativas >= 4) return;
+        clearTimeout(timerRetentativa);
+        const espera = Math.min(60000, 5000 * (2 ** tentativas++));
+        timerRetentativa = setTimeout(() => {
+            if (aindaAberta(contexto)) void sincronizar(contexto);
+        }, espera);
+        // Evita manter um processo Node aberto por causa do temporizador de teste.
+        timerRetentativa?.unref?.();
+    }
+
+    function tentarSincronizar() {
+        const contexto = contextoAtual();
+        if (contexto.modo !== 'nuvem' || !contexto.uid || !contexto.id
+            || conflitos.has(identificador(contexto))) return;
+        tentativas = 0;
+        clearTimeout(timerRetentativa);
+        void sincronizar(contexto);
+    }
+
+    async function enviar(contexto) {
+        if (!aindaAberta(contexto)) return true;
+        if (conflitos.has(identificador(contexto))) return false;
+        try {
+            await repositorioLocal.flush();
+            if (!aindaAberta(contexto)) return true;
+            const { uid, id } = contexto;
+            const rascunho = repositorioLocal.lerRascunho(uid, id);
+            if (!rascunho) return true;
+
+            const resultado = await comProcessamento('Salvando ficha…',
+                () => estado.repositorioNuvem.salvar(id, rascunho.dados, estado.fichaNuvem?.updated_at),
+                { bloquear: false });
+            // A resposta do servidor contém a nova revisão (controle de concorrência).
+            if (aindaAberta(contexto) && resultado?.updated_at)
+                estado.fichaNuvem.updated_at = resultado.updated_at;
+            tentativas = 0;
+            clearTimeout(timerRetentativa);
+            // Uma edição feita durante a requisição já possui outro token.
+            if (repositorioLocal.lerRascunho(uid, id)?.token === rascunho.token) {
+                repositorioLocal.apagarRascunho(uid, id);
+                await repositorioLocal.flush();
+            }
+            if (aindaAberta(contexto)) {
+                if (pendente || repositorioLocal.lerRascunho(uid, id)) {
+                    informar('Novas alterações pendentes…');
+                    programarEnvio();
+                } else informar('Ficha salva na nuvem');
+            }
+            return true;
+        } catch (erro) {
+            console.warn('Falha ao sincronizar; rascunho preservado.', erro);
+            if (erro?.code === 'FICHA_EM_CONFLITO') {
+                conflitos.add(identificador(contexto));
+                if (aindaAberta(contexto)) informar('Conflito com outra edição! Rascunho local preservado. Exporte o JSON antes de reabrir.');
+            } else {
+                if (aindaAberta(contexto)) informar('Sem conexão: rascunho guardado neste navegador');
+                programarRetentativa(contexto);
+            }
+            return false;
+        }
+    }
+
+    function sincronizar(contexto) {
+        clearTimeout(timerNuvem);
+        if (contexto.modo !== 'nuvem' || !contexto.uid || !contexto.id) return Promise.resolve(true);
+        // Consulta o token dentro da fila para evitar enviar duas vezes o mesmo rascunho.
+        const envio = filaEnvios.then(() => enviar(contexto));
+        filaEnvios = envio.catch(() => false);
+        return envio;
+    }
+
+    async function concluir() {
+        const contexto = contextoAtual();
+        clearTimeout(timerLocal);
+        clearTimeout(timerNuvem);
+        do {
+            const versao = versaoEdicao;
+            if (pendente && !(await salvarAgora())) return false;
+            try { await repositorioLocal.flush(); }
+            catch (erro) {
+                if (aindaAberta(contexto)) informar('Falha no salvamento local; faça um backup JSON');
+                return false;
+            }
+            if (!aindaAberta(contexto)) return false;
+            const sincronizou = await sincronizar(contexto);
+            if (!sincronizou || !aindaAberta(contexto)) return false;
+            if (versao === versaoEdicao) return true;
+        } while (aindaAberta(contexto));
+        return false;
+    }
+
+    function descartarAgendado() {
+        clearTimeout(timerLocal);
+        clearTimeout(timerNuvem);
+        clearTimeout(timerRetentativa);
+        tentativas = 0;
+        versaoEdicao++;
+        pendente = false;
+    }
+
+    return { agendarSalvamento, salvarAgora, concluir, programarEnvio, tentarSincronizar, descartarAgendado,
+        pendente: () => pendente, aguardarEnvios: () => filaEnvios };
+}

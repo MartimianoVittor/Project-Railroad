@@ -1,0 +1,195 @@
+/* Railroad Jogador — integração com Railroad_Kit_Western(2).html.
+   O kit-western.css contém os desenhos originais. Este arquivo cuida somente
+   do encaixe, dos estados de seleção e da compatibilidade com as fichas. */
+
+/* As configurações ficam dentro do diálogo Conta, e não em uma página de jogo. */
+#painel-conta { width: min(920px, calc(100% - 24px)); }
+#personalizacao.rr-configuracoes-visuais {
+    width: min(1180px, calc(100% - 24px));
+    max-height: 90dvh;
+    padding: 18px;
+}
+#personalizacao .rr-personalizacao-conteudo { color: #382518; }
+#personalizacao .painel-fichas-cabecalho { flex-wrap: wrap; }
+#personalizacao .rr-acoes-personalizacao { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+#personalizacao .rr-acoes-personalizacao button:disabled { opacity: .6; cursor: wait; }
+#personalizacao input:focus-visible + .rr-amostra { outline: 3px solid #bd792a; outline-offset: 4px; }
+#personalizacao .rr-status-aparencia { min-height: 18px; font: 13px/1.4 Georgia,serif; color: #6a4523; }
+#personalizacao .rr-personalizacao-secoes { display: grid; gap: 14px; }
+#personalizacao .rr-grupo-visual {
+    min-width: 0; padding: 14px; margin: 0;
+    border: 1px solid #b49670; border-radius: 5px; background: #fff8e8;
+}
+#personalizacao .rr-grupo-visual legend {
+    padding: 0 8px; font: 15px 'Rye', Georgia,serif; color: #3d2314;
+}
+#personalizacao .rr-grupo-visual > p { margin: 0 0 12px; font: 13px/1.45 Georgia,serif; }
+#personalizacao .rr-opcoes-visuais {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    gap: 11px;
+}
+#personalizacao .rr-opcao-visual {
+    position: relative; display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between; gap: 9px;
+    cursor: pointer; padding: 15px 7px 11px; min-width: 0;
+    background: #f8ebd0; border: 2px solid #c4a77e; border-radius: 6px;
+}
+#personalizacao .rr-opcao-visual:hover { border-color: #76512c; }
+#personalizacao .rr-opcao-visual.selecionada {
+    border-color: #976126; outline: 2px solid #d6ae58; background: #fff0c9;
+}
+#personalizacao .rr-opcao-visual input {
+    position: absolute; right: 6px; top: 6px; z-index: 2;
+    width: 16px; height: 16px; accent-color: #845222; margin: 0;
+}
+#personalizacao .rr-opcao-nome {
+    font: bold 12px/1.25 Georgia, serif; color: #382518; text-align: center;
+}
+#personalizacao .rr-amostra {
+    position: relative; display: grid; place-items: center; flex-shrink: 0;
+    min-width: 0; width: 100%; max-width: 170px; height: 82px;
+    box-sizing: border-box; text-align: center; overflow-wrap: anywhere;
+}
+#personalizacao .rr-amostra-botao {
+    max-width: 180px; height: 54px; font: 13px 'Rye', Georgia,serif;
+    color: #392619; background: #e6cf9c;
+    border: 2px solid #68422b; border-radius: 5px;
+}
+#personalizacao .rr-amostra-botao.rr-botao {
+    display: inline-grid; border: 0; background: transparent;
+    --rr-altura: 52px; filter: none; width: 100%; max-width: 100%;
+    min-inline-size: min(100%, var(--rr-largura-minima));
+    padding: calc(var(--rr-h) * .2) var(--rr-espaco-direito) calc(var(--rr-h) * .2) var(--rr-espaco-esquerdo);
+    color: var(--rr-legenda); text-shadow: var(--rr-sombra-do-texto, none);
+    font: 600 12px/1.12 'Rye',Georgia,serif;
+}
+#personalizacao .rr-amostra-retrato {
+    width: min(100%, 136px); max-width: 136px; height: auto;
+    aspect-ratio: 1; overflow: visible; background: #cdb58a;
+    border: 2px solid #98734a; border-radius: 4px;
+    color: #42301c; font: 12px/1.3 Georgia,serif;
+}
+#personalizacao .rr-amostra-retrato.rr-retrato {
+    display: block; border: 0; border-radius: 0;
+    background: var(--rr-desenho) center/100% 100% no-repeat;
+    width: min(100%, 136px); height: auto;
+    --rr-tamanho: 136px;
+}
+#personalizacao .rr-amostra-retrato .rr-retrato__foto { pointer-events: none; }
+#personalizacao .rr-amostra-fundo {
+    color: #f9e6b7; text-shadow: 0 1px 2px #130c08;
+    font: 12px 'Rye', Georgia,serif; border: 1px solid #7b5d42; border-radius: 4px;
+}
+#personalizacao .rr-amostra-borda {
+    background: #f6e2bf; color: #392318;
+    font: 13px 'Rye', Georgia,serif; border: 2px solid #805c3e; border-radius: 5px;
+}
+/* Elementos do kit aplicados às fotografias reais, sem alterar arquivos de foto. */
+:is(#jogador,#personagem) .label-retrato.rr-retrato {
+    --rr-tamanho: 100%; display: block; width: 100%; max-width: 250px;
+    aspect-ratio: 1; position: relative; overflow: visible;
+    background: var(--rr-desenho) center / 100% 100% no-repeat !important;
+}
+:is(#jogador,#personagem) .label-retrato.rr-retrato > .circulo-interno.rr-retrato__foto {
+    display: block; position: absolute; flex: none;
+    inset: var(--rr-janela) !important;
+    width: var(--rr-foto-largura) !important;
+    height: var(--rr-foto-altura) !important;
+    max-width: none; aspect-ratio: auto !important;
+    padding: 0; margin: 0; border: 0 !important;
+    border-radius: var(--rr-raio, 0) !important;
+    clip-path: var(--rr-recorte, none); overflow: hidden;
+}
+:is(#jogador,#personagem) .label-retrato.rr-retrato > .circulo-interno > .imagem-exibida {
+    display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit;
+}
+#jogador .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/fundoCinza.jpg"],
+#personagem .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.png"] {
+    opacity: 0 !important;
+}
+/* As únicas peças temáticas são as três abas principais na barra lateral.
+   Retém os desenhos originais do kit (cartucho ou faca), sem mudar as ações. */
+@media (min-width: 769px) {
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav {
+        --rr-altura: 41px;
+        --rr-fonte-tamanho: 11px;
+        box-sizing: border-box;
+        display: inline-grid;
+        place-items: center;
+        position: relative;
+        isolation: isolate;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 43px;
+        height: 43px;
+        padding: calc(var(--rr-h) * .18) var(--rr-espaco-direito)
+                 calc(var(--rr-h) * .18) var(--rr-espaco-esquerdo);
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        color: var(--rr-legenda);
+        font: 600 var(--rr-fonte-tamanho)/1.15 'Rye',Georgia,serif;
+        letter-spacing: 0;
+        text-align: center;
+        text-shadow: var(--rr-sombra-do-texto, none);
+        text-decoration: none;
+        white-space: normal;
+        overflow-wrap: normal;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        border: solid transparent;
+        border-width: 0 var(--rr-ponta-direita) 0 var(--rr-ponta-esquerda);
+        border-image-source: var(--rr-desenho);
+        border-image-slice: var(--rr-recortes) fill;
+        border-image-repeat: round stretch;
+        filter: var(--rr-filtro,brightness(1)) drop-shadow(0 3px 0 #26190fd9);
+        pointer-events: none;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav .cartucho-svg {
+        display: none;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav .cartucho-texto {
+        width: 100%;
+        min-width: 0;
+        transform: none;
+        white-space: normal;
+        line-height: 1.15;
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:is(:hover,.ativa,[aria-current='page']) {
+        background: transparent;
+        box-shadow: none;
+        border: 0;
+        color: var(--rr-legenda);
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:hover {
+        --rr-filtro: brightness(1.08);
+        transform: translateX(2px);
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:is(.ativa,[aria-current='page']) {
+        --rr-filtro: brightness(1);
+        transform: translate(2px, -2px);
+    }
+    .barra-lateral .menu-navegacao .btn-nav.rr-botao-nav:focus-visible {
+        outline: 3px solid #f7da86;
+        outline-offset: 3px;
+    }
+}
+@media (max-width: 768px) {
+    #personalizacao.rr-configuracoes-visuais { padding: 0 10px 10px; }
+    #personalizacao .rr-opcoes-visuais { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    #personalizacao .rr-grupo-visual { padding: 11px 7px; }
+    #personalizacao .rr-amostra-retrato.rr-retrato { width: min(100%, 120px); }
+    #personalizacao .rr-amostra-botao.rr-botao { --rr-altura: 45px; font-size: 10px; }
+}
+@media (max-width: 370px) {
+    #personalizacao .rr-opcoes-visuais { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #personalizacao .rr-opcao-visual { transition: none; }
+}

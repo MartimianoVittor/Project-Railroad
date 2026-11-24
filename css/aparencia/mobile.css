@@ -1,0 +1,81 @@
+/* Mobile: miniaturas em duas colunas; a prévia permanece exclusiva do desktop. */
+@media (max-width: 768px) {
+    #personalizacao.rr-configuracoes-visuais[open] {
+        position: fixed; inset: 0; margin: 0;
+        width: 100%; max-width: 100%; height: 100dvh; max-height: 100dvh;
+        border-radius: 0;
+        padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    }
+    #personalizacao .painel-fichas-cabecalho { display: grid; grid-template-columns: minmax(0,1fr); gap: 4px; padding-bottom: 5px; }
+    #personalizacao .painel-fichas-cabecalho h2 { font-size: 18px; }
+    #personalizacao .rr-acoes-personalizacao { display: grid; grid-template-columns: 1fr 1fr 44px; width: 100%; margin: 0; gap: 6px; }
+    #personalizacao .rr-acoes-personalizacao button { min-height: 44px; padding: 5px; }
+    #personalizacao .rr-status-aparencia { margin: 2px 0; min-height: 0; }
+    #personalizacao .rr-status-aparencia:empty { display: none; }
+    #personalizacao .rr-previa { display: none; }
+    #personalizacao .rr-editor-visual { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr); gap: 0; }
+    #personalizacao .rr-personalizacao-secoes {
+        overflow-y: auto; overflow-x: hidden; touch-action: pan-y;
+        overscroll-behavior: contain; padding: 4px 6px 16px 3px; gap: 9px;
+        min-height: 0; align-content: start; grid-auto-rows: max-content;
+    }
+    #personalizacao .rr-opcoes-visuais { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    #personalizacao .rr-grupo-visual { padding: 10px; }
+    #personalizacao .rr-opcao-visual { min-height: 72px; padding: 16px 5px 8px; }
+    #personalizacao .rr-amostra-retrato.rr-retrato { width: min(100%, 96px); }
+    #personalizacao .rr-amostra-fundo, #personalizacao .rr-amostra-borda { height: 58px; }
+    #painel-conta .identidade-conta { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+    #painel-conta .identidade-conta span { grid-column: 1 / -1; }
+    #painel-conta .identidade-conta button, #painel-conta #conta-visitante button { min-height: 44px; }
+}
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 600px) {
+    #personalizacao .painel-fichas-cabecalho { display: flex; flex-wrap: nowrap; gap: 6px; }
+    #personalizacao .rr-acoes-personalizacao { display: flex; width: auto; margin-left: auto; flex-wrap: nowrap; }
+}
+
+/* Inventário mobile: superfícies internas seguem a paleta do cartão,
+   inclusive os rótulos gerados pela tabela responsiva. */
+@media (max-width: 768px) {
+    #inventario .inventario-itens.rr-leitura-automatica :is(.tabela-itens tbody tr, .inventario-resumo) {
+        box-sizing: border-box;
+        background: var(--rr-leitura-painel);
+        border-color: var(--rr-leitura-borda);
+        color: var(--rr-leitura-texto);
+        border-radius: 5px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .tabela-itens td::before,
+    #inventario .inventario-itens.rr-leitura-automatica .inventario-resumo-campo span {
+        color: var(--rr-leitura-texto);
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .tabela-itens td.celula-local-item {
+        background: var(--rr-leitura-campo);
+        border-color: var(--rr-leitura-borda);
+        padding: 8px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .celula-local-item::before {
+        color: var(--rr-leitura-campo-texto);
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .botao-local-item[aria-pressed="true"] {
+        outline: 1px solid var(--rr-leitura-borda);
+        outline-offset: -2px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .botao-local-item:focus-visible {
+        outline: 2px solid var(--rr-leitura-borda);
+        outline-offset: 2px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .botao-remover-item {
+        background: var(--rr-leitura-campo);
+        color: var(--rr-leitura-campo-texto);
+        border: 1px solid var(--rr-leitura-borda);
+        min-height: 44px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .inventario-resumo {
+        margin-top: 16px;
+        padding: 12px;
+        gap: 12px;
+    }
+    #inventario .inventario-itens.rr-leitura-automatica .inventario-resumo-campo input[readonly] {
+        font-weight: bold;
+        border-style: dashed;
+    }
+}

@@ -1,16 +1,9 @@
+import { serializarOrdenado } from '../core/serializacao.js?v=1.4.18';
+
 /**
- * A segurança de acesso está nas políticas RLS do PostgreSQL, não no navegador.
- * Esta camada só conhece operações de fichas; não conhece a interface ou o JSON.
+ * Operações da tabela fichas. O Supabase aplica as políticas de acesso do PostgreSQL.
  */
 export function criarRepositorioFichas(supabase) {
-    function ordenarChaves(valor) {
-        if (Array.isArray(valor))
-            return valor.map(ordenarChaves);
-        if (valor && typeof valor === 'object')
-            return Object.fromEntries(Object.keys(valor).sort().map((chave) => [chave, ordenarChaves(valor[chave])]));
-        return valor;
-    }
-
     async function exigir(resultado) {
         const { data, error } = await resultado;
         if (error)
@@ -34,14 +27,15 @@ export function criarRepositorioFichas(supabase) {
                 .insert({ usuario_id: usuarioId, titulo, dados })
                 .select('id, titulo, updated_at').single());
         },
-        async criarImportada(usuarioId, titulo, dados, identidade) {
-            async function localizar() {
+        async criarImportada(usuarioId, titulo, dados, identidade, identidadeAnterior) {
+            function localizar(origem) {
                 return exigir(supabase.from('fichas')
                     .select('id, titulo, updated_at')
-                    .eq('origem_importacao', identidade).maybeSingle());
+                    .eq('usuario_id', usuarioId).eq('origem_importacao', origem).maybeSingle());
             }
 
-            const existente = await localizar();
+            const existente = await localizar(identidade)
+                || (identidadeAnterior && await localizar(identidadeAnterior));
             if (existente)
                 return { registro: existente, duplicada: true };
 
@@ -50,7 +44,7 @@ export function criarRepositorioFichas(supabase) {
             const referencia = identidade.startsWith('id:') ? identidade.slice(3) : '';
             if (/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(referencia)) {
                 const fichaOriginal = await exigir(supabase.from('fichas')
-                    .select('id, titulo, updated_at').eq('id', referencia).maybeSingle());
+                    .select('id, titulo, updated_at').eq('usuario_id', usuarioId).eq('id', referencia).maybeSingle());
                 if (fichaOriginal)
                     return { registro: fichaOriginal, duplicada: true };
             }
@@ -58,10 +52,10 @@ export function criarRepositorioFichas(supabase) {
             // Fichas que já estavam no banco antes da migração não têm origem.
             // Compara o JSON de registros com o mesmo título sem modificá-los.
             const candidatas = await exigir(supabase.from('fichas')
-                .select('id, titulo, updated_at, dados').eq('titulo', titulo));
-            const conteudo = JSON.stringify(ordenarChaves(dados));
+                .select('id, titulo, updated_at, dados').eq('usuario_id', usuarioId).eq('titulo', titulo));
+            const conteudo = serializarOrdenado(dados);
             const anterior = candidatas.find((ficha) =>
-                JSON.stringify(ordenarChaves(ficha.dados)) === conteudo);
+                serializarOrdenado(ficha.dados) === conteudo);
             if (anterior)
                 return { registro: anterior, duplicada: true };
 
@@ -73,16 +67,27 @@ export function criarRepositorioFichas(supabase) {
                 return { registro: resultado.data, duplicada: false };
 
             if (resultado.error.code === '23505') {
-                const importada = await localizar();
+                const importada = await localizar(identidade);
                 if (importada)
                     return { registro: importada, duplicada: true };
             }
             throw new Error(resultado.error.message);
         },
-        salvar(id, dados) {
-            return exigir(supabase.from('fichas')
-                .update({ dados }).eq('id', id)
-                .select('id, updated_at').single());
+        async salvar(id, dados, revisao) {
+            if (!revisao) throw new Error('Revisão da ficha indisponível; reabra a ficha antes de salvar.');
+            // A comparação e a gravação acontecem na mesma requisição UPDATE.
+            // A revisão muda a cada gravação, mesmo sem trigger no PostgreSQL.
+            const { data, error } = await supabase.from('fichas')
+                .update({ dados, updated_at: new Date().toISOString() })
+                .eq('id', id).eq('updated_at', revisao)
+                .select('id, updated_at').maybeSingle();
+            if (error) throw new Error(error.message);
+            if (!data) {
+                const conflito = new Error('A ficha foi modificada em outro dispositivo. O rascunho local foi preservado. Exporte seu JSON e confira a versão online antes de continuar.');
+                conflito.code = 'FICHA_EM_CONFLITO';
+                throw conflito;
+            }
+            return data;
         },
         renomear(id, titulo) {
             return exigir(supabase.from('fichas')

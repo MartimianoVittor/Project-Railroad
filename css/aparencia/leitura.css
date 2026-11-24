@@ -1,0 +1,161 @@
+/* Leitura automática por textura: a paleta muda junto com o fundo escolhido.
+   Nenhuma preferência adicional é necessária e o estilo padrão é preservado. */
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--pergaminho {
+    --rr-leitura-texto: #342519;
+    --rr-leitura-titulo: #512b16;
+    --rr-leitura-suave: #5f422d;
+    --rr-leitura-campo: #fffaf0;
+    --rr-leitura-campo-texto: #2c2016;
+    --rr-leitura-borda: #71533a;
+    --rr-leitura-painel: rgba(255, 251, 238, .43);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--tabua {
+    --rr-leitura-texto: #fff2d9;
+    --rr-leitura-titulo: #ffe1a6;
+    --rr-leitura-suave: #f4dec0;
+    --rr-leitura-campo: #38271c;
+    --rr-leitura-campo-texto: #fff4e1;
+    --rr-leitura-placeholder: #e1c7a8;
+    --rr-gota-vazia: url('../../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #d3a46f;
+    --rr-leitura-painel: rgba(33, 20, 12, .65);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--couro {
+    --rr-leitura-texto: #fff1d4;
+    --rr-leitura-titulo: #f5d18e;
+    --rr-leitura-suave: #e7cdac;
+    --rr-leitura-campo: #241a13;
+    --rr-leitura-campo-texto: #fff2dc;
+    --rr-leitura-placeholder: #dec5a5;
+    --rr-gota-vazia: url('../../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #c79a5d;
+    --rr-leitura-painel: rgba(17, 12, 9, .54);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--mapa-topografico {
+    --rr-leitura-texto: #34291b;
+    --rr-leitura-titulo: #49301b;
+    --rr-leitura-suave: #59462c;
+    --rr-leitura-campo: #fcf6e6;
+    --rr-leitura-campo-texto: #2e2318;
+    --rr-leitura-borda: #685338;
+    --rr-leitura-painel: rgba(255, 250, 232, .45);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--latao {
+    --rr-leitura-texto: #291e0e;
+    --rr-leitura-titulo: #44250d;
+    --rr-leitura-suave: #51371a;
+    --rr-leitura-campo: #fff8df;
+    --rr-leitura-campo-texto: #2b2016;
+    --rr-leitura-borda: #5f4018;
+    --rr-leitura-painel: rgba(255, 247, 213, .43);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--terracota {
+    --rr-leitura-texto: #fff7e9;
+    --rr-leitura-titulo: #ffebc1;
+    --rr-leitura-suave: #ffe0c9;
+    --rr-leitura-campo: #542619;
+    --rr-leitura-campo-texto: #fff3e7;
+    --rr-leitura-placeholder: #f1c7ad;
+    --rr-gota-vazia: url('../../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #edc0a3;
+    --rr-leitura-painel: rgba(46, 17, 10, .55);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--ferrovia {
+    --rr-leitura-texto: #fff2dd;
+    --rr-leitura-titulo: #ffe0a4;
+    --rr-leitura-suave: #eee0cb;
+    --rr-leitura-campo: #29221b;
+    --rr-leitura-campo-texto: #fff6e6;
+    --rr-leitura-placeholder: #d8c5ad;
+    --rr-gota-vazia: url('../../assets/icons/gota-contorno-clara.svg');
+    --rr-gota-cheia: url('../../assets/icons/gota-preenchida-clara.svg');
+    --rr-gota-numero-cheio: #302014;
+    --rr-leitura-borda: #d2ab77;
+    --rr-leitura-painel: rgba(22, 15, 10, .72);
+}
+.rr-moldura-alvo.rr-leitura-automatica.rr-fundo--jornal {
+    --rr-leitura-texto: #2b241b;
+    --rr-leitura-titulo: #382319;
+    --rr-leitura-suave: #534233;
+    --rr-leitura-campo: #fffaf0;
+    --rr-leitura-campo-texto: #2a2018;
+    --rr-leitura-borda: #6e5140;
+    --rr-leitura-painel: rgba(255, 251, 239, .60);
+}
+
+.rr-moldura-alvo.rr-leitura-automatica {
+    color: var(--rr-leitura-texto);
+    color-scheme: light;
+}
+/* Respeitar os estilos de botões, marcadores e avisos com identidade própria. */
+.rr-moldura-alvo.rr-leitura-automatica :is(h1,h2,h3,h4,h5,h6,legend,.label-campo,.nome-traco,.cabecalho-tracos) {
+    color: var(--rr-leitura-titulo) !important;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(p,label:not(.marcador-dado),small,.resultado-rolagem,.bonus-distancia,.linha-check) {
+    color: var(--rr-leitura-texto) !important;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(.arma-municao-titulo,.texto-ajuda,.texto-secundario) {
+    color: var(--rr-leitura-suave) !important;
+}
+/* Textos inseridos/editados ficam sobre uma superfície uniforme e opaca. */
+.rr-moldura-alvo.rr-leitura-automatica :is(input[type='text'],input[type='number'],input[type='search'],input:not([type]),textarea,select) {
+    background: var(--rr-leitura-campo) !important;
+    color: var(--rr-leitura-campo-texto) !important;
+    border-color: var(--rr-leitura-borda) !important;
+    caret-color: var(--rr-leitura-campo-texto);
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(input[type='text'],input[type='number'],input[type='search'],input:not([type]),textarea,select)::placeholder {
+    color: var(--rr-leitura-placeholder, #685647) !important;
+    opacity: 1;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(input[type='text'],input[type='number'],input[type='search'],input:not([type]),textarea,select):focus-visible {
+    outline: 2px solid var(--rr-leitura-borda);
+    outline-offset: 1px;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(.cartao-rolagem,.cartao-arma,.barra-ferramentas) {
+    background-color: var(--rr-leitura-painel) !important;
+    border-color: var(--rr-leitura-borda) !important;
+}
+.rr-moldura-alvo.rr-leitura-automatica :is(.grupo-tracos,.grupo-caveiras) {
+    color: var(--rr-leitura-texto);
+}
+
+/* A janela vazia mostra a ilustração de referência da moldura. */
+.rr-retrato > .rr-retrato__foto:has(> img[src$="Placeholder.png"]),
+.rr-retrato > .rr-retrato__foto:has(> img[src$="fundoCinza.jpg"]) { background: transparent !important; }
+#personalizacao .rr-amostra-botao.rr-botao { --rr-altura: 35px; }
+
+.rr-retrato .imagem-exibida[src$="Placeholder.png"],
+.rr-retrato .imagem-exibida[src$="fundoCinza.jpg"] { opacity: 0 !important; }
+
+.rr-retrato > .rr-retrato__foto:has(> img[src$="retrato-vazio.svg"]) { background: transparent !important; }
+
+/* Marcadores legíveis sem alterar os estados dos checkboxes. */
+#personagem .rr-leitura-automatica .check-caveira {
+    background-color: var(--rr-leitura-texto) !important;
+}
+#personagem .rr-leitura-automatica .marcador-dado-visual {
+    background-image: var(--rr-gota-vazia, url('../../assets/icons/gota-contorno.svg'));
+    color: var(--rr-leitura-texto);
+}
+#personagem .rr-leitura-automatica .marcador-dado .check-tracos:checked + .marcador-dado-visual {
+    background-image: var(--rr-gota-cheia, url('../../assets/icons/gota-preenchida.svg'));
+    color: var(--rr-gota-numero-cheio, #fff4e1);
+}
+
+/* A superfície do quadro acompanha os campos editáveis em desktop e mobile. */
+.rr-moldura-alvo.rr-leitura-automatica .area-canvas {
+    background-color: var(--rr-leitura-campo) !important;
+    background-image: none !important;
+    border-color: var(--rr-leitura-borda);
+}
+#jogador .painel-quadro-jogador > .fragmento-quadro > .col {
+    background: transparent;
+}
+#quadro-rpg { background: transparent; }

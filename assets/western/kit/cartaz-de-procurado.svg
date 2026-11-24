@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <defs>
+        <pattern id="hachura-cartaz" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#1f140c" stroke-width="1.4" stroke-opacity="0.22"/>
+        </pattern>
+    </defs>
+    <rect x="18" y="10" width="204" height="220" rx="6" fill="#dfd0b4" stroke="#1f140c" stroke-width="4"/>
+    <rect x="18" y="196" width="204" height="34" rx="4" fill="url(#hachura-cartaz)"/>
+    <rect x="26" y="18" width="188" height="204" rx="3" fill="none" stroke="#1f140c" stroke-width="1.8"/>
+    <circle cx="31" cy="23" r="3.5" fill="#d9a738" stroke="#1f140c" stroke-width="2"/>
+    <circle cx="209" cy="23" r="3.5" fill="#d9a738" stroke="#1f140c" stroke-width="2"/>
+    <text x="120" y="45" text-anchor="middle" font-family="Rye, Georgia, serif" font-size="18" letter-spacing="1.5" fill="#1f140c">PROCURADO</text>
+    <line x1="36" y1="53" x2="204" y2="53" stroke="#1f140c" stroke-width="2.5"/>
+    <rect x="36" y="62" width="168" height="120" fill="#cbb794" stroke="#1f140c" stroke-width="3"/>
+    <rect x="42" y="68" width="156" height="108" fill="none" stroke="#1f140c" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <polygon points="36,62 52,62 36,78" fill="#bd5a2b" stroke="#1f140c" stroke-width="2"/>
+    <polygon points="204,62 188,62 204,78" fill="#bd5a2b" stroke="#1f140c" stroke-width="2"/>
+    <polygon points="36,182 52,182 36,166" fill="#bd5a2b" stroke="#1f140c" stroke-width="2"/>
+    <polygon points="204,182 188,182 204,166" fill="#bd5a2b" stroke="#1f140c" stroke-width="2"/>
+    <text x="120" y="118" text-anchor="middle" font-family="Rye, Georgia, serif" font-size="12" fill="#1f140c">SUA IMAGEM</text>
+    <text x="120" y="135" text-anchor="middle" font-family="Rye, Georgia, serif" font-size="12" fill="#1f140c">AQUI</text>
+    <line x1="36" y1="191" x2="204" y2="191" stroke="#1f140c" stroke-width="2.5"/>
+    <text x="120" y="211" text-anchor="middle" font-family="Rye, Georgia, serif" font-size="12" letter-spacing="1.2" fill="#1f140c">VIVO OU MORTO</text>
+</svg>

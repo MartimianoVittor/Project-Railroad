@@ -1,75 +1,91 @@
-import { criarGerenciadorElementos } from './elementos.js';
-import { criarFerramentas } from './ferramentas.js';
-import { criarCanvas } from './canvas.js';
-import { iniciarDesenho } from './desenho.js?v=1.4.5';
-import { iniciarImagens } from './imagens.js';
-export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
-    const canvas = document.getElementById('quadro-rpg');
-    const zonaDrop = document.getElementById('zona-drop');
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx || !zonaDrop) {
-        console.warn('Quadro não encontrado.');
-        return null;
+import { porId } from '../../utils/dom.js?v=1.4.18';
+import { criarCanvas } from './canvas.js?v=1.4.18';
+import { iniciarDesenho } from './desenho.js?v=1.4.18';
+import { criarGerenciadorElementos } from './elementos.js?v=1.4.18';
+import { criarFerramentas } from './ferramentas.js?v=1.4.18';
+import { iniciarImagens } from './imagens.js?v=1.4.18';
+
+function lerItem(container) {
+    const { tipo } = container.dataset;
+    const { left, top, width, height } = container.style;
+    const posicao = { tipo, left: left || '0px', top: top || '0px', width: width || '', height: height || '' };
+    if (tipo === 'texto') {
+        const campo = container.querySelector('.texto-conteudo');
+        return campo && {
+            ...posicao, texto: campo.textContent,
+            color: campo.style.color || '#000000', fontSize: campo.style.fontSize || '18px',
+        };
     }
-    const byId = id => document.getElementById(id);
-    const btnLapis = byId('btn-lapis'), btnBorracha = byId('btn-borracha'), btnTexto = byId('btn-texto'), btnMover = byId('btn-mover'), btnLimpar = byId('btn-limpar');
-    const seletorCor = byId('seletor-cor'), uploadMapa = byId('upload-mapa');
-    let ferramentas;
-    const obterModo = () => ferramentas?.obterModo() || 'lapis';
-    const selecionarFerramenta = (...args) => ferramentas?.selecionarFerramenta(...args);
-    const elementos = criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterModo, selecionarFerramenta, btnMover });
-    ferramentas = criarFerramentas({ canvas, ctx, zonaDrop, agendarSalvamento, btnLapis, btnBorracha, btnTexto, btnMover, btnLimpar, elementos, salvarDadosFicha });
-    const posicao = evento => { const r = zonaDrop.getBoundingClientRect(); return { x: evento.clientX - r.left, y: evento.clientY - r.top }; };
-    const canvasAPI = criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento });
-    iniciarDesenho({ canvas, ctx, zonaDrop, obterModo, obterPosicaoNoQuadro: posicao, criarElementoTexto: elementos.criarElementoTexto, seletorCor, agendarSalvamento });
-    iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem: elementos.criarElementoImagem, obterPosicaoNoQuadro: posicao });
-    canvasAPI.ajustarTamanhoCanvas();
-    if (!document.querySelector('.btn-oeste.ativo'))
-        ferramentas.selecionarFerramenta('lapis', btnLapis);
+    if (tipo === 'imagem') {
+        const imagem = container.querySelector('.imagem-conteudo');
+        return imagem && { ...posicao, src: imagem.getAttribute('src') || imagem.src };
+    }
+    return null;
+}
+
+export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
+    const canvas = porId('quadro-rpg');
+    const zonaDrop = porId('zona-drop');
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx || !zonaDrop) return null;
+
+    function obterPosicaoNoQuadro(evento) {
+        const area = zonaDrop.getBoundingClientRect();
+        return { x: evento.clientX - area.left, y: evento.clientY - area.top };
+    }
+
+    const botoes = Object.fromEntries(['lapis', 'borracha', 'texto', 'mover'].map((modo) => [modo, porId('btn-' + modo)]));
+    const desenho = criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento });
+    const obterModo = () => ferramentas.obterModo();
+    const elementos = criarGerenciadorElementos({
+        zonaDrop, agendarSalvamento, obterModo,
+        selecionarFerramenta: (modo) => ferramentas.selecionarFerramenta(modo),
+    });
+    const ferramentas = criarFerramentas({ canvas, zonaDrop, botoes, elementos, limparQuadro, salvarDadosFicha });
+    const cancelarTraco = iniciarDesenho({
+        canvas, ctx, obterModo, obterPosicaoNoQuadro, agendarSalvamento,
+        criarElementoTexto: elementos.criarElementoTexto, selecionarItem: elementos.selecionarItem,
+        seletorCor: porId('seletor-cor'),
+    });
+    const cancelarImagensPendentes = iniciarImagens({
+        zonaDrop, uploadMapa: porId('upload-mapa'), obterPosicaoNoQuadro,
+        criarElementoImagem: elementos.criarElementoImagem,
+    });
+
+    desenho.ajustarTamanhoCanvas();
     window.addEventListener('railroad:pagina-alterada', (evento) => {
         if (['jogador', 'quadro-mobile'].includes(evento.detail?.pagina))
-            requestAnimationFrame(canvasAPI.ajustarTamanhoCanvas);
+            requestAnimationFrame(desenho.ajustarTamanhoCanvas);
     });
-    if ('ResizeObserver' in window)
-        new ResizeObserver(canvasAPI.ajustarTamanhoCanvas).observe(zonaDrop);
-    else
-        window.addEventListener('resize', canvasAPI.ajustarTamanhoCanvas);
-    function coletarQuadro() {
-        const itensQuadro = elementos.obterItensMoveis().map(container => {
-            const tipo = container.dataset.tipo;
-            const dados = { tipo, left: container.style.left || '0px', top: container.style.top || '0px', width: container.style.width || '', height: container.style.height || '' };
-            if (tipo === 'texto') {
-                const t = container.querySelector('.texto-conteudo');
-                if (!t)
-                    return null;
-                dados.texto = t.textContent;
-                dados.color = t.style.color || '#000000';
-                dados.fontSize = t.style.fontSize || '18px';
-            }
-            else if (tipo === 'imagem') {
-                const i = container.querySelector('.imagem-conteudo');
-                if (!i)
-                    return null;
-                dados.src = i.getAttribute('src') || i.src;
-            }
-            else
-                return null;
-            return dados;
-        }).filter(Boolean);
-        return { desenhoCanvas: canvasAPI.obterImagem(), itensQuadro };
-    }
-    function restaurarQuadro(ficha) {
+    if ('ResizeObserver' in window) new ResizeObserver(desenho.ajustarTamanhoCanvas).observe(zonaDrop);
+    else window.addEventListener('resize', desenho.ajustarTamanhoCanvas);
+
+    function limparQuadro() {
+        cancelarTraco();
+        cancelarImagensPendentes();
+        desenho.carregarImagemNoCanvas(null);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvasAPI.carregarImagemNoCanvas(ficha.desenhoCanvas);
         elementos.limparElementosDoQuadro();
+    }
+
+    function restaurarQuadro(ficha) {
+        limparQuadro();
+        if (ficha.desenhoCanvas) desenho.carregarImagemNoCanvas(ficha.desenhoCanvas);
         for (const item of ficha.itensQuadro || []) {
-            if (!item || typeof item !== 'object')
-                continue;
-            if (item.tipo === 'texto' && typeof item.texto === 'string')
-                elementos.criarElementoTexto(item.texto, item.left || '0px', item.top || '0px', item.color || '#000000', item.fontSize || '18px', false);
-            else if (item.tipo === 'imagem' && typeof item.src === 'string' && item.src)
-                elementos.criarElementoImagem(item.src, item.left || '0px', item.top || '0px', item.width || '200px', item.height || 'auto', false);
+            if (!item) continue;
+            const x = item.left || '0px';
+            const y = item.top || '0px';
+            if (item.tipo === 'texto' && typeof item.texto === 'string') {
+                elementos.criarElementoTexto(item.texto, x, y, item.color || '#000000', item.fontSize || '18px', false);
+            } else if (item.tipo === 'imagem' && typeof item.src === 'string' && item.src) {
+                elementos.criarElementoImagem(item.src, x, y, item.width || '200px', item.height || 'auto', false);
+            }
         }
+    }
+
+    function coletarQuadro() {
+        const itensQuadro = elementos.obterItensMoveis().map(lerItem).filter(Boolean);
+        return { desenhoCanvas: desenho.obterImagem(), itensQuadro };
     }
     return { coletarQuadro, restaurarQuadro };
 }

@@ -1,0 +1,89 @@
+/* Base dos botões. Defina --rr-altura no botão para mudar a escala. */
+.rr-botao {
+  appearance: none;
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  vertical-align: middle;
+  min-block-size: var(--rr-h);
+  min-inline-size: min(100%, var(--rr-largura-minima));
+  max-inline-size: 100%;
+  padding: calc(var(--rr-h) * .2) var(--rr-espaco-direito)
+           calc(var(--rr-h) * .2) var(--rr-espaco-esquerdo);
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--rr-legenda);
+  font: 600 var(--rr-fonte-tamanho, 15px)/1.12 Rye, Georgia, serif;
+  letter-spacing: .045em;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-shadow: var(--rr-sombra-do-texto, none);
+  cursor: pointer;
+}
+.rr-botao::before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: solid transparent;
+  border-width: 0 var(--rr-ponta-direita) 0 var(--rr-ponta-esquerda);
+  border-image-source: var(--rr-desenho);
+  border-image-slice: var(--rr-recortes) fill;
+  border-image-repeat: round stretch;
+  filter: var(--rr-filtro, brightness(1)) drop-shadow(0 3px 0 #26190fd9);
+  pointer-events: none;
+}
+.rr-botao:hover:enabled:not([aria-pressed="true"]) { --rr-filtro: brightness(1.06); }
+.rr-botao:active:enabled { transform: translateY(2px); }
+.rr-botao:focus-visible { outline: 3px solid #a15129; outline-offset: 4px; }
+.rr-botao:disabled { opacity: .48; cursor: not-allowed; }
+
+/* Munição calibre 12 · kit-consolidado-melhores-versoes.html */
+.rr-botao--cartucho-12 {
+  --rr-h: var(--rr-altura, 58px);
+  --rr-largura-minima: calc(var(--rr-h) * 2.89655);
+  --rr-ponta-esquerda: calc(var(--rr-h) * 0.68966);
+  --rr-ponta-direita: calc(var(--rr-h) * 0.27586);
+  --rr-recortes: 0 16 0 40;
+  --rr-espaco-esquerdo: calc(var(--rr-h) * 0.79310);
+  --rr-espaco-direito: calc(var(--rr-h) * 0.41379);
+  --rr-legenda: #fff4dc;
+  --rr-sombra-do-texto: 0 2px 0 #1f140c;
+  --rr-desenho: url("../../assets/western/kit/cartucho-12.svg");
+}
+
+/* Faca Bowie · arsenal-botoes-western.html */
+.rr-botao--faca-bowie {
+  --rr-h: var(--rr-altura, 54px);
+  --rr-largura-minima: calc(var(--rr-h) * 4.01852);
+  --rr-ponta-esquerda: calc(var(--rr-h) * 1.25926);
+  --rr-ponta-direita: calc(var(--rr-h) * 0.83333);
+  --rr-recortes: 0 45 0 68;
+  --rr-espaco-esquerdo: calc(var(--rr-h) * 1.44444);
+  --rr-espaco-direito: calc(var(--rr-h) * 0.62963);
+  --rr-legenda: #1f140c;
+  --rr-desenho: url("../../assets/western/kit/faca-bowie.svg");
+}
+
+/* Munição .45: desenho da navegação existente, também usado na miniatura. */
+.rr-botao--cartucho-45 {
+ --rr-h: var(--rr-altura, 58px);
+ --rr-largura-minima: calc(var(--rr-h) * 2.8125);
+ --rr-ponta-esquerda: calc(var(--rr-h) * .32);
+ --rr-ponta-direita: calc(var(--rr-h) * .8);
+ --rr-recortes: 0 51 0 20;
+ --rr-espaco-esquerdo: calc(var(--rr-h) * .4);
+ --rr-espaco-direito: calc(var(--rr-h) * .85);
+ --rr-legenda: #1f140c;
+ --rr-desenho: url("../../assets/western/kit/cartucho-45.svg");
+}
+
+/* A seleção conserva a arte e as cores do estado normal. */
+.rr-botao:is([aria-pressed="true"], [aria-current="page"]) {
+  --rr-filtro: brightness(1);
+  transform: translateY(2px);
+}

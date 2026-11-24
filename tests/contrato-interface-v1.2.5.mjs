@@ -22,8 +22,9 @@ for (const id of ['btn-conta', 'btn-minhas-fichas', 'btn-fichas-locais']) {
 }
 assert.doesNotMatch(index, /data-include="html\/sidebar\.html"/);
 
-const gestor = ler('js/modules/fichas.js');
+const gestor = ler('js/modules/fichas/eventos.js');
 const escutados = [...gestor.matchAll(/escutar\('([^']+)'/g)].map((resultado) => resultado[1]);
+assert.ok(escutados.length >= 10, 'Os eventos dos painéis devem ser verificados.');
 for (const id of escutados)
     assert.ok(idsUnicos.has(id), `O JavaScript utiliza #${id}, ausente no HTML.`);
 
@@ -37,9 +38,14 @@ for (const painel of ['conta', 'fichas', 'locais']) {
 const carregador = ler('js/includes.js');
 assert.match(carregador, /Promise\.allSettled/);
 assert.match(carregador, /cache: 'no-store'/);
-assert.match(carregador, /v=1\.4\.1/);
+const versaoCSS = index.match(/css\/main\.css\?v=([\d.]+)/)?.[1];
+const versaoJS = index.match(/js\/includes\.js\?v=([\d.]+)/)?.[1];
+assert.ok(versaoCSS);
+assert.equal(versaoCSS, versaoJS);
+assert.match(carregador, /script\.searchParams\.get\('v'\)/);
+assert.match(carregador, /urlDoProjeto\('\.\/main\.js', script\)/);
 assert.match(ler('js/main.js'), /fichas\.registrarEventos\(\)/);
 assert.match(ler('js/main.js'), /await Promise\.all/);
-assert.match(index, /js\/navegacao\.js\?v=1\.4\.0/);
+assert.match(index, new RegExp(`js/navegacao\\.js\\?v=${versaoJS.replaceAll('.', '\\.')}($|[\"&])`));
 
 console.log('OK: IDs únicos, botões presentes e painéis conectados ao JavaScript.');

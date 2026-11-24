@@ -5,7 +5,13 @@
  * dependem de uma segunda requisição para aparecerem.
  */
 (async () => {
-    const VERSAO = '1.4.10';
+    const script = new URL(document.currentScript.src, document.baseURI);
+    const revisao = script.searchParams.get('v');
+    function urlDoProjeto(caminho, base = document.baseURI) {
+        const url = new URL(caminho, base);
+        if (revisao) url.searchParams.set('v', revisao);
+        return url;
+    }
     const dialogosEssenciais = new Set([
         'html/dialogs/conta.html',
         'html/dialogs/fichas.html',
@@ -46,7 +52,7 @@
             if (!alvos.length) break;
             const resultados = await Promise.allSettled(alvos.map(async (alvo) => {
                 const caminho = alvo.dataset.include;
-                const resposta = await fetch(`${caminho}?v=${VERSAO}`, { cache: 'no-store' });
+                const resposta = await fetch(urlDoProjeto(caminho), { cache: 'no-store' });
                 if (!resposta.ok)
                     throw new Error(`Não foi possível carregar ${caminho} (HTTP ${resposta.status})`);
                 return { alvo, caminho, html: await resposta.text() };
@@ -87,7 +93,7 @@
         }
 
         window.dispatchEvent(new Event('railroad:fragmentos-carregados'));
-        await import('./main.js?v=1.4.16');
+        await import(urlDoProjeto('./main.js', script).href);
     } catch (erro) {
         avisoInicializacao(`Não foi possível iniciar o Railroad: ${erro.message}`);
     }

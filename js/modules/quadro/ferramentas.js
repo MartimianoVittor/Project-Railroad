@@ -1,66 +1,38 @@
-export function criarFerramentas({ canvas, ctx, zonaDrop, agendarSalvamento, btnLapis, btnBorracha, btnTexto, btnMover, btnLimpar, elementos, salvarDadosFicha }) {
-    let modoAtual = 'lapis';
-    const { selecionarItem, limparElementosDoQuadro, obterSelecionado } = elementos;
-    function selecionarFerramenta(modo, botaoAtivo) {
-        selecionarItem(null);
+export function criarFerramentas({ canvas, zonaDrop, botoes, elementos, limparQuadro, salvarDadosFicha }) {
+    let modoAtual;
+
+    function selecionarFerramenta(modo) {
+        elementos.selecionarItem(null);
         modoAtual = modo;
-        zonaDrop.closest('#jogador')?.querySelectorAll('.btn-oeste').forEach(botao => {
-            botao.classList.remove('ativo');
-        });
-        if (botaoAtivo) {
-            botaoAtivo.classList.add('ativo');
+        for (const [nome, botao] of Object.entries(botoes)) {
+            botao?.classList.toggle('ativo', nome === modo);
+            botao?.setAttribute('aria-pressed', String(nome === modo));
         }
-        if (modo === 'mover') {
-            zonaDrop.classList.add('modo-mover-ativo');
-            canvas.style.cursor = 'default';
-        }
-        else {
-            zonaDrop.classList.remove('modo-mover-ativo');
-            canvas.style.cursor =
-                modo === 'texto' ? 'text' : 'crosshair';
-        }
+        zonaDrop.classList.toggle('modo-mover-ativo', modo === 'mover');
+        canvas.style.cursor = modo === 'mover' ? 'default' : modo === 'texto' ? 'text' : 'crosshair';
     }
-    if (btnLapis) {
-        btnLapis.addEventListener('click', () => {
-            selecionarFerramenta('lapis', btnLapis);
-        });
+
+    for (const [modo, botao] of Object.entries(botoes)) {
+        botao?.addEventListener('click', () => selecionarFerramenta(modo));
     }
-    if (btnBorracha) {
-        btnBorracha.addEventListener('click', () => {
-            selecionarFerramenta('borracha', btnBorracha);
-        });
-    }
-    if (btnTexto) {
-        btnTexto.addEventListener('click', () => {
-            selecionarFerramenta('texto', btnTexto);
-        });
-    }
-    if (btnMover) {
-        btnMover.addEventListener('click', () => {
-            selecionarFerramenta('mover', btnMover);
-        });
-    }
-    if (btnLimpar) {
-        btnLimpar.addEventListener('click', () => {
-            const confirmar = confirm('Tem certeza de que deseja limpar todo o quadro tático?');
-            if (!confirmar)
-                return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            limparElementosDoQuadro();
-            salvarDadosFicha();
-        });
-    }
-    document.addEventListener('keydown', evento => {
-        const campoEmEdicao = evento.target.matches('input, textarea, select, [contenteditable="true"]');
-        if (campoEmEdicao)
-            return;
-        if (modoAtual === 'mover' &&
-            obterSelecionado() &&
-            (evento.key === 'Delete' || evento.key === 'Backspace')) {
-            obterSelecionado().remove();
-            selecionarItem(null);
-            salvarDadosFicha();
-        }
+    document.getElementById('btn-limpar')?.addEventListener('click', () => {
+        if (!confirm('Tem certeza de que deseja limpar todo o quadro tático?')) return;
+        limparQuadro();
+        salvarDadosFicha();
     });
+
+    document.addEventListener('keydown', (evento) => {
+        if (modoAtual !== 'mover' || !['Delete', 'Backspace'].includes(evento.key)) return;
+        if (evento.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+        if (zonaDrop.closest('[hidden], [inert]')) return;
+        const item = elementos.obterSelecionado();
+        if (!item) return;
+        evento.preventDefault();
+        item.remove();
+        elementos.selecionarItem(null);
+        salvarDadosFicha();
+    });
+
+    selecionarFerramenta('lapis');
     return { selecionarFerramenta, obterModo: () => modoAtual };
 }

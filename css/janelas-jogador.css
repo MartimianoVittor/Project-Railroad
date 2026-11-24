@@ -1,0 +1,59 @@
+/* A mesma textura, moldura e paleta dos cartões da ficha nos diálogos reais.
+   As amostras da Personalização preservam suas próprias classes e modelos. */
+dialog.painel-fichas.rr-moldura-alvo {
+    box-sizing: border-box;
+    background-color: var(--rr-textura-cor) !important;
+    background-image: var(--rr-textura-imagem) !important;
+    color: var(--rr-leitura-texto);
+    scrollbar-color: var(--rr-leitura-borda) transparent;
+    max-inline-size: calc(100vw - 20px);
+    max-block-size: calc(100dvh - 20px);
+}
+dialog.painel-fichas.rr-moldura-alvo .painel-fichas-cabecalho {
+    border-color: var(--rr-leitura-borda);
+    color: var(--rr-leitura-texto);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(h2,h3,h4,strong,.rr-opcao-nome) {
+    color: var(--rr-leitura-titulo);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(p,label,small,.dica-fichas,.informacoes-ficha small,
+        .envio-mesa small,.mensagem-conta) {
+    color: var(--rr-leitura-texto);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(.fechar-painel-fichas) {
+    color: var(--rr-leitura-titulo);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(input:not([type=radio]):not([type=checkbox]),textarea,select) {
+    background: var(--rr-leitura-campo);
+    color: var(--rr-leitura-campo-texto);
+    border-color: var(--rr-leitura-borda);
+    caret-color: var(--rr-leitura-campo-texto);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(input,textarea)::placeholder {
+    color: var(--rr-leitura-placeholder,var(--rr-leitura-suave));
+    opacity: 1;
+}
+dialog.painel-fichas.rr-moldura-alvo :is(.linha-ficha,.cartao-convite-mesa,
+    .codigo-jogador-mesa,.envio-mesa,.status-mesa) {
+    background: var(--rr-leitura-painel);
+    border-color: var(--rr-leitura-borda);
+    color: var(--rr-leitura-texto);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(.dica-fichas,.status-mesa,.informacoes-ficha small) {
+    color: var(--rr-leitura-suave);
+}
+dialog.painel-fichas.rr-moldura-alvo :is(.form-criar-ficha input,.seletor-ficha-mesa) {
+    color: var(--rr-leitura-campo-texto);
+}
+dialog.painel-fichas.rr-moldura-alvo .btn-oeste-perigo {
+    background: #8b252d;
+    color: #fff4e2;
+    border-color: #632027;
+}
+/* A área ilustrativa simula cada escolha: não herda molduras extras. */
+#personalizacao .rr-previa-cartao {
+    color: var(--rr-leitura-texto,#342519);
+}
+@media (max-width: 700px) {
+    dialog.painel-fichas.rr-moldura-alvo { padding: 12px; }
+}

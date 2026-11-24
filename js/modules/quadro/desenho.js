@@ -1,51 +1,53 @@
-export function iniciarDesenho({ canvas, ctx, zonaDrop, obterModo, obterPosicaoNoQuadro, criarElementoTexto, seletorCor, agendarSalvamento }) {
-    let desenhando = false;
-    const modoAtualProxy = () => obterModo();
-    canvas.addEventListener('pointerdown', evento => {
-        if (evento.button !== 0)
-            return;
-        if (modoAtualProxy() === 'mover') {
+export function iniciarDesenho({
+    canvas, ctx, obterModo, obterPosicaoNoQuadro, criarElementoTexto, selecionarItem, seletorCor, agendarSalvamento,
+}) {
+    let ponteiroAtivo = null;
+
+    canvas.addEventListener('pointerdown', (evento) => {
+        if (evento.button !== 0 || ponteiroAtivo !== null) return;
+        const modo = obterModo();
+        if (modo === 'mover') {
             selecionarItem(null);
             return;
         }
         const { x, y } = obterPosicaoNoQuadro(evento);
-        if (modoAtualProxy() === 'texto') {
-            const texto = prompt('Digite o texto para inserir no quadro:');
-            if (texto && texto.trim()) {
-                criarElementoTexto(texto.trim(), `${x}px`, `${y}px`, seletorCor ? seletorCor.value : '#000000');
-            }
+        if (modo === 'texto') {
+            const texto = prompt('Digite o texto para inserir no quadro:')?.trim();
+            if (texto) criarElementoTexto(texto, x + 'px', y + 'px', seletorCor?.value || '#000000');
             return;
         }
-        desenhando = true;
-        canvas.setPointerCapture(evento.pointerId);
+        ponteiroAtivo = evento.pointerId;
+        canvas.setPointerCapture(ponteiroAtivo);
         ctx.beginPath();
         ctx.moveTo(x, y);
     });
-    canvas.addEventListener('pointermove', evento => {
-        if (!desenhando)
-            return;
+
+    canvas.addEventListener('pointermove', (evento) => {
+        if (evento.pointerId !== ponteiroAtivo) return;
         const { x, y } = obterPosicaoNoQuadro(evento);
-        ctx.lineWidth = modoAtualProxy() === 'borracha' ? 20 : 3;
+        const apagar = obterModo() === 'borracha';
+        ctx.save();
+        ctx.lineWidth = apagar ? 20 : 3;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        // Apagar pixels, em vez de pintar com a antiga cor do fundo.
-        ctx.save();
-        ctx.globalCompositeOperation = modoAtualProxy() === 'borracha' ? 'destination-out' : 'source-over';
-        ctx.strokeStyle = modoAtualProxy() === 'borracha' ? '#000000' : (seletorCor ? seletorCor.value : '#000000');
+        ctx.globalCompositeOperation = apagar ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = apagar ? '#000000' : (seletorCor?.value || '#000000');
         ctx.lineTo(x, y);
         ctx.stroke();
         ctx.restore();
         ctx.beginPath();
         ctx.moveTo(x, y);
     });
-    function finalizarDesenho() {
-        if (!desenhando)
-            return;
-        desenhando = false;
+
+    function finalizar(evento) {
+        if (evento.pointerId !== ponteiroAtivo) return;
+        ponteiroAtivo = null;
         ctx.closePath();
         agendarSalvamento();
     }
-    canvas.addEventListener('pointerup', finalizarDesenho);
-    canvas.addEventListener('pointercancel', finalizarDesenho);
-    canvas.addEventListener('lostpointercapture', finalizarDesenho);
+
+    canvas.addEventListener('pointerup', finalizar);
+    canvas.addEventListener('pointercancel', finalizar);
+    canvas.addEventListener('lostpointercapture', finalizar);
+    return () => { ponteiroAtivo = null; };
 }

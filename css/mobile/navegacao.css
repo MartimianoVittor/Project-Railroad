@@ -1,0 +1,169 @@
+/* Railroad Mobile v3 — abas são TELAS, não âncoras em uma página longa. */
+@media (max-width: 768px) {
+    :root {
+        --largura-sidebar: 0px;
+    }
+
+    html {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+        scroll-behavior: auto;
+    }
+
+    body {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin: 0;
+        padding-left: 0 !important;
+        overflow-x: hidden !important;
+        padding-bottom: calc(70px + env(safe-area-inset-bottom,0px));
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    #slot-sidebar, .barra-lateral {
+        display: none !important;
+    }
+
+    /* Oculta telas inativas inclusive seus conteúdos; impede Inventário aparecer em Quadro. */
+    #jogador, #personagem, #quadro-mobile, #inventario {
+        display: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #jogador.tela-mobile-ativa, #personagem.tela-mobile-ativa,
+  #quadro-mobile.tela-mobile-ativa, #inventario.tela-mobile-ativa {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch;
+    }
+
+    #jogador > .col, #personagem > .col, #inventario > .col, #quadro-mobile > .col {
+        flex: 0 0 auto;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 12px !important;
+        margin: 0 !important;
+    }
+
+    #jogador > .col {
+        border: 0 !important;
+    }
+
+    #quadro-mobile {
+        min-height: calc(100dvh - 72px) !important;
+    }
+
+    #quadro-mobile > .col {
+        min-height: calc(100dvh - 84px) !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #quadro-mobile .barra-ferramentas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    #quadro-mobile .barra-ferramentas button, #quadro-mobile .barra-ferramentas label {
+        min-height: 40px;
+    }
+
+    #quadro-mobile .area-canvas {
+        flex: 1 1 auto;
+        height: clamp(300px,65dvh,900px);
+        min-height: 300px;
+        width: 100%;
+        max-width: 100%;
+        touch-action: none;
+    }
+
+    #jogador textarea {
+        min-height: 76px !important;
+        height: 100px;
+        max-height: 55dvh;
+        resize: vertical;
+    }
+
+    #inventario .inventario-itens, #inventario .inventario-cabecalho {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #inventario .tabela-itens-rolagem {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    #inventario .tabela-itens input {
+        min-width: 0 !important;
+        max-width: 100%;
+    }
+
+    .navegacao-mobile {
+        grid-template-columns: repeat(5,minmax(0,1fr)) !important;
+        width: 100%;
+    }
+
+    .aba-mobile {
+        font-size: clamp(9px,2.3vw,11px);
+    }
+
+}
+
+@media (max-width:768px) and (orientation:landscape) {
+    body {
+        padding-bottom: calc(50px + env(safe-area-inset-bottom,0px));
+    }
+
+    .navegacao-mobile {
+        min-height: 44px !important;
+        padding: 2px 4px calc(2px + env(safe-area-inset-bottom,0px)) !important;
+    }
+
+    .aba-mobile {
+        min-height: 38px !important;
+        flex-direction: row;
+        gap: 4px;
+        font-size: 10px;
+    }
+
+    .aba-mobile > span:first-child {
+        font-size: 17px;
+    }
+
+    #quadro-mobile {
+        min-height: calc(100dvh - 52px) !important;
+    }
+
+    #quadro-mobile > .col {
+        min-height: calc(100dvh - 62px) !important;
+    }
+
+    #quadro-mobile .area-canvas {
+        min-height: 170px;
+        height: 55dvh;
+    }
+
+}

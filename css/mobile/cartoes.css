@@ -1,0 +1,140 @@
+/* Retratos padronizados no celular; preserva moldura do Personagem. */
+@media (max-width: 768px) {
+    #jogador .label-retrato, #personagem .label-retrato {
+        width: min(65vw, 200px);
+        max-width: 200px;
+        aspect-ratio: 1 / 1;
+        margin-inline: auto;
+    }
+
+    #jogador .circulo-interno {
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+    }
+
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    #jogador .label-retrato, #personagem .label-retrato {
+        width: min(35vh, 155px);
+        max-width: 155px;
+    }
+
+}
+
+/* Inventário mobile: itens em cartões e resumo abaixo da lista. */
+@media (max-width: 768px) {
+    #inventario .local-item-controles {
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    #inventario .botao-local-item {
+        flex-basis: 44px;
+        height: 44px;
+        background-size: 30px 30px;
+    }
+
+    #inventario .inventario-resumo {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 16px;
+        padding-bottom: 90px;
+    }
+
+    #inventario .inventario-resumo-campo input {
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+}
+
+/* Inventário mobile: a primeira célula agrupa chapéu e alforge. */
+@media (max-width: 768px) {
+    #inventario .tabela-itens tr {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #inventario .tabela-itens td:nth-child(1) {
+        grid-column: 1 / -1;
+        padding: 8px;
+        border: 1px solid #a98763;
+        border-radius: 4px;
+        background: rgba(255, 247, 233, .45);
+    }
+
+    #inventario .tabela-itens td:nth-child(1)::before { content: 'Local'; }
+    #inventario .tabela-itens td:nth-child(2) { grid-column: 1 / -1; }
+    #inventario .tabela-itens td:nth-child(2)::before { content: 'Item'; }
+    #inventario .tabela-itens td:nth-child(3)::before { content: 'Quantidade'; }
+    #inventario .tabela-itens td:nth-child(4)::before { content: 'Tamanho'; }
+    #inventario .tabela-itens td:nth-child(5) { grid-column: 1 / -1; }
+    #inventario .tabela-itens td:nth-child(5)::before { content: 'Descrição'; }
+    #inventario .tabela-itens td:nth-child(6) {
+        grid-column: 1 / -1;
+        text-align: right;
+    }
+    #inventario .tabela-itens td:nth-child(6)::before { content: none; }
+
+    #inventario .local-item-controles {
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    #inventario .botao-local-item {
+        width: 48px;
+        height: 48px;
+        background-size: 38px 38px;
+    }
+}
+
+/* Ícones e nomes dos traços legíveis no mobile. */
+@media (max-width: 768px) {
+    #inventario .botao-local-item { background-size: 36px 36px; }
+    #personagem .linha-traco .nome-traco { font-size: clamp(15px, 3.9vw, 19px); line-height: 1.12; }
+}
+
+/* ==========================================
+   INVENTÁRIO - CARD DE CAPACIDADE MOBILE
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    #inventario .inventario-resumo {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+
+        width: 100%;
+        padding: 14px;
+        box-sizing: border-box;
+
+        background-color: #f5e8d0;
+        border: 2px solid #76543b;
+        border-radius: 8px;
+    }
+
+    #inventario .inventario-resumo-campo {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        min-width: 0;
+        gap: 6px;
+    }
+
+    #inventario .inventario-resumo-campo span {
+        display: block;
+        min-height: 32px;
+        font-size: 11px;
+        line-height: 16px;
+        text-align: center;
+        color: #4b2e1c;
+    }
+
+    #inventario .inventario-resumo-campo input {
+        width: 100%;
+        min-width: 0;
+        height: 40px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}

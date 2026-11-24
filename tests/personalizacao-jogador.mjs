@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { lerEstilos } from './apoio/estilos.mjs';
 import { OPCOES_VISUAIS, validarPreferencias, migrarPreferenciasAnteriores } from '../js/modules/personalizacao.js';
 
 const ler = (caminho) => readFileSync(new URL(`../${caminho}`, import.meta.url), 'utf8');
@@ -7,9 +8,10 @@ const index = ler('index.html');
 const conta = ler('html/dialogs/conta.html');
 const fragmento = ler('html/personalizacao.html');
 const navegacao = ler('js/navegacao.js');
-const cssKit = ler('css/kit-western.css');
-const cssIntegracao = ler('css/personalizacao.css');
-const js = ler('js/modules/personalizacao.js');
+const cssKit = lerEstilos('css/kit-western.css');
+const cssIntegracao = lerEstilos('css/personalizacao.css');
+const js = ['personalizacao.js', 'aparencia/preferencias.js', 'aparencia/visual.js']
+    .map((arquivo) => ler('js/modules/' + arquivo)).join('\n');
 
 assert.match(conta, /<dialog id="personalizacao"/);
 assert.match(conta, /data-include="html\/personalizacao.html"/);
@@ -28,7 +30,8 @@ assert.match(js, /railroad_jogador_aparencia_v1/);
 for (const id of ['botao-cartucho-12', 'botao-faca-bowie', 'retrato-camafeu-de-latao', 'fundo-tabua', 'borda-filete']) {
     assert.match(cssKit, new RegExp(`rr-(?:botao|retrato|fundo|borda)--${id.replace(/^(botao|retrato|fundo|borda)-/, '')}`));
 }
-assert.match(cssIntegracao, /rr-moldura-alvo\.rr-fundo--tabua/);
+assert.match(cssIntegracao, /rr-moldura-alvo\[class\*="rr-fundo--"\]/);
+assert.match(cssIntegracao, /background-image: var\(--rr-textura-imagem\) !important/);
 assert.match(cssIntegracao, /rr-moldura-alvo\.rr-borda--latonada/);
 assert.deepEqual(validarPreferencias({
     botao: 'faca-bowie', retratoJogador: 'estrela-de-xerife',
@@ -67,6 +70,9 @@ assert.match(js, /cartao\.classList\.add\('rr-leitura-automatica'\)/);
 assert.match(cssIntegracao, /\.rr-leitura-automatica :is\(input\[type='text'\]/);
 for (const [identificador] of OPCOES_VISUAIS.fundoCartao) {
     if (identificador === 'padrao') continue;
+    const textura = cssKit.match(new RegExp(`\\.rr-fundo--${identificador} \\{([^}]*)\\}`));
+    assert.ok(textura?.[1].includes('--rr-textura-cor:'));
+    assert.ok(textura?.[1].includes('--rr-textura-imagem:'));
     const bloco = cssIntegracao.match(new RegExp(`\\.rr-leitura-automatica\\.rr-fundo--${identificador} \\{([^}]*)\\}`));
     assert.ok(bloco, `Paleta ausente para ${identificador}`);
     for (const variavel of ['--rr-leitura-texto','--rr-leitura-titulo','--rr-leitura-campo','--rr-leitura-campo-texto']) {

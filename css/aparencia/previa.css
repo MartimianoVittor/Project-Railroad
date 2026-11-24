@@ -1,0 +1,56 @@
+/* Prévia isolada: reutiliza as mesmas variantes do kit e paletas dos cartões. */
+/* Cabeçalho e prévia fixos; somente a lista de opções possui rolagem. */
+#personalizacao.rr-configuracoes-visuais[open] {
+    box-sizing: border-box;
+    height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#personalizacao > header, #personalizacao > .rr-status-aparencia { flex: none; }
+#personalizacao > .rr-personalizacao-corpo, #personalizacao .rr-personalizacao-conteudo {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+}
+#personalizacao .rr-editor-visual {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    grid-template-rows: minmax(0, 1fr); gap: 14px;
+}
+#personalizacao .rr-personalizacao-secoes {
+    min-height: 0; min-width: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; grid-auto-rows: max-content;
+    align-content: start; padding: 4px 8px 8px 4px;
+}
+#personalizacao .rr-previa { min-width: 0; min-height: 0; background: #f4eccf; padding: 4px; display: flex; flex-direction: column; }
+#personalizacao .rr-previa h3 { margin: 0 0 6px; font-size: 15px; }
+.rr-previa-tela { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 8px; border: 1px solid #6b4630; border-radius: 6px; }
+.rr-previa-nav { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; justify-items: center; margin-bottom: 6px; }
+.rr-previa-nav .rr-botao { --rr-altura: 30px; font-size: 10px; width: 100%; min-inline-size: 0; }
+.rr-previa-nav .rr-previa-ativa { transform: translate(2px,-2px); }
+.rr-previa-cartao { flex: 1; min-height: 0; align-content: space-evenly; padding: 12px; display: grid; gap: 5px; min-width: 0; font-size: 12px; }
+.rr-previa-cartao h4, .rr-previa-cartao p { margin: 0; }
+.rr-previa-cartao label { display: grid; gap: 2px; }
+.rr-previa-cartao :is(input,textarea) { width: 100%; box-sizing: border-box; padding: 4px; border: 1px solid; border-radius: 3px; font-size: 12px; min-height: 0; }
+.rr-previa-cartao textarea { height: 32px; resize: none; }
+.rr-previa-retratos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; }
+.rr-previa-retratos .rr-retrato { --rr-tamanho: 100%; width: 100%; max-width: min(155px, 19dvh); margin: auto; }
+.rr-previa-icones { display: flex; gap: 4px; }
+.rr-previa-icones span { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+.rr-previa-cartao .cartao-rolagem, .rr-previa-quadro { padding: 5px; border: 1px solid var(--rr-leitura-borda); border-radius: 4px; box-sizing: border-box; }
+@media (max-width: 700px) {
+    #personalizacao.rr-configuracoes-visuais[open] { height: 96dvh; max-height: 96dvh; padding: 8px; }
+    #personalizacao .painel-fichas-cabecalho { gap: 4px; padding-bottom: 5px; }
+    #personalizacao .painel-fichas-cabecalho h2 { font-size: 18px; }
+    #personalizacao .rr-editor-visual { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0, 1.1fr) minmax(0, 1fr); gap: 6px; }
+    .rr-previa-nav .rr-botao { --rr-altura: 25px; font-size: 8px; }
+    .rr-previa-cartao { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 9px; gap: 4px; }
+    .rr-previa-retratos, .rr-previa-cartao h4, .rr-previa-icones { grid-column: 1 / -1; }
+    .rr-previa-retratos .rr-retrato { max-width: min(64px, 9dvh); }
+    .rr-previa-cartao textarea { height: 26px; }
+}
+@media (max-height: 620px) {
+    .rr-previa-retratos .rr-retrato { max-width: 44px; }
+    .rr-previa-cartao { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3px; padding: 8px; }
+    .rr-previa-retratos, .rr-previa-cartao h4, .rr-previa-icones { grid-column: 1 / -1; }
+    .rr-previa-cartao textarea { height: 26px; }
+    .rr-previa-nav { margin-bottom: 4px; }
+}

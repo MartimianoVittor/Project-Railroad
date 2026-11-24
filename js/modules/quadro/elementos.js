@@ -1,4 +1,4 @@
-export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterModo, selecionarFerramenta, btnMover }) {
+export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterModo, selecionarFerramenta }) {
     let itemSelecionado = null;
     const obterItensMoveis = () => Array.from(zonaDrop.querySelectorAll('.item-movel'));
     const selecionarItem = elemento => {
@@ -7,8 +7,11 @@ export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterMo
         if (itemSelecionado)
             itemSelecionado.classList.add('selecionado');
     };
-    const limparElementosDoQuadro = () => { obterItensMoveis().forEach(item => item.remove()); selecionarItem(null); };
-    const modoAtualProxy = () => obterModo();
+    function limparElementosDoQuadro() {
+        obterItensMoveis().forEach((item) => item.remove());
+        selecionarItem(null);
+    }
+
     function configurarItemInterativo(container, tipo) {
         container.dataset.tipo = tipo;
         const alca = document.createElement('div');
@@ -22,12 +25,11 @@ export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterMo
         let inicioLeft = 0;
         let inicioTop = 0;
         let inicioWidth = 0;
-        let inicioHeight = 0;
         let inicioFonte = 0;
         let proporcao = 1;
         let ponteiroId = null;
         container.addEventListener('pointerdown', evento => {
-            if (modoAtualProxy() !== 'mover' || evento.target === alca)
+            if (obterModo() !== 'mover' || evento.target === alca || ponteiroId !== null)
                 return;
             if (evento.button !== 0)
                 return;
@@ -43,7 +45,7 @@ export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterMo
             container.setPointerCapture(ponteiroId);
         });
         alca.addEventListener('pointerdown', evento => {
-            if (modoAtualProxy() !== 'mover' || evento.button !== 0)
+            if (obterModo() !== 'mover' || evento.button !== 0 || ponteiroId !== null)
                 return;
             evento.preventDefault();
             evento.stopPropagation();
@@ -53,9 +55,8 @@ export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterMo
             inicioX = evento.clientX;
             inicioY = evento.clientY;
             inicioWidth = container.offsetWidth;
-            inicioHeight = container.offsetHeight;
             proporcao = inicioWidth > 0
-                ? inicioHeight / inicioWidth
+                ? container.offsetHeight / inicioWidth
                 : 1;
             if (tipo === 'texto') {
                 const texto = container.querySelector('.texto-conteudo');
@@ -120,7 +121,7 @@ export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterMo
         zonaDrop.appendChild(container);
         configurarItemInterativo(container, 'texto');
         if (ativarMover) {
-            selecionarFerramenta('mover', btnMover);
+            selecionarFerramenta('mover');
             selecionarItem(container);
             agendarSalvamento();
         }
@@ -144,7 +145,7 @@ export function criarGerenciadorElementos({ zonaDrop, agendarSalvamento, obterMo
         zonaDrop.appendChild(container);
         configurarItemInterativo(container, 'imagem');
         if (ativarMover) {
-            selecionarFerramenta('mover', btnMover);
+            selecionarFerramenta('mover');
             selecionarItem(container);
             agendarSalvamento();
         }

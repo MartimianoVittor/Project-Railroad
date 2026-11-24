@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rye&family=Smokum&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css?v=1.4.16">
+    <link rel="stylesheet" href="css/main.css?v=1.4.18">
     <title>Railroad RPG — Jogador</title>
 </head>
 <body class="entrada-pendente">
@@ -21,7 +21,7 @@
             <p id="entrada-jogador-status" role="status" aria-live="polite">Verificando sua sessão…</p>
         </div>
     </section>
-    <script src="js/entrada.js?v=1.3.4" defer></script>
+    <script src="js/entrada.js?v=1.4.18" defer></script>
     <!-- Barra lateral é parte fixa da aplicação: disponível antes dos fragmentos. -->
     <aside class="barra-lateral" aria-label="Menu do jogador">
         <div class="marca-jogador">
@@ -30,79 +30,25 @@
         </div>
     
         <nav class="menu-navegacao" aria-label="Páginas da ficha">
-            <a href="#jogador" class="btn-nav btn-cartucho ativa" data-aba="jogador" aria-current="page"><svg class="cartucho-svg" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                    <defs>
-                        <pattern id="hachura-cartucho-jogador" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                            <path d="M0 0V7" stroke="#28170d" stroke-width="2" stroke-opacity=".32" />
-                        </pattern>
-                        <pattern id="hachura-cartucho-jogador-ativa-jogador" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                            <path d="M0 0V7" stroke="#f5d376" stroke-width="2" stroke-opacity=".23" />
-                        </pattern>
-                        <clipPath id="recorte-cartucho-jogador">
-                            <path d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" />
-                        </clipPath>
-                    </defs>
-                    <path class="cartucho-sombra" d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" transform="translate(0 2)" />
-                    <g class="cartucho-corpo" clip-path="url(#recorte-cartucho-jogador)">
-                        <path class="c-estojo" d="M0 0H129V64H0Z" />
-                        <path class="c-ogiva" d="M129 0H180V64H129Z" />
-                        <path class="c-estojo-luz" d="M0 0H129V16H0Z" />
-                        <path class="c-ogiva-luz" d="M129 0H180V16H129Z" />
-                        <path class="cartucho-hachura" d="M2 36 C8 43 15 43 22 43 H129 C153 43 175 36 178 34 V64 H2Z" />
-                        <path class="c-juncao" d="M129 0V64" />
-                        <path class="c-culote" d="M12 0H18V64H12Z" />
-                    </g>
-                    <path class="c-contorno" d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" />
-                </svg><span class="cartucho-texto">Jogador</span></a>
+            <a href="#jogador" class="btn-nav btn-cartucho ativa" data-aba="jogador" aria-current="page">
+                <svg class="cartucho-svg" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <use href="assets/western/kit/cartucho-menu.svg#cartucho-menu"></use>
+                </svg>
+                <span class="cartucho-texto">Jogador</span>
+            </a>
 
-            <a href="#personagem" class="btn-nav btn-cartucho" data-aba="personagem"><svg class="cartucho-svg" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                    <defs>
-                        <pattern id="hachura-cartucho-personagem" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                            <path d="M0 0V7" stroke="#28170d" stroke-width="2" stroke-opacity=".32" />
-                        </pattern>
-                        <pattern id="hachura-cartucho-personagem-ativa-personagem" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                            <path d="M0 0V7" stroke="#f5d376" stroke-width="2" stroke-opacity=".23" />
-                        </pattern>
-                        <clipPath id="recorte-cartucho-personagem">
-                            <path d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" />
-                        </clipPath>
-                    </defs>
-                    <path class="cartucho-sombra" d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" transform="translate(0 2)" />
-                    <g class="cartucho-corpo" clip-path="url(#recorte-cartucho-personagem)">
-                        <path class="c-estojo" d="M0 0H129V64H0Z" />
-                        <path class="c-ogiva" d="M129 0H180V64H129Z" />
-                        <path class="c-estojo-luz" d="M0 0H129V16H0Z" />
-                        <path class="c-ogiva-luz" d="M129 0H180V16H129Z" />
-                        <path class="cartucho-hachura" d="M2 36 C8 43 15 43 22 43 H129 C153 43 175 36 178 34 V64 H2Z" />
-                        <path class="c-juncao" d="M129 0V64" />
-                        <path class="c-culote" d="M12 0H18V64H12Z" />
-                    </g>
-                    <path class="c-contorno" d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" />
-                </svg><span class="cartucho-texto">Personagem</span></a>
-            <a href="#inventario" class="btn-nav btn-cartucho" data-aba="inventario"><svg class="cartucho-svg" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                    <defs>
-                        <pattern id="hachura-cartucho-inventario" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                            <path d="M0 0V7" stroke="#28170d" stroke-width="2" stroke-opacity=".32" />
-                        </pattern>
-                        <pattern id="hachura-cartucho-inventario-ativa-inventario" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                            <path d="M0 0V7" stroke="#f5d376" stroke-width="2" stroke-opacity=".23" />
-                        </pattern>
-                        <clipPath id="recorte-cartucho-inventario">
-                            <path d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" />
-                        </clipPath>
-                    </defs>
-                    <path class="cartucho-sombra" d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" transform="translate(0 2)" />
-                    <g class="cartucho-corpo" clip-path="url(#recorte-cartucho-inventario)">
-                        <path class="c-estojo" d="M0 0H129V64H0Z" />
-                        <path class="c-ogiva" d="M129 0H180V64H129Z" />
-                        <path class="c-estojo-luz" d="M0 0H129V16H0Z" />
-                        <path class="c-ogiva-luz" d="M129 0H180V16H129Z" />
-                        <path class="cartucho-hachura" d="M2 36 C8 43 15 43 22 43 H129 C153 43 175 36 178 34 V64 H2Z" />
-                        <path class="c-juncao" d="M129 0V64" />
-                        <path class="c-culote" d="M12 0H18V64H12Z" />
-                    </g>
-                    <path class="c-contorno" d="M7 2 H129 C151 2 178 17 178 32 C178 47 151 62 129 62 H7 Q2 62 2 57 V7 Q2 2 7 2Z" />
-                </svg><span class="cartucho-texto">Inventário</span></a>
+            <a href="#personagem" class="btn-nav btn-cartucho" data-aba="personagem">
+                <svg class="cartucho-svg" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <use href="assets/western/kit/cartucho-menu.svg#cartucho-menu"></use>
+                </svg>
+                <span class="cartucho-texto">Personagem</span>
+            </a>
+            <a href="#inventario" class="btn-nav btn-cartucho" data-aba="inventario">
+                <svg class="cartucho-svg" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <use href="assets/western/kit/cartucho-menu.svg#cartucho-menu"></use>
+                </svg>
+                <span class="cartucho-texto">Inventário</span>
+            </a>
         </nav>
     
         <div class="acoes-ficha-aside">
@@ -133,7 +79,7 @@
         </div>
     </aside>
 
-    <main id="area-fichas" aria-label="Fichas do jogador">
+    <main id="area-fichas" aria-label="Fichas do jogador" inert>
         <section id="jogador" class="pagina-ficha ativa" aria-label="Jogador e quadro de ideias">
             <div data-include="html/jogador.html" class="fragmento-coluna"></div>
             <div id="alvo-quadro-desktop" class="painel-quadro-jogador">
@@ -168,7 +114,7 @@
     <div data-include="html/dialogs/conta.html"></div>
     <div data-include="html/dialogs/local.html"></div>
 
-    <script src="js/navegacao.js?v=1.4.0"></script>
-    <script src="js/includes.js?v=1.4.16"></script>
+    <script src="js/navegacao.js?v=1.4.18"></script>
+    <script src="js/includes.js?v=1.4.18"></script>
 </body>
 </html>

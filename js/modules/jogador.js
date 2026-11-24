@@ -1,39 +1,23 @@
-import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js';
-export function iniciarJogador(agendarSalvamento) {
-    const inputFoto = document.getElementById('escolher-foto-jogador');
-    const fotoJogador = document.getElementById('foto-jogador');
-    const campos = ['nome-jogador', 'apelido-jogador', 'bio-jogador'].map(id => document.getElementById(id));
-    inputFoto?.addEventListener('change', async (evento) => {
-        const arquivo = evento.target.files?.[0];
-        if (!arquivo)
-            return;
-        if (!arquivo.type.startsWith('image/')) {
-            alert('Selecione uma imagem válida.');
-            inputFoto.value = '';
-            return;
-        }
-        try {
-            if (fotoJogador)
-                fotoJogador.src = await arquivoParaDataURL(arquivo);
-            agendarSalvamento();
-        }
-        catch (erro) {
-            mostrarErro('Não foi possível carregar a foto.', erro);
-        }
-    });
-    campos.forEach(c => c?.addEventListener('input', agendarSalvamento));
+import { porId } from '../utils/dom.js?v=1.4.18';
+import { criarRetrato } from './retrato.js?v=1.4.18';
+
+const retrato = criarRetrato('jogador');
+const CAMPOS = [['nome-jogador', 'nome'], ['apelido-jogador', 'apelido'], ['bio-jogador', 'bio']];
+
+export function iniciarJogador(agendar) {
+    retrato.observar(agendar);
+    for (const [id] of CAMPOS) porId(id)?.addEventListener('input', agendar);
 }
+
 export function coletarJogador() {
-    return { nome: document.getElementById('nome-jogador')?.value || '', apelido: document.getElementById('apelido-jogador')?.value || '',
-        bio: document.getElementById('bio-jogador')?.value || '', fotoPerfil: document.getElementById('foto-jogador')?.getAttribute('src') || '' };
+    const dados = Object.fromEntries(CAMPOS.map(([id, chave]) => [chave, porId(id)?.value || '']));
+    return { ...dados, fotoPerfil: retrato.coletar() };
 }
+
 export function restaurarJogador(ficha) {
-    for (const [id, chave] of [['nome-jogador', 'nome'], ['apelido-jogador', 'apelido'], ['bio-jogador', 'bio']]) {
-        const el = document.getElementById(id);
-        if (el)
-            el.value = typeof ficha[chave] === 'string' ? ficha[chave] : '';
+    for (const [id, chave] of CAMPOS) {
+        const campo = porId(id);
+        if (campo) campo.value = typeof ficha[chave] === 'string' ? ficha[chave] : '';
     }
-    const foto = document.getElementById('foto-jogador');
-    if (foto)
-        foto.src = (typeof ficha.fotoPerfil === 'string' && ficha.fotoPerfil && !ficha.fotoPerfil.startsWith('blob:')) ? ficha.fotoPerfil : 'assets/imgs/retrato-vazio.svg';
+    retrato.restaurar(ficha.fotoPerfil);
 }

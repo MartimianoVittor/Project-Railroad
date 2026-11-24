@@ -71,6 +71,6 @@ assert.doesNotMatch(ler('index.html'), /data-include="html\/sidebar\.html"/);
 assert.match(includes, /Promise\.allSettled/);
 assert.match(includes, /cache: 'no-store'/);
 assert.match(ler('js/main.js'), /fichas\.registrarEventos\(\)/);
-assert.doesNotMatch(ler('js/modules/fichas.js'), /escutar\('btn-apagar-ficha'/);
+assert.doesNotMatch(ler('js/modules/fichas/eventos.js'), /escutar\('btn-apagar-ficha'/);
 
 console.log('OK: shell completo, login independente de botões removidos e fragmentos isolados.');

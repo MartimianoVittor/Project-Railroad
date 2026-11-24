@@ -9,6 +9,7 @@ export function abrirBancoLocal() {
             return;
         }
 
+        let bloqueado = false;
         const pedido = indexedDB.open(NOME_BANCO, VERSAO_BANCO);
         pedido.onupgradeneeded = () => {
             const banco = pedido.result;
@@ -17,11 +18,17 @@ export function abrirBancoLocal() {
             if (!banco.objectStoreNames.contains('rascunhos'))
                 banco.createObjectStore('rascunhos', { keyPath: 'chave' });
         };
-        pedido.onsuccess = () => resolver(criarAcesso(pedido.result));
+        pedido.onsuccess = () => {
+            const banco = pedido.result;
+            if (bloqueado) return banco.close();
+            banco.onversionchange = () => banco.close();
+            resolver(criarAcesso(banco));
+        };
         pedido.onerror = () => rejeitar(pedido.error);
-        pedido.onblocked = () => rejeitar(new Error(
-            'O banco local está bloqueado por outra aba. Feche outras abas do Railroad e recarregue.'
-        ));
+        pedido.onblocked = () => {
+            bloqueado = true;
+            rejeitar(new Error('O banco local está bloqueado por outra aba. Feche outras abas do Railroad e recarregue.'));
+        };
     });
 }
 

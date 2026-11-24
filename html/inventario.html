@@ -1,152 +1,140 @@
 <section class="flex" id="inventario">
- <div class="col inventario-rolagens">
-  <h2>Rolagens</h2>
-  <div class="cartao-rolagem">
-   <label for="rolagem-traco">Traço</label>
-   <select class="campo-inventario" id="rolagem-traco">
-    <option value="">Selecione um traço</option>
-    <option value="traco-1">Sangue Quente</option>
-    <option value="traco-2">Mira Afiada</option>
-    <option value="traco-3">Guerreiro Ancestral</option>
-    <option value="traco-4">Amigo Kaboom</option>
-    <option value="traco-5">Orelha Em Pé</option>
-    <option value="traco-6">Passos Na Sombra</option>
-    <option value="traco-7">Poeira e Ossos</option>
-    <option value="traco-8">Rédea e Sela</option>
-    <option value="traco-9">Língua de Trapo</option>
-    <option value="traco-10">Agourento e Carrancudo</option>
-    <option value="traco-11">Cachola Cheia</option>
-    <option value="traco-12">Grande Maioral</option>
-   </select>
-   <label for="rolagem-bonus">Bônus / penalidade</label>
-   <select class="campo-inventario" id="rolagem-bonus">
-    <option value="-3">-3</option>
-    <option value="-2">-2</option>
-    <option value="-1">-1</option>
-    <option selected="" value="0">+0</option>
-    <option value="1">+1</option>
-    <option value="2">+2</option>
-    <option value="3">+3</option>
-   </select>
-   <button class="botao-rolar" data-rolagem="traco" type="button">🎲 Rolar traço</button>
-   <output aria-live="polite" class="resultado-rolagem" id="resultado-traco">
-   </output>
-  </div>
-  <h2>Armas</h2>
-  <fieldset class="cartao-arma">
-   <legend>
-    Arma primária
-   </legend>
-   <div class="arma-linha-nome">
-    <label class="arma-nome">
-     <input aria-label="Nome da arma primária" class="campo-inventario" id="arma-primaria" placeholder="Nome da arma" type="text"/>
-    </label>
-    <div aria-label="Munição da arma primária" class="arma-municao" role="group">
-     <span class="arma-municao-titulo">Munição</span>
-     <div class="arma-municao-controles">
-      <button aria-label="Diminuir munição da arma primária" class="municao-botao" data-direcao="-1" data-municao="primaria" type="button">−</button>
-      <input aria-label="Quantidade de munição da arma primária" class="municao-valor" id="municao-primaria" max="99" min="0" step="1" type="number" value="0"/>
-      <button aria-label="Aumentar munição da arma primária" class="municao-botao" data-direcao="1" data-municao="primaria" type="button">+</button>
-     </div>
+    <div class="col inventario-rolagens">
+        <h2>Rolagens</h2>
+        <div class="cartao-rolagem">
+            <label for="rolagem-traco">Traço</label>
+            <select class="campo-inventario" id="rolagem-traco">
+                <option value="">Selecione um traço</option>
+            </select>
+            <label for="rolagem-bonus">Bônus / penalidade</label>
+            <select class="campo-inventario" id="rolagem-bonus">
+                <option value="-3">-3</option>
+                <option value="-2">-2</option>
+                <option value="-1">-1</option>
+                <option selected="" value="0">+0</option>
+                <option value="1">+1</option>
+                <option value="2">+2</option>
+                <option value="3">+3</option>
+            </select>
+            <button class="botao-rolar" data-rolagem="traco" type="button">🎲 Rolar traço</button>
+            <output aria-live="polite" class="resultado-rolagem" id="resultado-traco">
+            </output>
+        </div>
+        <h2>Armas</h2>
+        <fieldset class="cartao-arma">
+            <legend>
+                Arma primária
+            </legend>
+            <div class="arma-linha-nome">
+                <label class="arma-nome">
+                    <input aria-label="Nome da arma primária" class="campo-inventario" id="arma-primaria" placeholder="Nome da arma" type="text"/>
+                </label>
+                <div aria-label="Munição da arma primária" class="arma-municao" role="group">
+                    <span class="arma-municao-titulo">Munição</span>
+                    <div class="arma-municao-controles">
+                        <button aria-label="Diminuir munição da arma primária" class="municao-botao" data-direcao="-1" data-municao="primaria" type="button">−</button>
+                        <input aria-label="Quantidade de munição da arma primária" class="municao-valor" id="municao-primaria" max="99" min="0" step="1" type="number" value="0"/>
+                        <button aria-label="Aumentar munição da arma primária" class="municao-botao" data-direcao="1" data-municao="primaria" type="button">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bonus-distancias">
+                <label class="bonus-distancia">
+                    <span>Corpo a corpo</span>
+                    <input aria-label="Bônus de Corpo a corpo da arma primária" class="campo-inventario" id="bonus-primaria-corpo" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+                <label class="bonus-distancia">
+                    <span>Curta</span>
+                    <input aria-label="Bônus de Curta da arma primária" class="campo-inventario" id="bonus-primaria-curta" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+                <label class="bonus-distancia">
+                    <span>Média</span>
+                    <input aria-label="Bônus de Média da arma primária" class="campo-inventario" id="bonus-primaria-media" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+                <label class="bonus-distancia">
+                    <span>Longa</span>
+                    <input aria-label="Bônus de Longa da arma primária" class="campo-inventario" id="bonus-primaria-longa" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+            </div>
+        </fieldset>
+        <fieldset class="cartao-arma">
+            <legend>
+                Arma secundária
+            </legend>
+            <div class="arma-linha-nome">
+                <label class="arma-nome">
+                    <input aria-label="Nome da arma secundária" class="campo-inventario" id="arma-secundaria" placeholder="Nome da arma" type="text"/>
+                </label>
+                <div aria-label="Munição da arma secundária" class="arma-municao" role="group">
+                    <span class="arma-municao-titulo">Munição</span>
+                    <div class="arma-municao-controles">
+                        <button aria-label="Diminuir munição da arma secundária" class="municao-botao" data-direcao="-1" data-municao="secundaria" type="button">−</button>
+                        <input aria-label="Quantidade de munição da arma secundária" class="municao-valor" id="municao-secundaria" max="99" min="0" step="1" type="number" value="0"/>
+                        <button aria-label="Aumentar munição da arma secundária" class="municao-botao" data-direcao="1" data-municao="secundaria" type="button">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bonus-distancias">
+                <label class="bonus-distancia">
+                    <span>Corpo a corpo</span>
+                    <input aria-label="Bônus de Corpo a corpo da arma secundária" class="campo-inventario" id="bonus-secundaria-corpo" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+                <label class="bonus-distancia">
+                    <span>Curta</span>
+                    <input aria-label="Bônus de Curta da arma secundária" class="campo-inventario" id="bonus-secundaria-curta" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+                <label class="bonus-distancia">
+                    <span>Média</span>
+                    <input aria-label="Bônus de Média da arma secundária" class="campo-inventario" id="bonus-secundaria-media" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+                <label class="bonus-distancia">
+                    <span>Longa</span>
+                    <input aria-label="Bônus de Longa da arma secundária" class="campo-inventario" id="bonus-secundaria-longa" max="3" min="-3" step="1" type="number" value="0"/>
+                </label>
+            </div>
+        </fieldset>
     </div>
-   </div>
-   <div class="bonus-distancias">
-    <label class="bonus-distancia">
-     <span>Corpo a corpo</span>
-     <input aria-label="Bônus de Corpo a corpo da arma primária" class="campo-inventario" id="bonus-primaria-corpo" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-    <label class="bonus-distancia">
-     <span>Curta</span>
-     <input aria-label="Bônus de Curta da arma primária" class="campo-inventario" id="bonus-primaria-curta" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-    <label class="bonus-distancia">
-     <span>Média</span>
-     <input aria-label="Bônus de Média da arma primária" class="campo-inventario" id="bonus-primaria-media" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-    <label class="bonus-distancia">
-     <span>Longa</span>
-     <input aria-label="Bônus de Longa da arma primária" class="campo-inventario" id="bonus-primaria-longa" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-   </div>
-  </fieldset>
-  <fieldset class="cartao-arma">
-   <legend>
-    Arma secundária
-   </legend>
-   <div class="arma-linha-nome">
-    <label class="arma-nome">
-     <input aria-label="Nome da arma secundária" class="campo-inventario" id="arma-secundaria" placeholder="Nome da arma" type="text"/>
-    </label>
-    <div aria-label="Munição da arma secundária" class="arma-municao" role="group">
-     <span class="arma-municao-titulo">Munição</span>
-     <div class="arma-municao-controles">
-      <button aria-label="Diminuir munição da arma secundária" class="municao-botao" data-direcao="-1" data-municao="secundaria" type="button">−</button>
-      <input aria-label="Quantidade de munição da arma secundária" class="municao-valor" id="municao-secundaria" max="99" min="0" step="1" type="number" value="0"/>
-      <button aria-label="Aumentar munição da arma secundária" class="municao-botao" data-direcao="1" data-municao="secundaria" type="button">+</button>
-     </div>
-    </div>
-   </div>
-   <div class="bonus-distancias">
-    <label class="bonus-distancia">
-     <span>Corpo a corpo</span>
-     <input aria-label="Bônus de Corpo a corpo da arma secundária" class="campo-inventario" id="bonus-secundaria-corpo" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-    <label class="bonus-distancia">
-     <span>Curta</span>
-     <input aria-label="Bônus de Curta da arma secundária" class="campo-inventario" id="bonus-secundaria-curta" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-    <label class="bonus-distancia">
-     <span>Média</span>
-     <input aria-label="Bônus de Média da arma secundária" class="campo-inventario" id="bonus-secundaria-media" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-    <label class="bonus-distancia">
-     <span>Longa</span>
-     <input aria-label="Bônus de Longa da arma secundária" class="campo-inventario" id="bonus-secundaria-longa" max="3" min="-3" step="1" type="number" value="0"/>
-    </label>
-   </div>
-  </fieldset>
- </div>
- <div class="col inventario-itens">
-  <div class="inventario-cabecalho">
-   <h2>Itens</h2>
-   <div class="inventario-acoes">
-    <button class="botao-rolar" id="adicionar-item" type="button">+ Adicionar item</button>
+    <div class="col inventario-itens">
+        <div class="inventario-cabecalho">
+            <h2>Itens</h2>
+            <div class="inventario-acoes">
+                <button class="botao-rolar" id="adicionar-item" type="button">+ Adicionar item</button>
 
-   </div>
-  </div>
-  <div class="tabela-itens-rolagem">
-   <table class="tabela-itens">
-    <thead>
-     <tr>
-      <th title="Escolha entre personagem e montaria">Local</th>
-      <th>Item</th>
-      <th>Qtd.</th>
-      <th>Tam.</th>
-      <th>Descrição</th>
-      <th><span class="sr-only">Ações</span></th>
-     </tr>
-    </thead>
-    <tbody id="lista-itens">
-    </tbody>
-   </table>
-  </div>
-   <div class="inventario-resumo" role="group" aria-label="Espaço de carga do jogador e da montaria">
-    <label class="inventario-resumo-campo" for="espaco-ocupado-jogador">
-     <span>Personagem · Ocupado</span>
-     <input id="espaco-ocupado-jogador" type="number" value="0" readonly>
-    </label>
-    <label class="inventario-resumo-campo" for="espaco-maximo-jogador">
-     <span>Personagem · Capacidade</span>
-     <input id="espaco-maximo-jogador" type="number" min="0" step="1" inputmode="numeric" value="0">
-    </label>
-    <label class="inventario-resumo-campo" for="espaco-ocupado-montaria">
-     <span>Montaria · Ocupado</span>
-     <input id="espaco-ocupado-montaria" type="number" value="0" readonly>
-    </label>
-    <label class="inventario-resumo-campo" for="espaco-maximo-montaria">
-     <span>Montaria · Capacidade</span>
-     <input id="espaco-maximo-montaria" type="number" min="0" step="1" inputmode="numeric" value="0">
-    </label>
-   </div>
- </div>
+            </div>
+        </div>
+        <div class="tabela-itens-rolagem">
+            <table class="tabela-itens">
+                <thead>
+                    <tr>
+                        <th title="Escolha entre personagem e montaria">Local</th>
+                        <th>Item</th>
+                        <th>Qtd.</th>
+                        <th>Tam.</th>
+                        <th>Descrição</th>
+                        <th><span class="sr-only">Ações</span></th>
+                    </tr>
+                </thead>
+                <tbody id="lista-itens">
+                </tbody>
+            </table>
+        </div>
+            <div class="inventario-resumo" role="group" aria-label="Espaço de carga do jogador e da montaria">
+                <label class="inventario-resumo-campo" for="espaco-ocupado-jogador">
+                    <span>Personagem · Ocupado</span>
+                    <input id="espaco-ocupado-jogador" type="number" value="0" readonly>
+                </label>
+                <label class="inventario-resumo-campo" for="espaco-maximo-jogador">
+                    <span>Personagem · Capacidade</span>
+                    <input id="espaco-maximo-jogador" type="number" min="0" step="1" inputmode="numeric" value="0">
+                </label>
+                <label class="inventario-resumo-campo" for="espaco-ocupado-montaria">
+                    <span>Montaria · Ocupado</span>
+                    <input id="espaco-ocupado-montaria" type="number" value="0" readonly>
+                </label>
+                <label class="inventario-resumo-campo" for="espaco-maximo-montaria">
+                    <span>Montaria · Capacidade</span>
+                    <input id="espaco-maximo-montaria" type="number" min="0" step="1" inputmode="numeric" value="0">
+                </label>
+            </div>
+    </div>
 </section>

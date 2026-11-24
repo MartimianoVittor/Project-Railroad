@@ -1,5 +1,6 @@
-import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js';
+import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.18';
 export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obterPosicaoNoQuadro }) {
+    let geracao = 0;
     async function inserirImagemMovel(arquivo, posX = 30, posY = 30) {
         if (!arquivo ||
             !arquivo.type ||
@@ -7,12 +8,14 @@ export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obte
             alert('Selecione uma imagem válida.');
             return;
         }
+        const atual = geracao;
         try {
             const dataURL = await arquivoParaDataURL(arquivo);
+            if (atual !== geracao) return;
             criarElementoImagem(dataURL, `${posX}px`, `${posY}px`);
         }
         catch (erro) {
-            mostrarErro('Não foi possível inserir a imagem.', erro);
+            if (atual === geracao) mostrarErro('Não foi possível inserir a imagem.', erro);
         }
     }
     if (uploadMapa) {
@@ -54,4 +57,5 @@ export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obte
             }
         }
     });
+    return () => { geracao++; };
 }

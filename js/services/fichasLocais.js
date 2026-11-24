@@ -1,14 +1,7 @@
-import { CHAVE_STORAGE } from '../core/storage.js';
-import { abrirBancoLocal } from './bancoLocal.js';
+import { abrirBancoLocal } from './bancoLocal.js?v=1.4.18';
+import { migrarArmazenamentoAntigo } from './migracaoFichasLocais.js?v=1.4.18';
+import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.18';
 
-const CHAVE_INDICE_ANTIGO = 'railroad_fichas_locais_v1';
-const CHAVE_ATIVA = 'railroad_ficha_local_ativa_v1';
-const CHAVE_MIGRADA_ANTIGA = 'railroad_ficha_legada_migrada_v1';
-const PREFIXO_FICHA_ANTIGO = 'railroad_ficha_local:';
-const PREFIXO_RASCUNHO = 'railroad_rascunho:';
-const ID_FICHA_LEGADA = 'railroad_legado_v1';
-
-const nomeValido = (valor) => String(valor || '').trim().slice(0, 120) || 'Personagem local';
 const chaveRascunho = (uid, id) => `${PREFIXO_RASCUNHO}${uid}:${id}`;
 
 /**
@@ -20,20 +13,33 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
     const rascunhos = new Map();
     let banco;
     let fila = Promise.resolve();
-    let erroGravacao = null;
+    const pendentes = new Map();
 
-    function enfileirar(gravar) {
-        const operacao = fila.then(gravar);
-        fila = operacao.catch((erro) => { erroGravacao = erro; });
-        return operacao;
+    function tentar(chave, escrita) {
+        escrita.erro = null;
+        fila = fila.then(async () => {
+            if (pendentes.get(chave) !== escrita) return;
+            try {
+                await escrita.gravar();
+                if (pendentes.get(chave) === escrita) pendentes.delete(chave);
+            } catch (erro) { escrita.erro = erro; }
+        });
+    }
+
+    function enfileirar(chave, gravar) {
+        const escrita = { gravar, erro: null };
+        pendentes.set(chave, escrita);
+        tentar(chave, escrita);
     }
 
     async function flush() {
+        // Outra chamada a flush pode recuperar a última escrita da mesma chave.
+        for (const [chave, escrita] of pendentes) {
+            if (escrita.erro) tentar(chave, escrita);
+        }
         await fila;
-        if (erroGravacao) {
-            const erro = erroGravacao;
-            erroGravacao = null;
-            throw erro;
+        for (const escrita of pendentes.values()) {
+            if (escrita.erro) throw escrita.erro;
         }
     }
 
@@ -49,7 +55,7 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
             updatedAt: new Date().toISOString(),
         };
         fichas.set(registro.id, registro);
-        enfileirar(() => banco.gravarFicha(registro));
+        enfileirar('ficha:' + registro.id, () => banco.gravarFicha(registro));
         return registro;
     }
 
@@ -58,7 +64,7 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
         if (!anterior) throw new Error('Ficha local não encontrada.');
         const atualizado = { ...anterior, dados, updatedAt: new Date().toISOString() };
         fichas.set(id, atualizado);
-        enfileirar(() => banco.gravarFicha(atualizado));
+        enfileirar('ficha:' + id, () => banco.gravarFicha(atualizado));
         return atualizado;
     }
 
@@ -67,13 +73,13 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
         if (!anterior) throw new Error('Ficha local não encontrada.');
         const atualizado = { ...anterior, titulo: nomeValido(titulo), updatedAt: new Date().toISOString() };
         fichas.set(id, atualizado);
-        enfileirar(() => banco.gravarFicha(atualizado));
+        enfileirar('ficha:' + id, () => banco.gravarFicha(atualizado));
         return atualizado;
     }
 
     function excluir(id) {
         fichas.delete(id);
-        enfileirar(() => banco.excluirFicha(id));
+        enfileirar('ficha:' + id, () => banco.excluirFicha(id));
         if (armazenamento.getItem(CHAVE_ATIVA) === id)
             armazenamento.removeItem(CHAVE_ATIVA);
     }
@@ -85,14 +91,14 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
     function gravarRascunho(uid, id, dados) {
         const rascunho = { chave: chaveRascunho(uid, id), dados, token: crypto.randomUUID() };
         rascunhos.set(rascunho.chave, rascunho);
-        enfileirar(() => banco.gravarRascunho(rascunho));
+        enfileirar(rascunho.chave, () => banco.gravarRascunho(rascunho));
         return rascunho;
     }
 
     function apagarRascunho(uid, id) {
         const chave = chaveRascunho(uid, id);
         rascunhos.delete(chave);
-        enfileirar(() => banco.excluirRascunho(chave));
+        enfileirar(chave, () => banco.excluirRascunho(chave));
     }
 
     /** Remove cópias antigas somente após cada gravação confirmada no IndexedDB. */
@@ -101,77 +107,7 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
         for (const registro of await banco.listarFichas()) fichas.set(registro.id, registro);
         for (const rascunho of await banco.listarRascunhos()) rascunhos.set(rascunho.chave, rascunho);
 
-        const chaves = new Set();
-        try {
-            const indice = JSON.parse(armazenamento.getItem(CHAVE_INDICE_ANTIGO) || '[]');
-            for (const registro of indice) chaves.add(`${PREFIXO_FICHA_ANTIGO}${registro.id}`);
-        } catch (erro) {
-            console.warn('Índice antigo inválido; procurando fichas por chave.', erro);
-        }
-        // Recupera também fichas que não tenham sido incluídas no índice antigo.
-        for (let posicao = 0; posicao < (armazenamento.length || 0); posicao++) {
-            const chave = armazenamento.key(posicao);
-            if (chave?.startsWith(PREFIXO_FICHA_ANTIGO) || chave?.startsWith(PREFIXO_RASCUNHO))
-                chaves.add(chave);
-        }
-
-        let migracaoCompleta = true;
-        for (const chave of chaves) {
-            const texto = armazenamento.getItem(chave);
-            if (!texto) continue;
-            try {
-                const registro = JSON.parse(texto);
-                if (chave.startsWith(PREFIXO_FICHA_ANTIGO)) {
-                    const id = chave.slice(PREFIXO_FICHA_ANTIGO.length);
-                    if (!id || registro.id !== id) throw new Error('Identificador de ficha inválido.');
-                    if (!fichas.has(id)) {
-                        await banco.gravarFicha(registro);
-                        fichas.set(id, registro);
-                    }
-                } else if (chave.startsWith(PREFIXO_RASCUNHO)) {
-                    if (!registro?.dados) throw new Error('Rascunho inválido.');
-                    if (!rascunhos.has(chave)) {
-                        const rascunho = { ...registro, chave };
-                        await banco.gravarRascunho(rascunho);
-                        rascunhos.set(chave, rascunho);
-                    }
-                }
-                armazenamento.removeItem(chave);
-            } catch (erro) {
-                migracaoCompleta = false;
-                console.warn(`Registro antigo preservado (${chave}).`, erro);
-            }
-        }
-
-        const textoLegado = armazenamento.getItem(CHAVE_STORAGE);
-        if (textoLegado) {
-            try {
-                if (!fichas.has(ID_FICHA_LEGADA)) {
-                    const dados = normalizarFicha(JSON.parse(textoLegado));
-                    const registro = {
-                        id: ID_FICHA_LEGADA,
-                        titulo: nomeValido(dados.personagem?.['nome-personagem'] || 'Ficha antiga'),
-                        dados,
-                        updatedAt: new Date().toISOString(),
-                    };
-                    await banco.gravarFicha(registro);
-                    fichas.set(registro.id, registro);
-                    if (!armazenamento.getItem(CHAVE_ATIVA))
-                        armazenamento.setItem(CHAVE_ATIVA, registro.id);
-                }
-                armazenamento.removeItem(CHAVE_STORAGE);
-            } catch (erro) {
-                migracaoCompleta = false;
-                console.warn('A ficha legada foi preservada para recuperação.', erro);
-            }
-        }
-
-        if (migracaoCompleta) {
-            armazenamento.removeItem(CHAVE_INDICE_ANTIGO);
-            armazenamento.removeItem(CHAVE_MIGRADA_ANTIGA);
-        }
-        if (!migracaoCompleta)
-            throw new Error('Algumas fichas antigas não puderam ser migradas. Os originais foram preservados.');
+        await migrarArmazenamentoAntigo({ armazenamento, banco, fichas, rascunhos, normalizarFicha });
     }
 
     return {

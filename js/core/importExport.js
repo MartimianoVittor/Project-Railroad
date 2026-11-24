@@ -1,4 +1,4 @@
-import { normalizarFicha } from './validacao.js';
+import { normalizarFicha, validarArquivoFicha } from './validacao.js?v=1.4.18';
 /** Remove caracteres incompatíveis com nomes de arquivo, preservando acentos. */
 function nomeParaArquivo(valor, alternativa) {
     const nome = String(valor ?? '')
@@ -23,5 +23,10 @@ export function baixarFicha(dados) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 export function interpretarArquivo(texto) {
-    return normalizarFicha(JSON.parse(texto));
+    if (typeof texto !== 'string' || new TextEncoder().encode(texto).length > 20 * 1024 * 1024)
+        throw new Error('O arquivo JSON deve ter no máximo 20 MB.');
+    let dados;
+    try { dados = JSON.parse(texto); }
+    catch { throw new Error('O arquivo selecionado não contém um JSON válido.'); }
+    return normalizarFicha(validarArquivoFicha(dados));
 }

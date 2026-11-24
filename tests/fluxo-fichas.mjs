@@ -87,6 +87,7 @@ class Consulta {
 
 const usuario = { id: 'usuario-1', email: 'teste@railroad.example' };
 let oauthChamadas = 0;
+let notificarConta;
 const cliente = {
     from: (tabela) => { assert.equal(tabela, 'fichas'); return new Consulta(); },
     rpc: async (funcao) => {
@@ -94,7 +95,7 @@ const cliente = {
         return { data: [], error: null };
     },
     auth: {
-        onAuthStateChange: () => {},
+        onAuthStateChange: (callback) => { notificarConta = callback; },
         getSession: async () => ({ data: { session: { user: usuario } }, error: null }),
         getUser: async () => ({ data: { user: usuario }, error: null }),
         signInWithOAuth: async () => { oauthChamadas++; return { error: null }; },
@@ -107,6 +108,7 @@ localStorage.setItem('railroad_rpg_ficha', JSON.stringify(normalizarFicha({
     personagem: { 'nome-personagem': 'Antigo local' },
 })));
 let formulario = normalizarFicha({});
+const repositorioLocal = criarRepositorioLocal(localStorage, async () => criarBancoEmMemoria());
 const gestao = criarGerenciadorFichas({
     coletarFicha: () => structuredClone(formulario),
     carregarFicha: (ficha) => { formulario = structuredClone(ficha); },
@@ -115,7 +117,7 @@ const gestao = criarGerenciadorFichas({
     interpretarArquivo: (texto) => normalizarFicha(JSON.parse(texto)),
     conectar: async () => cliente,
     configurado: () => true,
-    repositorioLocal: criarRepositorioLocal(localStorage, async () => criarBancoEmMemoria()),
+    repositorioLocal,
 });
 const aguardar = () => new Promise((resolver) => setTimeout(resolver, 35));
 
@@ -181,4 +183,39 @@ assert.deepEqual(linhas, antesDeApagar, 'apagar ficha nunca exclui nem modifica 
 assert.match(porId('status-salvamento').textContent, /online preservados/);
 assert.match(porId('ficha-atual').textContent, /Local:/);
 
-console.log('OK: gerenciadores separados, arquivo JSON, bloqueio de duplicatas e apagar somente no navegador.');
+// A lista só contém metadados. A cópia precisa ler o conteúdo após o autosave.
+porId('btn-fichas-locais').click();
+const original = repositorioLocal.ativa();
+formulario.personagem['nome-personagem'] = 'Rosa, editada agora';
+gestao.agendarSalvamento();
+const linhaAtiva = porId('lista-fichas-locais').children.find((linha) => linha.className.includes(' ativa'));
+linhaAtiva.children[1].children.find((botao) => botao.textContent === 'Duplicar').click();
+await aguardar();
+assert.notEqual(repositorioLocal.ativa(), original);
+assert.equal(formulario.personagem['nome-personagem'], 'Rosa, editada agora');
+assert.equal(repositorioLocal.obter(original).dados.personagem['nome-personagem'], 'Rosa, editada agora');
+
+// Uma ficha importada na versão anterior pode já ter sido renomeada e editada.
+linhas.push({
+    id: 'preexistente', usuario_id: usuario.id, titulo: 'Novo nome no banco', dados: { versao: 3 },
+    origem_importacao: 'sha256:cbffc6a8ea172040d083fca5b7d3c8d61fa79acf7e272c1128b397587250bfe1',
+});
+const legado = { versao: 1, personagem: { 'nome-personagem': 'Rosa' },
+    inventario: [{ nome: 'Cantil', quantidade: 0, tamanho: '2', cor: 'preto' }] };
+porId('input-importar-online').disparar('change', {
+    target: { files: [{ text: async () => JSON.stringify(legado) }], value: 'antiga.json' },
+});
+await aguardar();
+assert.equal(linhas.length, 3);
+assert.match(porId('mensagem-locais').textContent, /Novo nome no banco.*já foi importada/);
+
+notificarConta('SIGNED_OUT', null);
+await aguardar();
+assert.equal(porId('conta-autenticada').hidden, true);
+notificarConta('SIGNED_IN', { user: { id: 'conta-2', email: 'segunda@example.org' } });
+await aguardar();
+assert.equal(porId('email-conta').textContent, 'segunda@example.org');
+assert.equal(porId('painel-fichas').open, true);
+assert.equal(formulario.personagem['nome-personagem'], 'Rosa, editada agora');
+
+console.log('OK: fichas locais e online, duplicação com edição pendente, importações antigas e troca de conta.');

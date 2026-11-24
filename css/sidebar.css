@@ -207,17 +207,6 @@
         white-space: nowrap;
         transform: translateY(-1px);
     }
-    .barra-lateral .btn-cartucho .cartucho-sombra { fill: #20120b; }
-    .barra-lateral .btn-cartucho .c-estojo { fill: #deb043; }
-    .barra-lateral .btn-cartucho .c-estojo-luz { fill: #edd074; }
-    .barra-lateral .btn-cartucho .c-ogiva { fill: #bd5a2b; }
-    .barra-lateral .btn-cartucho .c-ogiva-luz { fill: #d67849; }
-    .barra-lateral .btn-cartucho .cartucho-hachura { fill: url(#hachura-cartucho-jogador); }
-    .barra-lateral .btn-cartucho[data-aba="personagem"] .cartucho-hachura { fill: url(#hachura-cartucho-personagem); }
-    .barra-lateral .btn-cartucho[data-aba="inventario"] .cartucho-hachura { fill: url(#hachura-cartucho-inventario); }
-    .barra-lateral .btn-cartucho .c-juncao { fill: none; stroke: #1f140c; stroke-width: 3; }
-    .barra-lateral .btn-cartucho .c-culote { fill: #1f140c; }
-    .barra-lateral .btn-cartucho .c-contorno { fill: none; stroke: #1f140c; stroke-width: 3; stroke-linejoin: round; }
     .barra-lateral .menu-navegacao .btn-nav.btn-cartucho:hover { transform: translateX(3px); background: transparent; color: #fff6db; }
 
     /* A aba ativa mantém as cores originais; só muda sua posição. */
