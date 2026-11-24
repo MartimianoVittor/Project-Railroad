@@ -27,7 +27,7 @@ O projeto está em desenvolvimento e pretende expandir suas funcionalidades grad
 - [x] **Gerenciamento de Personagens e Inventário:** criação, personalização e acompanhamento da evolução dos personagens além de inventário dinâmico que permite adicionar e retirar itens bem como criar novos.
 - [x] **Ferramentas de Jogo:** recursos interativos para auxiliar jogadores durante as sessões.
 - [x] **Integração com Banco de Dados:** fichas privadas usando Supabase Auth e PostgreSQL com RLS.
-- [ ] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas repositório "http://github.com/MartimianoVittor/Project-Railroad-Master".
+- [x] **Sistema para Mestres:** ferramentas para organização e gerenciamento das campanhas repositório "http://github.com/MartimianoVittor/Project-Railroad-Master".
 - [ ] **Guia de Campanhas:** campanhas pré montadas para todos.
 
 
@@ -39,16 +39,6 @@ O aplicativo é servido diretamente pelo navegador e usa as seguintes tecnologia
 - CSS3
 - JavaScript com módulos ES e IndexedDB para fichas locais
 - Supabase Auth (Google OAuth) e PostgreSQL (JSONB + RLS; após configuração)
-
-## Executar e testar
-
-Sirva a pasta que contém `index.html` com o Live Server ou execute `python -m http.server 8000` e abra `http://localhost:8000/`. Para usar a ficha no próprio navegador, escolha **Continuar com ficha local**. O acesso com Google habilita os recursos da conta.
-
-Rode `npm test` com Node.js 22 ou superior para executar a suíte de testes. O site dispensa compilação.
-
-Antes de cada publicação no GitHub Pages, altere a versão em `package.json` e execute `npm run preparar:publicacao`. Esse comando remove os arquivos órfãos da plataforma Mestre, atualiza **todas** as referências locais a JS/CSS com a mesma versão e executa os testes. Publique os arquivos resultantes (inclusive as exclusões) pelo Git. Não envie a pasta `.git` em ZIPs de distribuição.
-
-Para localizar os módulos de edição, as regras de inventário, o salvamento e a personalização, consulte o [guia de arquitetura](docs/ARQUITETURA.md).
 
 ## 🎯 Objetivos
 
@@ -71,13 +61,3 @@ versão do mestre e campanhas em desenvolvimento confira o repositório "http://
 ### 🌄 RAILROAD
 
 **Prepare seu cavalo, carregue seu revólver.**
-
-
-
-## Integridade das fichas e limites
-
-Importações JSON agora passam por validação de estrutura e tamanho (20 MB), mantendo a leitura de versões antigas. Fichas salvas pelo próprio app continuam preservando os campos desconhecidos. Se um dispositivo modificar uma ficha online enquanto ela estiver aberta em outro, o segundo salvamento detecta o conflito pela coluna `updated_at`, exibe um aviso e preserva o rascunho local. Exporte a ficha JSON antes de recarregar para reconciliar as mudanças; o aplicativo não mescla os dois arquivos automaticamente.
-
-Uma perda de conexão mantém o rascunho no IndexedDB; o envio tenta novamente algumas vezes e ao receber o evento de retorno da rede. Evite fechar a aba imediatamente após editar, pois nenhum navegador garante a conclusão de uma escrita assíncrona no evento `pagehide`.
-
-As políticas de acesso efetivas do Supabase precisam ser conferidas no projeto do banco (consulte `docs/SEGURANCA_SUPABASE.md`). Os testes usam simulações e não substituem uma auditoria de RLS real.
