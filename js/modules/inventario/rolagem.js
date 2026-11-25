@@ -1,5 +1,5 @@
-import { facesDoTraco, TRACOS } from '../../dominio/tracos.js?v=1.4.23';
-import { elemento, porId } from '../../utils/dom.js?v=1.4.23';
+import { facesDoTraco, TRACOS } from '../../dominio/tracos.js?v=1.4.25';
+import { elemento, porId } from '../../utils/dom.js?v=1.4.25';
 
 function rolarTraco() {
     const saida = porId('resultado-traco');

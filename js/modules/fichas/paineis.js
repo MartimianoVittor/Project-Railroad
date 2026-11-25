@@ -1,5 +1,5 @@
-import { porId } from '../../utils/dom.js?v=1.4.23';
-import { comProcessamento } from '../../utils/processamento.js?v=1.4.23';
+import { porId } from '../../utils/dom.js?v=1.4.25';
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.25';
 
 const AVISOS_ACAO = {
     Abrir: 'Carregando ficha…', Duplicar: 'Duplicando ficha…', Renomear: 'Renomeando ficha…',

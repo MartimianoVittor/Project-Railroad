@@ -1,6 +1,7 @@
-import { porId } from '../../utils/dom.js?v=1.4.23';
-import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.23';
-import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.23';
+import { obterImagensStorage, possuiImagensParaMigrar } from '../../services/imagensStorage.js?v=1.4.25';
+import { porId } from '../../utils/dom.js?v=1.4.25';
+import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.25';
+import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.25';
 
 export const chaveUltima = (uid) => `railroad_ultima_ficha:${uid}`;
 
@@ -13,6 +14,7 @@ export function rascunhoCompativel(rascunho, revisaoNuvem) {
 export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLocal, carregarFicha, normalizarFicha, interpretarArquivo, restaurarLocal }) {
     const { painelOnline, mensagem, atualizarInterface, desenharLinha, fecharPaineis, estadoSalvamento } = paineis;
     const concluirSalvamento = salvamento.concluir;
+    let versaoAbertura = 0;
 
     function desenharListaOnline(fichas) {
         const lista = porId('lista-fichas');
@@ -61,19 +63,25 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
     }
 
     async function abrirFichaOnline(id) {
+        const abertura = ++versaoAbertura;
         const geracao = estado.geracaoConta;
         if (!(await concluirSalvamento()))
             throw new Error('Não foi possível salvar a ficha atual; tente novamente.');
-        if (geracao !== estado.geracaoConta || !estado.usuario) return;
+        if (abertura !== versaoAbertura || geracao !== estado.geracaoConta || !estado.usuario) return;
         const registro = await estado.repositorioNuvem.obter(id);
-        if (geracao !== estado.geracaoConta) return;
+        if (abertura !== versaoAbertura || geracao !== estado.geracaoConta) return;
         const rascunho = repositorioLocal.lerRascunho(estado.usuario.id, id);
+        const imagens = obterImagensStorage(await estado.conectar());
+        const conteudo = await imagens.resolverDocumento(rascunho?.dados || registro.dados);
+        if (abertura !== versaoAbertura || geracao !== estado.geracaoConta) return;
+        // Alterar o modo de edição somente DEPOIS de resolver as imagens.
+        // Falha de leitura não deve associar a interface antiga à ficha nova.
         estado.fichaNuvem = {
             id: registro.id, titulo: registro.titulo,
             updated_at: registro.updated_at, revisao: Number(registro.revisao),
         };
         estado.modoEdicao = 'nuvem';
-        carregarFicha(normalizarFicha(rascunho?.dados || registro.dados));
+        carregarFicha(normalizarFicha(conteudo));
         localStorage.setItem(chaveUltima(estado.usuario.id), id);
         atualizarInterface();
         if (rascunho && !rascunhoCompativel(rascunho, estado.fichaNuvem.revisao)) {
@@ -97,6 +105,15 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
         });
         if (geracao !== estado.geracaoConta || !estado.usuario) return;
         const registro = await estado.repositorioNuvem.criar(estado.usuario.id, tituloValido(titulo), nova);
+        if (geracao !== estado.geracaoConta) return;
+        // Ficha criada antes do upload, pois a política Storage exige dono no banco.
+        // Se a transferência falhar, o documento original continua intacto no JSONB.
+        if (possuiImagensParaMigrar(nova, `fichas/${registro.id}`)) {
+            const imagens = obterImagensStorage(await estado.conectar());
+            const preparado = await imagens.prepararDocumento(nova, `fichas/${registro.id}`);
+            const resultado = await estado.repositorioNuvem.salvar(registro.id, preparado, Number(registro.revisao));
+            if (!resultado?.revisao) throw new Error('Ficha criada, mas a migração de imagens não foi confirmada.');
+        }
         if (geracao === estado.geracaoConta) await abrirFichaOnline(registro.id);
     }
 
@@ -176,7 +193,13 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
                 `A ficha "${resultado.registro.titulo}" já foi importada para esta conta. Nenhuma duplicata foi criada.`);
             return;
         }
-        await abrirFichaOnline(resultado.registro.id);
+        // Importação permanece protegida mesmo se o Storage falhar: JSON já foi gravado.
+        if (possuiImagensParaMigrar(dados, `fichas/${resultado.registro.id}`)) {
+            const imagens = obterImagensStorage(await estado.conectar());
+            const preparado = await imagens.prepararDocumento(dados, `fichas/${resultado.registro.id}`);
+            await estado.repositorioNuvem.salvar(resultado.registro.id, preparado, Number(resultado.registro.revisao));
+        }
+        if (geracao === estado.geracaoConta) await abrirFichaOnline(resultado.registro.id);
     }
 
     return { abrirFichaOnline, atualizarListaOnline, criarOnline, importarArquivoOnline };

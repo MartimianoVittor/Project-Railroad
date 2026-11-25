@@ -1,4 +1,5 @@
-import { comProcessamento } from '../../utils/processamento.js?v=1.4.23';
+import { normalizarReferencias, obterImagensStorage } from '../../services/imagensStorage.js?v=1.4.25';
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.25';
 
 const ESPERA_LOCAL_MS = 250;
 const ESPERA_NUVEM_MS = 1200;
@@ -40,7 +41,8 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
         pendente = false;
         return comProcessamento('Salvando ficha…', async () => {
             try {
-                const dados = coletarFicha();
+                const dados = contexto.modo === 'nuvem'
+                    ? normalizarReferencias(coletarFicha()) : coletarFicha();
                 if (contexto.modo === 'local') estado.fichaLocal = repositorioLocal.salvar(contexto.id, dados);
                 else repositorioLocal.gravarRascunho(contexto.uid, contexto.id, dados, estado.fichaNuvem?.revisao);
                 await repositorioLocal.flush();
@@ -113,7 +115,12 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
             if (!rascunho) return true;
 
             const resultado = await comProcessamento('Salvando ficha…',
-                () => estado.repositorioNuvem.salvar(id, rascunho.dados, estado.fichaNuvem?.revisao),
+                async () => {
+                    const preparado = typeof estado.conectar === 'function'
+                        ? await obterImagensStorage(await estado.conectar()).prepararDocumento(rascunho.dados, `fichas/${id}`)
+                        : rascunho.dados; // Compatibilidade com repositórios injetados em testes.
+                    return estado.repositorioNuvem.salvar(id, preparado, estado.fichaNuvem?.revisao);
+                },
                 { bloquear: false });
             // Somente remove o rascunho depois de confirmar a nova revisão.
             if (!Number.isSafeInteger(resultado?.revisao) ||
@@ -125,6 +132,12 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
             }
             tentativas = 0;
             clearTimeout(timerRetentativa);
+            // A limpeza é best-effort e não pode bloquear o salvamento confirmado.
+            if (typeof estado.conectar === 'function') {
+                void estado.conectar().then((cliente) =>
+                    obterImagensStorage(cliente).limparImagensObsoletasDaFicha(id)
+                ).catch((erro) => console.warn('Limpeza de imagens adiada:', erro));
+            }
             // Uma edição feita durante a requisição já possui outro token.
             if (repositorioLocal.lerRascunho(uid, id)?.token === rascunho.token) {
                 repositorioLocal.apagarRascunho(uid, id);

@@ -3,6 +3,7 @@ export function iniciarDesenho({
 }) {
     let ponteiroAtivo = null;
 
+    let tracou = false;
     canvas.addEventListener('pointerdown', (evento) => {
         if (evento.button !== 0 || ponteiroAtivo !== null) return;
         const modo = obterModo();
@@ -17,6 +18,7 @@ export function iniciarDesenho({
             return;
         }
         ponteiroAtivo = evento.pointerId;
+        tracou = false;
         canvas.setPointerCapture(ponteiroAtivo);
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -34,6 +36,7 @@ export function iniciarDesenho({
         ctx.strokeStyle = apagar ? '#000000' : (seletorCor?.value || '#000000');
         ctx.lineTo(x, y);
         ctx.stroke();
+        tracou = true;
         ctx.restore();
         ctx.beginPath();
         ctx.moveTo(x, y);
@@ -43,7 +46,8 @@ export function iniciarDesenho({
         if (evento.pointerId !== ponteiroAtivo) return;
         ponteiroAtivo = null;
         ctx.closePath();
-        agendarSalvamento();
+        if (tracou) agendarSalvamento();
+        tracou = false;
     }
 
     canvas.addEventListener('pointerup', finalizar);

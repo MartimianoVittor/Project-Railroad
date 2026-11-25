@@ -1,11 +1,12 @@
-import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.23';
+import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.25';
 export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obterPosicaoNoQuadro }) {
     let geracao = 0;
     async function inserirImagemMovel(arquivo, posX = 30, posY = 30) {
         if (!arquivo ||
             !arquivo.type ||
-            !arquivo.type.startsWith('image/')) {
-            alert('Selecione uma imagem válida.');
+            !['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(arquivo.type)
+            || arquivo.size > 8 * 1024 * 1024) {
+            alert('Escolha PNG, JPG, WebP ou GIF de até 8 MiB.');
             return;
         }
         const atual = geracao;

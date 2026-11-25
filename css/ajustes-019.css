@@ -1,0 +1,108 @@
+/* Etapa 019: caixas com molduras espessas não devem exceder o espaço disponível. */
+:is(#jogador,#personagem,#inventario, .col, .cartao, .rr-moldura-alvo,
+    .quadro-tatico-container, .area-canvas, .painel-fichas, .rr-previa,
+    .rr-previa-tela, .rr-previa-cartao) { box-sizing: border-box; min-width: 0; }
+#jogador > .col, #jogador .rr-moldura-alvo { max-width: 100%; }
+/* Diálogos: o contorno não pode criar rolagem horizontal nem ultrapassar a viewport. */
+dialog.painel-fichas { box-sizing: border-box; max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-x: clip; }
+dialog.painel-fichas :is(input,textarea,select) { max-width: 100%; box-sizing: border-box; }
+/* A mensagem de estado não deve reservar altura quando não houver texto. */
+#personalizacao .rr-status-aparencia:empty { display: none; min-height: 0; margin: 0; }
+#personalizacao.rr-configuracoes-visuais[open] { height: min(96dvh, 1100px); max-height: calc(100dvh - 12px); }
+#personalizacao .rr-previa { overflow: hidden; }
+#personalizacao .rr-previa-cartao { overflow-y: auto; align-content: start; min-height: 0; }
+#personalizacao .rr-previa-tela { min-height: 0; overflow: hidden; }
+/* O navegador não deve impor fundo e texto do preenchimento automático. */
+:is(input,textarea):-webkit-autofill,
+:is(input,textarea):-webkit-autofill:hover,
+:is(input,textarea):-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--rr-leitura-campo-texto, #342519) !important;
+    -webkit-box-shadow: 0 0 0 1000px var(--rr-leitura-campo, #f4eccf) inset !important;
+    box-shadow: 0 0 0 1000px var(--rr-leitura-campo, #f4eccf) inset !important;
+    caret-color: var(--rr-leitura-campo-texto, #342519);
+}
+@media (max-width: 768px) {
+  #jogador .quadro-tatico-container { height: auto; min-height: 430px; max-width: 100%; }
+  #jogador .area-canvas { min-height: 320px; width: 100%; }
+  #jogador .barra-ferramentas { flex-wrap: wrap; max-width: 100%; }
+  #jogador > .col { padding-inline: 10px; }
+  #jogador .item-movel { max-width: 100%; }
+}
+
+/* Etapa 020: o quadro no celular em retrato deve orientar o usuário,
+   sem exibir uma área de desenho cortada ou permitir edições acidentais. */
+.rr-aviso-quadro-horizontal { display: none; }
+@media (max-width: 768px) and (orientation: portrait) {
+  #quadro-mobile .rr-aviso-quadro-horizontal {
+    display: block; box-sizing: border-box; width: 100%;
+    padding: 18px 16px; margin: 12px 0;
+    border: 2px solid #8a613a; border-radius: 8px;
+    background: #f4eccf; color: #3d2314;
+    font-size: 16px; line-height: 1.5; text-align: center; font-weight: 700;
+  }
+  #quadro-mobile .barra-ferramentas,
+  #quadro-mobile .dica-quadro,
+  #quadro-mobile .area-canvas { display: none !important; }
+  #quadro-mobile > .col { min-height: 0 !important; }
+}
+/* Os rebites decorativos na base da moldura não devem aparecer como
+   pontos soltos no rodapé das janelas ou da prévia. */
+dialog.painel-fichas.rr-borda--ferro-rebitado::after,
+#personalizacao .rr-previa .rr-borda--ferro-rebitado::after {
+  background-image: radial-gradient(circle, #b5a38a 2px, transparent 2.5px);
+  background-position: top left;
+  background-repeat: repeat-x;
+}
+
+/* Etapa 021: barras de rolagem não devem aparecer como decoração nas
+   janelas e na prévia. A rolagem por roda, toque e teclado permanece ativa
+   quando o conteúdo realmente exceder o espaço disponível. */
+:is(#painel-conta, #painel-fichas, #painel-locais, #personalizacao) {
+  overflow-x: clip;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+:is(#painel-conta, #painel-fichas, #painel-locais, #personalizacao)::-webkit-scrollbar {
+  display: none;
+}
+#personalizacao :is(.rr-previa, .rr-previa-tela, .rr-previa-cartao) {
+  scrollbar-width: none;
+}
+#personalizacao :is(.rr-previa, .rr-previa-tela, .rr-previa-cartao)::-webkit-scrollbar {
+  display: none;
+}
+
+/* Etapa 023: bitmap com proporção preservada entre desktop e celular. */
+#quadro-rpg { width: 100%; height: 100%; object-fit: contain; }
+/* Etapa 024: o aviso acompanha a mesma paleta automática dos cartões de
+   rolagem/armas. As variáveis são definidas pelo fundo do cartão pai em
+   css/aparencia/leitura.css; não forçar pergaminho sobre fundos escuros. */
+@media (max-width: 768px) and (orientation: portrait) {
+  #quadro-mobile .rr-moldura-alvo.rr-leitura-automatica p.rr-aviso-quadro-horizontal,
+  #quadro-mobile p.rr-aviso-quadro-horizontal {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 12px 0;
+    padding: 16px 12px;
+    background: var(--rr-leitura-painel, rgba(244, 220, 179, .4)) !important;
+    background-image: none !important;
+    color: var(--rr-leitura-texto, #3d2314) !important;
+    -webkit-text-fill-color: var(--rr-leitura-texto, #3d2314) !important;
+    border: 2px solid var(--rr-leitura-borda, #6b4630) !important;
+    border-radius: 5px;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+    font: 700 15px/1.5 'Rye', Georgia, serif;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  #quadro-mobile p.rr-aviso-quadro-horizontal::before,
+  #quadro-mobile p.rr-aviso-quadro-horizontal::after {
+    content: none !important;
+    display: none !important;
+  }
+}

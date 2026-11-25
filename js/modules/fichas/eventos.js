@@ -1,4 +1,4 @@
-import { porId } from '../../utils/dom.js?v=1.4.23';
+import { porId } from '../../utils/dom.js?v=1.4.25';
 
 export function registrarEventosFicha({
     estado, paineis, salvamento, conta, locais, online,
@@ -57,7 +57,9 @@ export function registrarEventosFicha({
         }, 'Criando ficha local…');
     });
 
-    escutar('exportar-json', 'click', exportarFicha);
+    escutar('exportar-json', 'click', () => {
+        void executar(painelLocal, exportarFicha, 'Preparando backup JSON…');
+    });
 
     for (const [botao, input, painel, importar] of [
         ['importar-json-local', 'input-importar-local', painelLocal, importarArquivoLocal],

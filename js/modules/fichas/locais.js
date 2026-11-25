@@ -1,5 +1,5 @@
-import { porId } from '../../utils/dom.js?v=1.4.23';
-import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.23';
+import { porId } from '../../utils/dom.js?v=1.4.25';
+import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.25';
 
 export function criarGestaoLocal({ estado, paineis, salvamento, repositorioLocal, carregarFicha, normalizarFicha, interpretarArquivo }) {
     const { painelLocal, mensagem, atualizarInterface, desenharLinha, fecharPaineis, estadoSalvamento } = paineis;

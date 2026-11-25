@@ -27,15 +27,17 @@ try {
     assert.equal(salvamentos, 0, 'aba oculta não salva um quadro vazio');
 
     api.carregarImagemNoCanvas('data:image/png;base64,DESENHO');
+    imagemCarregando.naturalWidth = 600;
+    imagemCarregando.naturalHeight = 400;
     imagemCarregando.onload();
     assert.equal(api.obterImagem(), 'data:image/png;base64,DESENHO', 'imagem pendente não é perdida');
     zonaDrop.clientWidth = 720;
     zonaDrop.clientHeight = 480;
     api.ajustarTamanhoCanvas();
-    assert.equal(canvas.width, 720);
-    assert.equal(canvas.height, 480);
+    assert.equal(canvas.width, 600, 'redimensionamento não altera a resolução do desenho');
+    assert.equal(canvas.height, 400, 'redimensionamento não deforma a proporção');
     assert.equal(salvamentos, 0, 'primeira medição visível não grava alterações artificiais');
-    assert.equal(api.obterImagem(), 'data:image/png;base64,ORIGINAL', 'desenho foi restaurado no canvas');
+    assert.equal(api.obterImagem(), 'data:image/png;base64,DESENHO', 'redimensionar não deve reexportar o desenho');
     assert.ok(chamadas.some(([nome]) => nome === 'desenhar'));
 } finally {
     globalThis.document = documentAnterior;

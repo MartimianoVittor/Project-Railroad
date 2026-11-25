@@ -1,5 +1,5 @@
-import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.23';
-import { porId } from '../utils/dom.js?v=1.4.23';
+import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.25';
+import { porId } from '../utils/dom.js?v=1.4.25';
 
 const RETRATO_VAZIO = 'assets/imgs/retrato-vazio.svg';
 
@@ -25,7 +25,9 @@ export function criarRetrato(tipo, lerImagem = arquivoParaDataURL) {
             if (!arquivo) return;
             const atual = ++requisicao;
             campo.value = '';
-            if (!arquivo.type.startsWith('image/')) return alert('Selecione uma imagem válida.');
+            if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(arquivo.type)
+                || arquivo.size > 8 * 1024 * 1024)
+                return alert('Escolha PNG, JPG, WebP ou GIF de até 8 MiB.');
             try {
                 const src = await lerImagem(arquivo);
                 const imagem = foto();

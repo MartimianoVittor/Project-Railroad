@@ -1,9 +1,9 @@
-import { porId } from '../../utils/dom.js?v=1.4.23';
-import { criarCanvas } from './canvas.js?v=1.4.23';
-import { iniciarDesenho } from './desenho.js?v=1.4.23';
-import { criarGerenciadorElementos } from './elementos.js?v=1.4.23';
-import { criarFerramentas } from './ferramentas.js?v=1.4.23';
-import { iniciarImagens } from './imagens.js?v=1.4.23';
+import { porId } from '../../utils/dom.js?v=1.4.25';
+import { criarCanvas } from './canvas.js?v=1.4.25';
+import { iniciarDesenho } from './desenho.js?v=1.4.25';
+import { criarGerenciadorElementos } from './elementos.js?v=1.4.25';
+import { criarFerramentas } from './ferramentas.js?v=1.4.25';
+import { iniciarImagens } from './imagens.js?v=1.4.25';
 
 function lerItem(container) {
     const { tipo } = container.dataset;
@@ -30,8 +30,17 @@ export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
     if (!canvas || !ctx || !zonaDrop) return null;
 
     function obterPosicaoNoQuadro(evento) {
-        const area = zonaDrop.getBoundingClientRect();
-        return { x: evento.clientX - area.left, y: evento.clientY - area.top };
+        // object-fit: contain mantém a proporção e pode introduzir margens.
+        const area = canvas.getBoundingClientRect();
+        const escala = Math.min(area.width / canvas.width, area.height / canvas.height);
+        const largura = canvas.width * escala;
+        const altura = canvas.height * escala;
+        const esquerda = area.left + (area.width - largura) / 2;
+        const topo = area.top + (area.height - altura) / 2;
+        return {
+            x: Math.max(0, Math.min(canvas.width, (evento.clientX - esquerda) / escala)),
+            y: Math.max(0, Math.min(canvas.height, (evento.clientY - topo) / escala)),
+        };
     }
 
     const botoes = Object.fromEntries(['lapis', 'borracha', 'texto', 'mover'].map((modo) => [modo, porId('btn-' + modo)]));
@@ -43,7 +52,8 @@ export function iniciarQuadro({ agendarSalvamento, salvarDadosFicha }) {
     });
     const ferramentas = criarFerramentas({ canvas, zonaDrop, botoes, elementos, limparQuadro, salvarDadosFicha });
     const cancelarTraco = iniciarDesenho({
-        canvas, ctx, obterModo, obterPosicaoNoQuadro, agendarSalvamento,
+        canvas, ctx, obterModo, obterPosicaoNoQuadro,
+        agendarSalvamento: () => { desenho.registrarAlteracao(); agendarSalvamento(); },
         criarElementoTexto: elementos.criarElementoTexto, selecionarItem: elementos.selecionarItem,
         seletorCor: porId('seletor-cor'),
     });

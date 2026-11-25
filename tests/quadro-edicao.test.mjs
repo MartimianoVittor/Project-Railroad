@@ -79,5 +79,5 @@ test('trocar de ficha cancela uma colagem e limpar o quadro cancela o desenho em
     campos['btn-limpar'].disparar('click');
     imagens[0].onload();
     assert.deepEqual(operacoes, []);
-    assert.equal(api.coletarQuadro().desenhoCanvas, 'data:desenho-atual');
+    assert.equal(api.coletarQuadro().desenhoCanvas, '');
 });

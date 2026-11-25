@@ -1,11 +1,11 @@
-import { comProcessamento } from '../utils/processamento.js?v=1.4.23';
-import { obterSupabase } from '../services/supabaseClient.js?v=1.4.23';
-import { criarRepositorioPreferencias } from '../services/preferenciasRepository.js?v=1.4.23';
+import { comProcessamento } from '../utils/processamento.js?v=1.4.25';
+import { obterSupabase } from '../services/supabaseClient.js?v=1.4.25';
+import { criarRepositorioPreferencias } from '../services/preferenciasRepository.js?v=1.4.25';
 
-import { guardarPreferencias, OPCOES_VISUAIS, PADRAO, recuperarPreferencias, validarPreferencias } from './aparencia/preferencias.js?v=1.4.23';
-import { atualizarVisual, criarOpcao, personalizarCartoes } from './aparencia/visual.js?v=1.4.23';
+import { guardarPreferencias, OPCOES_VISUAIS, PADRAO, recuperarPreferencias, validarPreferencias } from './aparencia/preferencias.js?v=1.4.25';
+import { atualizarVisual, criarOpcao, personalizarCartoes } from './aparencia/visual.js?v=1.4.25';
 
-export { OPCOES_VISUAIS, validarPreferencias, migrarPreferenciasAnteriores } from './aparencia/preferencias.js?v=1.4.23';
+export { OPCOES_VISUAIS, validarPreferencias, migrarPreferenciasAnteriores } from './aparencia/preferencias.js?v=1.4.25';
 
 export function iniciarPersonalizacao(armazenamento = null) {
     if (!armazenamento) {

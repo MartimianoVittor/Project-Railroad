@@ -1,65 +1,47 @@
-export function criarCanvas({ canvas, ctx, zonaDrop, agendarSalvamento }) {
-    let primeiraMedicao = true;
+/** O bitmap do quadro possui dimensões próprias; a viewport nunca o reamostra. */
+export function criarCanvas({ canvas, ctx, zonaDrop }) {
     let versaoImagem = 0;
-    let imagemPendente = null;
-    let imagemPronta = null;
+    let fonteOriginal = null;
+    let desenhoAlterado = false;
+    let dimensoesDefinidas = false;
 
-    function aplicarImagemCarregada() {
-        if (!imagemPronta || zonaDrop.clientWidth < 2 || zonaDrop.clientHeight < 2) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(imagemPronta, 0, 0, canvas.width, canvas.height);
-        imagemPronta = null;
-        imagemPendente = null;
-    }
     function ajustarTamanhoCanvas() {
-        const larguraAnterior = canvas.width;
-        const alturaAnterior = canvas.height;
-        // Não reduza a imagem a 1px quando a aba Quadro estiver oculta.
-        if (zonaDrop.clientWidth < 2 || zonaDrop.clientHeight < 2) return;
-        const novaLargura = Math.round(zonaDrop.clientWidth);
-        const novaAltura = Math.round(zonaDrop.clientHeight);
-        if (novaLargura === larguraAnterior &&
-            novaAltura === alturaAnterior) {
-            aplicarImagemCarregada();
-            return;
-        }
-        const copia = document.createElement('canvas');
-        copia.width = larguraAnterior;
-        copia.height = alturaAnterior;
-        const contextoCopia = copia.getContext('2d');
-        contextoCopia.drawImage(canvas, 0, 0);
-        canvas.width = novaLargura;
-        canvas.height = novaAltura;
-        ctx.drawImage(copia, 0, 0, novaLargura, novaAltura);
-        aplicarImagemCarregada();
-        if (primeiraMedicao)
-            primeiraMedicao = false;
-        else
-            agendarSalvamento();
+        // O tamanho CSS acompanha a janela; o bitmap só é dimensionado ao criar
+        // um quadro vazio. Alterações de orientação não modificam os pixels.
+        if (dimensoesDefinidas || zonaDrop.clientWidth < 2 || zonaDrop.clientHeight < 2) return;
+        canvas.width = Math.round(zonaDrop.clientWidth);
+        canvas.height = Math.round(zonaDrop.clientHeight);
+        dimensoesDefinidas = true;
     }
+
     function carregarImagemNoCanvas(dataURL) {
-        // Ao trocar de personagem, ignora carregamentos atrasados da ficha anterior.
         const requisicao = ++versaoImagem;
-        imagemPendente = typeof dataURL === 'string' && dataURL ? dataURL : null;
-        imagemPronta = null;
-        if (!imagemPendente)
-            return;
+        fonteOriginal = typeof dataURL === 'string' && dataURL ? dataURL : null;
+        desenhoAlterado = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!fonteOriginal) return;
         const imagem = new Image();
+        imagem.crossOrigin = 'anonymous';
         imagem.onload = () => {
-            if (requisicao !== versaoImagem)
-                return;
-            imagemPronta = imagem;
-            aplicarImagemCarregada();
+            if (requisicao !== versaoImagem) return;
+            // Preserva a resolução e a proporção reais do desenho salvo.
+            canvas.width = imagem.naturalWidth || imagem.width || canvas.width;
+            canvas.height = imagem.naturalHeight || imagem.height || canvas.height;
+            dimensoesDefinidas = true;
+            ctx.drawImage(imagem, 0, 0);
         };
         imagem.onerror = () => {
-            if (requisicao === versaoImagem)
-                console.warn('Não foi possível restaurar o desenho.');
+            if (requisicao === versaoImagem) console.warn('Não foi possível restaurar o desenho.');
         };
-        imagem.src = dataURL;
+        imagem.src = fonteOriginal;
     }
+
     function obterImagem() {
-        // Evita sobrescrever o desenho salvo antes de a imagem terminar de carregar.
-        return imagemPendente || canvas.toDataURL('image/png');
+        return desenhoAlterado ? canvas.toDataURL('image/png') : (fonteOriginal || '');
     }
-    return { ajustarTamanhoCanvas, carregarImagemNoCanvas, obterImagem };
+    function registrarAlteracao() {
+        desenhoAlterado = true;
+        fonteOriginal = null;
+    }
+    return { ajustarTamanhoCanvas, carregarImagemNoCanvas, obterImagem, registrarAlteracao };
 }
