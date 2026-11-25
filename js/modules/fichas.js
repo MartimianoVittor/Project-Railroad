@@ -1,13 +1,13 @@
-import { supabaseConfigurado } from '../config/supabase.js?v=1.4.21';
-import { obterSupabase } from '../services/supabaseClient.js?v=1.4.21';
-import { criarRepositorioLocal } from '../services/fichasLocais.js?v=1.4.21';
-import { comProcessamento } from '../utils/processamento.js?v=1.4.21';
-import { criarConta } from './fichas/conta.js?v=1.4.21';
-import { registrarEventosFicha } from './fichas/eventos.js?v=1.4.21';
-import { criarGestaoLocal } from './fichas/locais.js?v=1.4.21';
-import { chaveUltima, criarGestaoOnline } from './fichas/online.js?v=1.4.21';
-import { criarPaineisFicha } from './fichas/paineis.js?v=1.4.21';
-import { criarSalvamento } from './fichas/salvamento.js?v=1.4.21';
+import { supabaseConfigurado } from '../config/supabase.js?v=1.4.23';
+import { obterSupabase } from '../services/supabaseClient.js?v=1.4.23';
+import { criarRepositorioLocal } from '../services/fichasLocais.js?v=1.4.23';
+import { comProcessamento } from '../utils/processamento.js?v=1.4.23';
+import { criarConta } from './fichas/conta.js?v=1.4.23';
+import { registrarEventosFicha } from './fichas/eventos.js?v=1.4.23';
+import { criarGestaoLocal } from './fichas/locais.js?v=1.4.23';
+import { chaveUltima, criarGestaoOnline } from './fichas/online.js?v=1.4.23';
+import { criarPaineisFicha } from './fichas/paineis.js?v=1.4.23';
+import { criarSalvamento } from './fichas/salvamento.js?v=1.4.23';
 
 /** Coordena a ficha aberta. A conta conectada pode continuar editando uma ficha local. */
 export function criarGerenciadorFichas({

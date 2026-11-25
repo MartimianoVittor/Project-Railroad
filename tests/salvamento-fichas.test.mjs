@@ -20,7 +20,7 @@ async function preparar(t, salvar) {
     await local.migrarAntiga((dados) => dados);
     const estado = {
         modoEdicao: 'nuvem', usuario: { id: 'A' }, geracaoConta: 1,
-        fichaNuvem: { id: 'ficha' }, repositorioNuvem: { salvar },
+        fichaNuvem: { id: 'ficha', revisao: 1 }, repositorioNuvem: { salvar },
     };
     let formulario;
     const avisos = [];
@@ -41,12 +41,13 @@ test('uma gravação em andamento respeita a edição seguinte e confirma cada v
     const inicio = Promise.withResolvers();
     const resposta = Promise.withResolvers();
     const enviados = [];
-    const { editar, api, local } = await preparar(t, async (id, dados) => {
+    const { editar, api, local, estado } = await preparar(t, async (id, dados) => {
         enviados.push([id, dados.nome]);
         if (enviados.length === 1) {
             inicio.resolve();
             await resposta.promise;
         }
+        return { revisao: estado.fichaNuvem.revisao + 1, updated_at: '2026-10-02T10:00:00Z' };
     });
     await editar('Primeiro');
     const gravacao = api.concluir();
@@ -65,6 +66,7 @@ test('a resposta da conta anterior não remove o rascunho nem muda o aviso da co
     const { editar, api, local, estado, avisos } = await preparar(t, async () => {
         inicio.resolve();
         await resposta.promise;
+        return { revisao: 2, updated_at: '2026-10-02T10:00:00Z' };
     });
     await editar('Alice');
     const gravacao = api.concluir();
@@ -85,6 +87,7 @@ test('perder conexão conserva o rascunho até uma nova tentativa bem-sucedida',
     let offline = true;
     const { editar, api, local } = await preparar(t, async () => {
         if (offline) throw new Error('rede interrompida');
+        return { revisao: 2, updated_at: '2026-10-02T10:00:00Z' };
     });
     t.mock.method(console, 'warn', () => {});
     await editar('Rascunho');
@@ -124,7 +127,7 @@ test('ao voltar a conexão, o rascunho pode ser sincronizado sem nova edição',
     const { editar, api, local } = await preparar(t, async () => {
         envios++;
         if (!disponivel) throw new Error('offline');
-        return { updated_at: '2026-10-02T10:00:00.000Z' };
+        return { revisao: 2, updated_at: '2026-10-02T10:00:00.000Z' };
     });
     t.mock.method(console, 'warn', () => {});
     await editar('Versão pendente');
@@ -153,4 +156,27 @@ test('conflito de edição preserva o rascunho e bloqueia reenvio automático', 
     assert.equal(envios, 1);
     assert.equal(local.lerRascunho('A', 'ficha').dados.nome, 'Minha alteração');
     assert.ok(avisos.some((mensagem) => mensagem.includes('Conflito')));
+});
+
+
+test('o rascunho não é descartado quando a RPC deixa de confirmar a revisão', async (t) => {
+    const { editar, api, local, avisos } = await preparar(t, async () => ({ updated_at: '2026-10-02T10:00:00Z' }));
+    t.mock.method(console, 'warn', () => {});
+    await editar('Personagem incompleto');
+    assert.equal(await api.concluir(), false);
+    assert.equal(local.lerRascunho('A', 'ficha').dados.nome, 'Personagem incompleto');
+    assert.ok(avisos.some((aviso) => aviso.includes('rascunho guardado')));
+});
+
+
+test('rascunho preserva a revisão-base no IndexedDB para detectar mudanças ao reabrir', async () => {
+    const memoria = armazenamentoEmMemoria();
+    const banco = criarBancoEmMemoria();
+    const local = criarRepositorioLocal(memoria, async () => banco);
+    await local.migrarAntiga((dados) => dados);
+    local.gravarRascunho('A', 'ficha', { personagem: { nome: 'Clara' } }, 12);
+    await local.flush();
+    const reaberto = criarRepositorioLocal(memoria, async () => banco);
+    await reaberto.migrarAntiga((dados) => dados);
+    assert.equal(reaberto.lerRascunho('A', 'ficha').revisaoBase, 12);
 });

@@ -1,4 +1,4 @@
-import { comProcessamento } from '../../utils/processamento.js?v=1.4.21';
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.23';
 
 const ESPERA_LOCAL_MS = 250;
 const ESPERA_NUVEM_MS = 1200;
@@ -42,11 +42,13 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
             try {
                 const dados = coletarFicha();
                 if (contexto.modo === 'local') estado.fichaLocal = repositorioLocal.salvar(contexto.id, dados);
-                else repositorioLocal.gravarRascunho(contexto.uid, contexto.id, dados);
+                else repositorioLocal.gravarRascunho(contexto.uid, contexto.id, dados, estado.fichaNuvem?.revisao);
                 await repositorioLocal.flush();
                 if (aindaAberta(contexto) && versao === versaoEdicao) {
                     if (contexto.modo === 'local') informar('Ficha salva neste navegador');
-                    else {
+                    else if (conflitos.has(identificador(contexto))) {
+                        informar('Conflito: edição preservada neste navegador. Exporte o JSON para recuperar.');
+                    } else {
                         informar('Alterações locais; sincronizando…');
                         programarEnvio();
                     }
@@ -83,6 +85,14 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
         timerRetentativa?.unref?.();
     }
 
+    function bloquearConflito() {
+        const contexto = contextoAtual();
+        if (contexto.modo !== 'nuvem' || !contexto.uid || !contexto.id) return;
+        conflitos.add(identificador(contexto));
+        clearTimeout(timerNuvem);
+        clearTimeout(timerRetentativa);
+    }
+
     function tentarSincronizar() {
         const contexto = contextoAtual();
         if (contexto.modo !== 'nuvem' || !contexto.uid || !contexto.id
@@ -103,11 +113,16 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
             if (!rascunho) return true;
 
             const resultado = await comProcessamento('Salvando ficha…',
-                () => estado.repositorioNuvem.salvar(id, rascunho.dados, estado.fichaNuvem?.updated_at),
+                () => estado.repositorioNuvem.salvar(id, rascunho.dados, estado.fichaNuvem?.revisao),
                 { bloquear: false });
-            // A resposta do servidor contém a nova revisão (controle de concorrência).
-            if (aindaAberta(contexto) && resultado?.updated_at)
+            // Somente remove o rascunho depois de confirmar a nova revisão.
+            if (!Number.isSafeInteger(resultado?.revisao) ||
+                resultado.revisao <= estado.fichaNuvem?.revisao)
+                throw new Error('O Supabase não confirmou uma revisão nova; rascunho preservado.');
+            if (aindaAberta(contexto)) {
+                estado.fichaNuvem.revisao = resultado.revisao;
                 estado.fichaNuvem.updated_at = resultado.updated_at;
+            }
             tentativas = 0;
             clearTimeout(timerRetentativa);
             // Uma edição feita durante a requisição já possui outro token.
@@ -127,8 +142,11 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
             if (erro?.code === 'FICHA_EM_CONFLITO') {
                 conflitos.add(identificador(contexto));
                 if (aindaAberta(contexto)) informar('Conflito com outra edição! Rascunho local preservado. Exporte o JSON antes de reabrir.');
+            } else if (['22023', '42501', 'PGRST202'].includes(erro?.code)) {
+                if (aindaAberta(contexto))
+                    informar(`Falha no salvamento: ${erro.message}. Rascunho local preservado; exporte o JSON.`);
             } else {
-                if (aindaAberta(contexto)) informar('Sem conexão: rascunho guardado neste navegador');
+                if (aindaAberta(contexto)) informar('Sem conexão ou erro temporário: rascunho guardado neste navegador');
                 programarRetentativa(contexto);
             }
             return false;
@@ -174,5 +192,5 @@ export function criarSalvamento({ estado, coletarFicha, repositorioLocal, inform
     }
 
     return { agendarSalvamento, salvarAgora, concluir, programarEnvio, tentarSincronizar, descartarAgendado,
-        pendente: () => pendente, aguardarEnvios: () => filaEnvios };
+        bloquearConflito, pendente: () => pendente, aguardarEnvios: () => filaEnvios };
 }

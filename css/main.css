@@ -1,29 +1,29 @@
 /* Estilos compartilhados e componentes. Responsividade por último. */
-@import url("./base.css?v=1.4.21");
-@import url("./layout.css?v=1.4.21");
-@import url("./formularios.css?v=1.4.21");
-@import url("./sidebar.css?v=1.4.21");
-@import url("./quadro.css?v=1.4.21");
-@import url("./personagem.css?v=1.4.21");
-@import url("./inventario.css?v=1.4.21");
-@import url("./mobile.css?v=1.4.21");
-@import url("./conta.css?v=1.4.21");
-@import url("./shell.css?v=1.4.21");
+@import url("./base.css?v=1.4.23");
+@import url("./layout.css?v=1.4.23");
+@import url("./formularios.css?v=1.4.23");
+@import url("./sidebar.css?v=1.4.23");
+@import url("./quadro.css?v=1.4.23");
+@import url("./personagem.css?v=1.4.23");
+@import url("./inventario.css?v=1.4.23");
+@import url("./mobile.css?v=1.4.23");
+@import url("./conta.css?v=1.4.23");
+@import url("./shell.css?v=1.4.23");
 
-@import url("./entrada.css?v=1.4.21");
-@import url("./mobile-ajustes.css?v=1.4.21");
+@import url("./entrada.css?v=1.4.23");
+@import url("./mobile-ajustes.css?v=1.4.23");
 
 /* Padrão de botões compartilhado com o Railroad Mestre (atualização 26). */
-@import url("./botoes-railroad.css?v=1.4.21");
+@import url("./botoes-railroad.css?v=1.4.23");
 
 /* Cartões separados e layout fluido, sem barras de rolagem internas. */
-@import url("./cartoes-colunas.css?v=1.4.21");
+@import url("./cartoes-colunas.css?v=1.4.23");
 
 /* Componentes do kit western fornecido pelo usuário. */
-@import url("./kit-western.css?v=1.4.21");
+@import url("./kit-western.css?v=1.4.23");
 
 /* Preferências visuais da versão Jogador. */
-@import url("./personalizacao.css?v=1.4.21");
-@import url("./janelas-jogador.css?v=1.4.21");
+@import url("./personalizacao.css?v=1.4.23");
+@import url("./janelas-jogador.css?v=1.4.23");
 
-@import url("./processamento.css?v=1.4.21");
+@import url("./processamento.css?v=1.4.23");

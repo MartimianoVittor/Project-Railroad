@@ -1,7 +1,7 @@
 /* Integração da aparência do Jogador. A ordem mantém a cascata do desktop e do celular. */
-@import url("./aparencia/interface.css?v=1.4.21");
-@import url("./aparencia/cartoes.css?v=1.4.21");
-@import url("./aparencia/leitura.css?v=1.4.21");
-@import url("./aparencia/previa.css?v=1.4.21");
-@import url("./aparencia/variantes.css?v=1.4.21");
-@import url("./aparencia/mobile.css?v=1.4.21");
+@import url("./aparencia/interface.css?v=1.4.23");
+@import url("./aparencia/cartoes.css?v=1.4.23");
+@import url("./aparencia/leitura.css?v=1.4.23");
+@import url("./aparencia/previa.css?v=1.4.23");
+@import url("./aparencia/variantes.css?v=1.4.23");
+@import url("./aparencia/mobile.css?v=1.4.23");

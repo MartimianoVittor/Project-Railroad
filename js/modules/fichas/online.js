@@ -1,8 +1,14 @@
-import { porId } from '../../utils/dom.js?v=1.4.21';
-import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.21';
-import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.21';
+import { porId } from '../../utils/dom.js?v=1.4.23';
+import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.23';
+import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.23';
 
 export const chaveUltima = (uid) => `railroad_ultima_ficha:${uid}`;
+
+/** Não recupera automaticamente um rascunho legado ou de revisão anterior. */
+export function rascunhoCompativel(rascunho, revisaoNuvem) {
+    return Boolean(rascunho) && Number.isSafeInteger(rascunho.revisaoBase)
+        && rascunho.revisaoBase === revisaoNuvem;
+}
 
 export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLocal, carregarFicha, normalizarFicha, interpretarArquivo, restaurarLocal }) {
     const { painelOnline, mensagem, atualizarInterface, desenharLinha, fecharPaineis, estadoSalvamento } = paineis;
@@ -62,13 +68,23 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
         const registro = await estado.repositorioNuvem.obter(id);
         if (geracao !== estado.geracaoConta) return;
         const rascunho = repositorioLocal.lerRascunho(estado.usuario.id, id);
-        estado.fichaNuvem = { id: registro.id, titulo: registro.titulo, updated_at: registro.updated_at };
+        estado.fichaNuvem = {
+            id: registro.id, titulo: registro.titulo,
+            updated_at: registro.updated_at, revisao: Number(registro.revisao),
+        };
         estado.modoEdicao = 'nuvem';
         carregarFicha(normalizarFicha(rascunho?.dados || registro.dados));
         localStorage.setItem(chaveUltima(estado.usuario.id), id);
         atualizarInterface();
-        estadoSalvamento(rascunho ? 'Rascunho local aguardando sincronização' : 'Ficha salva na nuvem');
-        if (rascunho) salvamento.programarEnvio();
+        if (rascunho && !rascunhoCompativel(rascunho, estado.fichaNuvem.revisao)) {
+            // Rascunhos legados não possuem revisaoBase. Preservar o conteúdo
+            // sem tentar sobrepor cegamente uma revisão remota desconhecida.
+            salvamento.bloquearConflito();
+            estadoSalvamento('Rascunho de outra revisão: sincronização pausada. Exporte o JSON antes de reabrir.');
+        } else {
+            estadoSalvamento(rascunho ? 'Rascunho local aguardando sincronização' : 'Ficha salva na nuvem');
+            if (rascunho) salvamento.programarEnvio();
+        }
         fecharPaineis();
     }
 
@@ -89,10 +105,17 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
         if (titulo === null) return;
         if (!titulo.trim()) throw new Error('O nome não pode ficar vazio.');
         const geracao = estado.geracaoConta;
-        await estado.repositorioNuvem.renomear(ficha.id, tituloValido(titulo));
+        const aberta = estado.modoEdicao === 'nuvem' && estado.fichaNuvem?.id === ficha.id;
+        if (aberta && !(await concluirSalvamento()))
+            throw new Error('Salvamento pendente ou em conflito. Exporte o JSON antes de renomear.');
         if (geracao !== estado.geracaoConta) return;
-        if (estado.fichaNuvem?.id === ficha.id) {
-            estado.fichaNuvem.titulo = tituloValido(titulo);
+        const revisao = aberta ? estado.fichaNuvem.revisao : Number(ficha.revisao);
+        const resultado = await estado.repositorioNuvem.renomear(ficha.id, tituloValido(titulo), revisao);
+        if (geracao !== estado.geracaoConta) return;
+        if (aberta) {
+            estado.fichaNuvem.titulo = resultado.titulo;
+            estado.fichaNuvem.updated_at = resultado.updated_at;
+            estado.fichaNuvem.revisao = resultado.revisao;
             atualizarInterface();
         }
         await atualizarListaOnline();

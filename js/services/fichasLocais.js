@@ -1,6 +1,6 @@
-import { abrirBancoLocal } from './bancoLocal.js?v=1.4.21';
-import { migrarArmazenamentoAntigo } from './migracaoFichasLocais.js?v=1.4.21';
-import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.21';
+import { abrirBancoLocal } from './bancoLocal.js?v=1.4.23';
+import { migrarArmazenamentoAntigo } from './migracaoFichasLocais.js?v=1.4.23';
+import { CHAVE_ATIVA, PREFIXO_RASCUNHO, nomeValido } from './fichasLocaisChaves.js?v=1.4.23';
 
 const chaveRascunho = (uid, id) => `${PREFIXO_RASCUNHO}${uid}:${id}`;
 
@@ -88,8 +88,10 @@ export function criarRepositorioLocal(armazenamento = localStorage, abrirBanco =
         return rascunhos.get(chaveRascunho(uid, id)) || null;
     }
 
-    function gravarRascunho(uid, id, dados) {
-        const rascunho = { chave: chaveRascunho(uid, id), dados, token: crypto.randomUUID() };
+    function gravarRascunho(uid, id, dados, revisaoBase) {
+        // A revisão de origem permite identificar rascunhos desatualizados após
+        // reiniciar o navegador, sem substituir a versão recente da nuvem.
+        const rascunho = { chave: chaveRascunho(uid, id), dados, revisaoBase, token: crypto.randomUUID() };
         rascunhos.set(rascunho.chave, rascunho);
         enfileirar(rascunho.chave, () => banco.gravarRascunho(rascunho));
         return rascunho;
