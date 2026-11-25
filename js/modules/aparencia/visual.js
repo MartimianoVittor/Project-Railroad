@@ -88,6 +88,7 @@ export function atualizarVisual(preferencias) {
     aplicarVariante(document.body, CLASSIFICACOES.fundo, preferencias.fundoTela);
     personalizarCartoes(preferencias);
     personalizarJanelas(preferencias);
+    document.dispatchEvent(new CustomEvent('railroad:aparencia-atualizada', { detail: preferencias }));
     personalizarRetrato('#jogador', preferencias.retratoJogador);
     personalizarRetrato('#personagem', preferencias.retratoPersonagem);
     personalizarBotoes(preferencias);

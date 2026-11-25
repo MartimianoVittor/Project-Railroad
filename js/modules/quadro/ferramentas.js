@@ -1,3 +1,4 @@
+import { confirmar } from '../../utils/dialogos.js?v=1.4.25';
 export function criarFerramentas({ canvas, zonaDrop, botoes, elementos, limparQuadro, salvarDadosFicha }) {
     let modoAtual;
 
@@ -15,8 +16,8 @@ export function criarFerramentas({ canvas, zonaDrop, botoes, elementos, limparQu
     for (const [modo, botao] of Object.entries(botoes)) {
         botao?.addEventListener('click', () => selecionarFerramenta(modo));
     }
-    document.getElementById('btn-limpar')?.addEventListener('click', () => {
-        if (!confirm('Tem certeza de que deseja limpar todo o quadro tático?')) return;
+    document.getElementById('btn-limpar')?.addEventListener('click', async () => {
+        if (!(await confirmar('Tem certeza de que deseja limpar todo o quadro tático?'))) return;
         limparQuadro();
         salvarDadosFicha();
     });

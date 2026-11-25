@@ -5,18 +5,22 @@ let janela;
 let observador;
 let aviso;
 
-function manterJanelaNaFrente(registros) {
-    const outroDialogoAbriu = registros.some(({ target }) =>
-        target !== janela && target.tagName === 'DIALOG' && target.open);
-    if (outroDialogoAbriu && janela.open) {
-        janela.close();
-        janela.showModal();
-    }
+// Um alerta precisa permanecer acessível mesmo durante a sincronização.
+let dialogoSistemaAberto = false;
+if (typeof document !== 'undefined') {
+    document.addEventListener('rr:dialogo-sistema-aberto', () => {
+        dialogoSistemaAberto = true;
+        if (janela?.open) janela.close();
+        renderizar();
+    });
+    document.addEventListener('rr:dialogo-sistema-fechado', () => {
+        dialogoSistemaAberto = false;
+        renderizar();
+    });
 }
 
 function mostrarJanela(operacao) {
     if (!operacao) {
-        observador?.disconnect();
         if (janela?.open) janela.close();
         return;
     }
@@ -32,10 +36,6 @@ function mostrarJanela(operacao) {
     }
     janela.querySelector('p').textContent = operacao.texto;
     if (!janela.open) janela.showModal();
-    if (typeof MutationObserver !== 'undefined') {
-        observador ??= new MutationObserver(manterJanelaNaFrente);
-        observador.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
-    }
 }
 
 function mostrarAviso(operacao) {
@@ -60,8 +60,8 @@ function renderizar() {
     const operacoes = [...pendentes.values()];
     const modal = operacoes.findLast((operacao) => operacao.bloquear);
     const fundo = operacoes.findLast((operacao) => !operacao.bloquear);
-    mostrarJanela(modal);
-    mostrarAviso(modal ? null : fundo);
+    mostrarJanela(dialogoSistemaAberto ? null : modal);
+    mostrarAviso(dialogoSistemaAberto ? (modal || fundo) : (modal ? null : fundo));
     document.querySelectorAll('.status-salvamento').forEach((elemento) =>
         elemento.classList.toggle('rr-sincronizando', Boolean(fundo)));
 }

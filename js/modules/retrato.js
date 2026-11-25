@@ -1,3 +1,4 @@
+import { informar } from '../utils/dialogos.js?v=1.4.25';
 import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.25';
 import { porId } from '../utils/dom.js?v=1.4.25';
 
@@ -27,7 +28,7 @@ export function criarRetrato(tipo, lerImagem = arquivoParaDataURL) {
             campo.value = '';
             if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(arquivo.type)
                 || arquivo.size > 8 * 1024 * 1024)
-                return alert('Escolha PNG, JPG, WebP ou GIF de até 8 MiB.');
+                return void informar('Escolha PNG, JPG, WebP ou GIF de até 8 MiB.');
             try {
                 const src = await lerImagem(arquivo);
                 const imagem = foto();

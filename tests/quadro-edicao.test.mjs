@@ -77,6 +77,7 @@ test('trocar de ficha cancela uma colagem e limpar o quadro cancela o desenho em
     assert.equal(zona.filhos.length, 0);
     assert.equal(api.coletarQuadro().desenhoCanvas, 'data:outra-ficha');
     campos['btn-limpar'].disparar('click');
+    await Promise.resolve(); // confirmação assíncrona antes de efetuar a limpeza
     imagens[0].onload();
     assert.deepEqual(operacoes, []);
     assert.equal(api.coletarQuadro().desenhoCanvas, '');

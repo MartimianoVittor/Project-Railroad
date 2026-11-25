@@ -1,3 +1,4 @@
+import { informar } from '../utils/dialogos.js?v=1.4.25';
 export function arquivoParaDataURL(arquivo) {
     return new Promise((resolve, reject) => {
         const leitor = new FileReader();
@@ -8,5 +9,5 @@ export function arquivoParaDataURL(arquivo) {
 }
 export function mostrarErro(mensagem, erro) {
     console.error(mensagem, erro || '');
-    alert(mensagem);
+    void informar(mensagem);
 }

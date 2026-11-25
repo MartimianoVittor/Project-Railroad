@@ -1,10 +1,11 @@
+import { solicitar } from '../../utils/dialogos.js?v=1.4.25';
 export function iniciarDesenho({
     canvas, ctx, obterModo, obterPosicaoNoQuadro, criarElementoTexto, selecionarItem, seletorCor, agendarSalvamento,
 }) {
     let ponteiroAtivo = null;
 
     let tracou = false;
-    canvas.addEventListener('pointerdown', (evento) => {
+    canvas.addEventListener('pointerdown', async (evento) => {
         if (evento.button !== 0 || ponteiroAtivo !== null) return;
         const modo = obterModo();
         if (modo === 'mover') {
@@ -13,7 +14,7 @@ export function iniciarDesenho({
         }
         const { x, y } = obterPosicaoNoQuadro(evento);
         if (modo === 'texto') {
-            const texto = prompt('Digite o texto para inserir no quadro:')?.trim();
+            const texto = (await solicitar('Digite o texto para inserir no quadro:'))?.trim();
             if (texto) criarElementoTexto(texto, x + 'px', y + 'px', seletorCor?.value || '#000000');
             return;
         }

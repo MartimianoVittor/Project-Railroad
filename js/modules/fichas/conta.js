@@ -1,3 +1,4 @@
+import { confirmar } from '../../utils/dialogos.js?v=1.4.25';
 import { porId } from '../../utils/dom.js?v=1.4.25';
 import { comProcessamento } from '../../utils/processamento.js?v=1.4.25';
 import { criarRepositorioFichas } from '../../services/fichasRepository.js?v=1.4.25';
@@ -43,9 +44,9 @@ export function criarConta({ estado, paineis, configurado, conectar, aoMudarCont
     }
 
     async function sairGoogle() {
-        if (!(await concluirSalvamento()) && !confirm(
+        if (!(await concluirSalvamento()) && !(await confirmar(
             'Há um rascunho sem sincronizar. Ele continuará neste navegador. Deseja sair?'
-        )) return;
+        ))) return;
         const cliente = await obterConexao();
         const { error } = await cliente.auth.signOut();
         if (error) throw error;

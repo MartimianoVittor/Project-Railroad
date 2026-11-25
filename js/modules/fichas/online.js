@@ -1,3 +1,4 @@
+import { confirmar, solicitar } from '../../utils/dialogos.js?v=1.4.25';
 import { obterImagensStorage, possuiImagensParaMigrar } from '../../services/imagensStorage.js?v=1.4.25';
 import { porId } from '../../utils/dom.js?v=1.4.25';
 import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.25';
@@ -118,7 +119,7 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
     }
 
     async function renomearOnline(ficha) {
-        const titulo = prompt('Novo nome da ficha online:', ficha.titulo);
+        const titulo = await solicitar('Novo nome da ficha online:', ficha.titulo);
         if (titulo === null) return;
         if (!titulo.trim()) throw new Error('O nome não pode ficar vazio.');
         const geracao = estado.geracaoConta;
@@ -150,7 +151,7 @@ export function criarGestaoOnline({ estado, paineis, salvamento, repositorioLoca
     }
 
     async function excluirOnline(ficha) {
-        if (!confirm(`Excluir "${ficha.titulo}" PERMANENTEMENTE do banco de dados?`))
+        if (!await confirmar(`Excluir "${ficha.titulo}" PERMANENTEMENTE do banco de dados?`))
             return;
         const uid = estado.usuario.id;
         const geracao = estado.geracaoConta;

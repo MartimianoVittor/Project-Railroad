@@ -1,3 +1,4 @@
+import { informar } from '../../utils/dialogos.js?v=1.4.25';
 import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.25';
 export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obterPosicaoNoQuadro }) {
     let geracao = 0;
@@ -6,7 +7,7 @@ export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obte
             !arquivo.type ||
             !['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(arquivo.type)
             || arquivo.size > 8 * 1024 * 1024) {
-            alert('Escolha PNG, JPG, WebP ou GIF de até 8 MiB.');
+            void informar('Escolha PNG, JPG, WebP ou GIF de até 8 MiB.');
             return;
         }
         const atual = geracao;

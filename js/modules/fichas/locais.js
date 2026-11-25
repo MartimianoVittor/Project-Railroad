@@ -1,3 +1,4 @@
+import { confirmar, solicitar } from '../../utils/dialogos.js?v=1.4.25';
 import { porId } from '../../utils/dom.js?v=1.4.25';
 import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.25';
 
@@ -66,7 +67,7 @@ export function criarGestaoLocal({ estado, paineis, salvamento, repositorioLocal
     }
 
     async function renomearLocal(ficha) {
-        const titulo = prompt('Novo nome da ficha local:', ficha.titulo);
+        const titulo = await solicitar('Novo nome da ficha local:', ficha.titulo);
         if (titulo === null) return;
         if (!titulo.trim()) throw new Error('O nome não pode ficar vazio.');
         repositorioLocal.renomear(ficha.id, titulo);
@@ -84,7 +85,7 @@ export function criarGestaoLocal({ estado, paineis, salvamento, repositorioLocal
     }
 
     async function excluirLocal(ficha) {
-        if (!confirm(`Remover "${ficha.titulo}" deste navegador? A nuvem não será alterada.`))
+        if (!await confirmar(`Remover "${ficha.titulo}" deste navegador? A nuvem não será alterada.`))
             return;
         if (estado.modoEdicao === 'local' && estado.fichaLocal?.id === ficha.id) {
             salvamento.descartarAgendado();
@@ -111,7 +112,7 @@ export function criarGestaoLocal({ estado, paineis, salvamento, repositorioLocal
     /** Remove a cópia deste navegador, inclusive quando a ficha aberta é online. */
     async function apagarLocalAtual() {
         if (estado.modoEdicao === 'nuvem') {
-            if (!confirm('Descartar apenas o rascunho deste navegador? A ficha salva no banco permanecerá intacta.'))
+            if (!await confirmar('Descartar apenas o rascunho deste navegador? A ficha salva no banco permanecerá intacta.'))
                 return;
             salvamento.descartarAgendado();
             const uid = estado.usuario.id;
@@ -126,7 +127,7 @@ export function criarGestaoLocal({ estado, paineis, salvamento, repositorioLocal
             await repositorioLocal.flush();
             if (geracao === estado.geracaoConta) estadoSalvamento('Rascunho local removido; dados online preservados');
         } else {
-            if (!confirm('Apagar esta ficha somente do navegador? O banco de dados não será alterado.'))
+            if (!await confirmar('Apagar esta ficha somente do navegador? O banco de dados não será alterado.'))
                 return;
             const id = estado.fichaLocal.id;
             const geracao = estado.geracaoConta;

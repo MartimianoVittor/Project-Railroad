@@ -1,0 +1,45 @@
+/* Alertas, confirmações e campos de texto integrados à estética da ficha. */
+dialog.rr-dialogo-sistema__janela {
+    position: fixed;
+    box-sizing: border-box;
+    width: min(450px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    margin: auto;
+    padding: 9px !important;
+    overflow: hidden;
+    text-align: left;
+    box-shadow: 0 18px 60px #160d09a6;
+}
+dialog.rr-dialogo-sistema__janela::backdrop { background: #170c08bd; backdrop-filter: blur(3px); }
+.rr-dialogo-sistema__janela .rr-dialogo-sistema__conteudo {
+    display: flex; flex-direction: column; min-width: 0; max-height: calc(100dvh - 45px);
+    gap: 12px; overflow-y: auto; padding: clamp(15px, 4vw, 24px);
+    scrollbar-gutter: stable; overscroll-behavior: contain;
+}
+.rr-dialogo-sistema__marca { margin: 0; font: 1.2rem/1 'Smokum', Georgia, serif; letter-spacing: .08em; text-align: center; }
+.rr-dialogo-sistema__titulo { margin: 0; font: 400 clamp(1.12rem, 4.7vw, 1.42rem)/1.3 'Rye', Georgia, serif; text-align: center; }
+.rr-dialogo-sistema__mensagem { margin: 0; white-space: pre-line; overflow-wrap: anywhere; font: 400 1rem/1.55 Georgia, serif; }
+.rr-dialogo-sistema__campo { display: flex; flex-direction: column; gap: 5px; font: 700 .9rem/1.35 Georgia, serif; }
+.rr-dialogo-sistema__campo[hidden], .rr-dialogo-sistema__cancelar[hidden] { display: none !important; }
+.rr-dialogo-sistema__campo input { display: block; width: 100%; min-height: 42px; padding: 9px; border-radius: 4px; font: 1rem Georgia, serif; }
+.rr-dialogo-sistema__acoes { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; padding-top: 5px; }
+.rr-dialogo-sistema__acoes button { min-height: 42px; min-width: 110px; border: 2px solid #5b3b22; border-radius: 4px;
+    background: #ddc99a; color: #321c11; font: 700 .93rem Georgia, serif; cursor: pointer; padding: 8px 16px; }
+.rr-dialogo-sistema__acoes button.rr-dialogo-sistema__aceitar { background: #7e4829; color: #fff5d8; }
+.rr-dialogo-sistema__acoes button:hover { filter: brightness(1.1); }
+.rr-dialogo-sistema__acoes button:focus-visible, .rr-dialogo-sistema__campo input:focus-visible { outline: 3px solid #d6a544; outline-offset: 2px; }
+@media (max-width: 440px) {
+    .rr-dialogo-sistema__acoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rr-dialogo-sistema__acoes button { min-width: 0; }
+    dialog[data-tipo="informar"] .rr-dialogo-sistema__acoes button.rr-dialogo-sistema__aceitar { grid-column: 1 / -1; }
+}
+
+/* Herdar exatamente a textura, a borda e o contraste da Personalização. */
+dialog.rr-dialogo-sistema__janela { background-color: var(--rr-textura-cor, #e5d3ac) !important;
+    background-image: var(--rr-textura-imagem, none) !important;
+    color: var(--rr-leitura-texto, #382515); }
+dialog.rr-dialogo-sistema__janela .rr-dialogo-sistema__titulo,
+dialog.rr-dialogo-sistema__janela .rr-dialogo-sistema__marca { color: var(--rr-leitura-titulo, inherit); }
+dialog.rr-dialogo-sistema__janela .rr-dialogo-sistema__campo input { background: var(--rr-leitura-campo, #fff6df);
+    color: var(--rr-leitura-campo-texto, #352113); border-color: var(--rr-leitura-borda, #8b6a42); }

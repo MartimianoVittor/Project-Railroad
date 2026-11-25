@@ -1,3 +1,4 @@
+import { solicitar } from '../../utils/dialogos.js?v=1.4.25';
 import { porId } from '../../utils/dom.js?v=1.4.25';
 
 export function registrarEventosFicha({
@@ -37,7 +38,7 @@ export function registrarEventosFicha({
             if (navigator.clipboard?.writeText)
                 await navigator.clipboard.writeText(estado.usuario.id);
             else
-                prompt('Copie seu código de jogador:', estado.usuario.id);
+                await solicitar('Copie seu código de jogador:', estado.usuario.id);
             mensagem('mensagem-conta', 'Código de jogador pronto para enviar ao mestre.');
         });
     });
