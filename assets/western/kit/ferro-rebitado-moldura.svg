@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="ferro" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#77716a"/>
+      <stop offset=".46" stop-color="#55504a"/>
+      <stop offset="1" stop-color="#383630"/>
+    </linearGradient>
+    <radialGradient id="rebite" cx="34%" cy="27%" r="74%">
+      <stop offset="0" stop-color="#e3d2b3"/>
+      <stop offset=".48" stop-color="#ae9d82"/>
+      <stop offset="1" stop-color="#534a3e"/>
+    </radialGradient>
+  </defs>
+  <!-- A imagem ocupa exclusivamente os quatro lados do border-image.
+       A área central permanece vazia e não altera a textura do cartão. -->
+  <path d="M0 0H100V14H0Z M0 86H100V100H0Z M0 14H14V86H0Z M86 14H100V86H86Z" fill="url(#ferro)"/>
+  <path d="M0.8 14V0.8H99.2V99.2H0.8V86 M14 13H86 M14 87H86 M13 14V86 M87 14V86" fill="none" stroke="#211f1c" stroke-width="1.6"/>
+  <path d="M14 11.9H86 M14 88.1H86 M11.9 14V86 M88.1 14V86" fill="none" stroke="#999087" stroke-opacity=".6" stroke-width="1"/>
+  <!-- Rebites de canto e de trecho repetido. O border-image os fixa à moldura,
+       independentemente do scroll do conteúdo. -->
+  <g fill="url(#rebite)" stroke="#2c2823" stroke-width="1.1">
+    <circle cx="7" cy="7" r="4.4"/><circle cx="50" cy="7" r="4.4"/><circle cx="93" cy="7" r="4.4"/>
+    <circle cx="7" cy="50" r="4.4"/><circle cx="93" cy="50" r="4.4"/>
+    <circle cx="7" cy="93" r="4.4"/><circle cx="50" cy="93" r="4.4"/><circle cx="93" cy="93" r="4.4"/>
+  </g>
+  <g fill="#fff0d2" opacity=".52">
+    <circle cx="6" cy="6" r=".9"/><circle cx="49" cy="6" r=".9"/><circle cx="92" cy="6" r=".9"/>
+    <circle cx="6" cy="49" r=".9"/><circle cx="92" cy="49" r=".9"/>
+    <circle cx="6" cy="92" r=".9"/><circle cx="49" cy="92" r=".9"/><circle cx="92" cy="92" r=".9"/>
+  </g>
+</svg>

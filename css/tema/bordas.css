@@ -104,15 +104,15 @@
   outline-offset: -9px;
   border-radius: 4px;
   box-shadow: 0 4px 0 #1f140c;
-  position: relative;
+  /* A pintura fica na borda, não no conteúdo rolável do cartão. */
+  border-image-source: url("../../assets/western/kit/ferro-rebitado-moldura.svg");
+  border-image-slice: 14;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: round;
 }
+/* O antigo ::after com inset negativo criava barras de rolagem falsas e
+   rebites flutuantes; não se deve criar conteúdo decorativo neste estilo. */
 .rr-borda--ferro-rebitado::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  pointer-events: none;
-  background: radial-gradient(circle, #b5a38a 2px, transparent 2.5px) top left,
-    radial-gradient(circle, #b5a38a 2px, transparent 2.5px) bottom left;
-  background-size: 33.333% 8px;
-  background-repeat: repeat-x;
+  content: none;
 }

@@ -45,15 +45,6 @@ dialog.painel-fichas :is(input,textarea,select) { max-width: 100%; box-sizing: b
   #quadro-mobile .area-canvas { display: none !important; }
   #quadro-mobile > .col { min-height: 0 !important; }
 }
-/* Os rebites decorativos na base da moldura não devem aparecer como
-   pontos soltos no rodapé das janelas ou da prévia. */
-dialog.painel-fichas.rr-borda--ferro-rebitado::after,
-#personalizacao .rr-previa .rr-borda--ferro-rebitado::after {
-  background-image: radial-gradient(circle, #b5a38a 2px, transparent 2.5px);
-  background-position: top left;
-  background-repeat: repeat-x;
-}
-
 /* Etapa 021: barras de rolagem não devem aparecer como decoração nas
    janelas e na prévia. A rolagem por roda, toque e teclado permanece ativa
    quando o conteúdo realmente exceder o espaço disponível. */
