@@ -5,6 +5,13 @@ import { criarRepositorioFichas } from '../../services/fichasRepository.js?v=1.4
 import { criarRepositorioMesas } from '../../services/mesasRepository.js?v=1.4.26';
 import { criarPainelConvitesMesa } from '../convitesMesa.js?v=1.4.26';
 
+/** A sessão já encerrada não é uma falha de logout. Outros erros devem ser propagados. */
+function sessaoAusente(erro) {
+    return erro?.name === 'AuthSessionMissingError'
+        || erro?.code === 'session_not_found'
+        || erro?.code === 'session_missing';
+}
+
 export function criarConta({ estado, paineis, configurado, conectar, aoMudarConta, concluirSalvamento }) {
     let conexao;
     let erroConexao = '';
@@ -48,8 +55,23 @@ export function criarConta({ estado, paineis, configurado, conectar, aoMudarCont
             'Há um rascunho sem sincronizar. Ele continuará neste navegador. Deseja sair?'
         ))) return;
         const cliente = await obterConexao();
-        const { error } = await cliente.auth.signOut();
-        if (error) throw error;
+        let sessao = null;
+        try {
+            const resposta = await cliente.auth.getSession();
+            if (resposta.error && !sessaoAusente(resposta.error)) throw resposta.error;
+            sessao = resposta.data?.session ?? null;
+        } catch (erro) {
+            if (!sessaoAusente(erro)) throw erro;
+        }
+        // Evita /auth/v1/logout sem token e aceita sessões expiradas durante a operação.
+        if (sessao) {
+            try {
+                const { error } = await cliente.auth.signOut();
+                if (error && !sessaoAusente(error)) throw error;
+            } catch (erro) {
+                if (!sessaoAusente(erro)) throw erro;
+            }
+        }
         await aoMudarConta(null);
         paineis.fecharPaineis();
     }
