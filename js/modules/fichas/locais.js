@@ -1,6 +1,6 @@
-import { confirmar, solicitar } from '../../utils/dialogos.js?v=1.4.25';
-import { porId } from '../../utils/dom.js?v=1.4.25';
-import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.25';
+import { confirmar, solicitar } from '../../utils/dialogos.js?v=1.4.26';
+import { porId } from '../../utils/dom.js?v=1.4.26';
+import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.26';
 
 export function criarGestaoLocal({ estado, paineis, salvamento, repositorioLocal, carregarFicha, normalizarFicha, interpretarArquivo }) {
     const { painelLocal, mensagem, atualizarInterface, desenharLinha, fecharPaineis, estadoSalvamento } = paineis;

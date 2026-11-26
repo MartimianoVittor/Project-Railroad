@@ -1,8 +1,8 @@
-import { confirmar, solicitar } from '../../utils/dialogos.js?v=1.4.25';
-import { obterImagensStorage, possuiImagensParaMigrar } from '../../services/imagensStorage.js?v=1.4.25';
-import { porId } from '../../utils/dom.js?v=1.4.25';
-import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.25';
-import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.25';
+import { confirmar, solicitar } from '../../utils/dialogos.js?v=1.4.26';
+import { obterImagensStorage, possuiImagensParaMigrar } from '../../services/imagensStorage.js?v=1.4.26';
+import { porId } from '../../utils/dom.js?v=1.4.26';
+import { identificarArquivo } from '../../services/identidadeImportacao.js?v=1.4.26';
+import { tituloDoPersonagem, tituloValido } from './titulos.js?v=1.4.26';
 
 export const chaveUltima = (uid) => `railroad_ultima_ficha:${uid}`;
 

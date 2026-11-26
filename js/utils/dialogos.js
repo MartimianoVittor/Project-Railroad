@@ -102,8 +102,8 @@ export const confirmar = mensagem => solicitarResposta('confirmar', mensagem);
 export const solicitar = (mensagem, valor = '') => solicitarResposta('solicitar', mensagem, valor);
 
 // A aparência ativa (inclusive a sincronizada com a conta) acompanha a janela.
-import { recuperarPreferencias, PADRAO } from '../modules/aparencia/preferencias.js?v=1.4.25';
-import { personalizarJanelas } from '../modules/aparencia/visual.js?v=1.4.25';
+import { recuperarPreferencias, PADRAO } from '../modules/aparencia/preferencias.js?v=1.4.26';
+import { personalizarJanelas } from '../modules/aparencia/visual.js?v=1.4.26';
 let temaAtual = (() => {
     try { return recuperarPreferencias(window.localStorage); }
     catch { return PADRAO; }

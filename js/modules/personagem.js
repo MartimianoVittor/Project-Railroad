@@ -1,6 +1,6 @@
-import { DADOS_POR_NIVEL, TRACOS } from '../dominio/tracos.js?v=1.4.25';
-import { elemento, porId } from '../utils/dom.js?v=1.4.25';
-import { criarRetrato } from './retrato.js?v=1.4.25';
+import { DADOS_POR_NIVEL, TRACOS } from '../dominio/tracos.js?v=1.4.26';
+import { elemento, porId } from '../utils/dom.js?v=1.4.26';
+import { criarRetrato } from './retrato.js?v=1.4.26';
 
 const retrato = criarRetrato('personagem');
 const CAMPOS = [

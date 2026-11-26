@@ -104,7 +104,7 @@
     display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit;
 }
 #jogador .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/fundoCinza.jpg"],
-#personagem .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.png"] {
+#personagem .label-retrato.rr-retrato .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.webp"] {
     opacity: 0 !important;
 }
 /* As únicas peças temáticas são as três abas principais na barra lateral.

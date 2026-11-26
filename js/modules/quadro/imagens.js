@@ -1,5 +1,5 @@
-import { informar } from '../../utils/dialogos.js?v=1.4.25';
-import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.25';
+import { informar } from '../../utils/dialogos.js?v=1.4.26';
+import { arquivoParaDataURL, mostrarErro } from '../../utils/arquivos.js?v=1.4.26';
 export function iniciarImagens({ zonaDrop, uploadMapa, criarElementoImagem, obterPosicaoNoQuadro }) {
     let geracao = 0;
     async function inserirImagemMovel(arquivo, posX = 30, posY = 30) {

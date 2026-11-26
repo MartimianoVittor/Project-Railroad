@@ -1,8 +1,18 @@
-import { informar } from '../utils/dialogos.js?v=1.4.25';
-import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.25';
-import { porId } from '../utils/dom.js?v=1.4.25';
+import { informar } from '../utils/dialogos.js?v=1.4.26';
+import { arquivoParaDataURL, mostrarErro } from '../utils/arquivos.js?v=1.4.26';
+import { porId } from '../utils/dom.js?v=1.4.26';
 
 const RETRATO_VAZIO = 'assets/imgs/retrato-vazio.svg';
+const RETRATOS_ANTIGOS = Object.freeze({
+    'assets/imgs/imagemJogadorPlaceholder.png': 'assets/imgs/imagemJogadorPlaceholder.webp',
+    'assets/imgs/imagemPersonagemPlaceholder.png': 'assets/imgs/imagemPersonagemPlaceholder.webp',
+});
+
+/** Mantém o retrato de fichas antigas depois da otimização dos recursos. */
+export function normalizarEnderecoRetrato(valor) {
+    if (typeof valor !== 'string' || !valor || valor.startsWith('blob:')) return RETRATO_VAZIO;
+    return RETRATOS_ANTIGOS[valor] || valor;
+}
 
 export function criarRetrato(tipo, lerImagem = arquivoParaDataURL) {
     let requisicao = 0;
@@ -11,7 +21,7 @@ export function criarRetrato(tipo, lerImagem = arquivoParaDataURL) {
     function restaurar(valor) {
         requisicao++;
         const imagem = foto();
-        if (imagem) imagem.src = typeof valor === 'string' && valor && !valor.startsWith('blob:') ? valor : RETRATO_VAZIO;
+        if (imagem) imagem.src = normalizarEnderecoRetrato(valor);
     }
 
     function coletar() {

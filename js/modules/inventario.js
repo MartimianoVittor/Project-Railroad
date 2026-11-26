@@ -1,7 +1,7 @@
-import { ARMAS, DISTANCIAS, inteiroNaoNegativo, normalizarInventario } from '../dominio/inventario.js?v=1.4.25';
-import { porId } from '../utils/dom.js?v=1.4.25';
-import { criarTabelaItens } from './inventario/itens.js?v=1.4.25';
-import { iniciarRolagem } from './inventario/rolagem.js?v=1.4.25';
+import { ARMAS, DISTANCIAS, inteiroNaoNegativo, normalizarInventario } from '../dominio/inventario.js?v=1.4.26';
+import { porId } from '../utils/dom.js?v=1.4.26';
+import { criarTabelaItens } from './inventario/itens.js?v=1.4.26';
+import { iniciarRolagem } from './inventario/rolagem.js?v=1.4.26';
 
 const LIMITE_MUNICAO = 99;
 const limitarMunicao = (valor) => Math.max(0, Math.min(LIMITE_MUNICAO, Number.parseInt(valor, 10) || 0));

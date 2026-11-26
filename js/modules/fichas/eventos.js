@@ -1,5 +1,5 @@
-import { solicitar } from '../../utils/dialogos.js?v=1.4.25';
-import { porId } from '../../utils/dom.js?v=1.4.25';
+import { solicitar } from '../../utils/dialogos.js?v=1.4.26';
+import { porId } from '../../utils/dom.js?v=1.4.26';
 
 export function registrarEventosFicha({
     estado, paineis, salvamento, conta, locais, online,

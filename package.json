@@ -4,8 +4,13 @@
   "type": "module",
   "scripts": {
     "test": "node scripts/testar.mjs",
+    "verificar:recursos": "node scripts/verificar-recursos.mjs",
+    "verificar:sintaxe": "node scripts/verificar-sintaxe.mjs",
+    "validar": "npm run verificar:recursos && npm run verificar:sintaxe && npm test",
     "versionar": "node scripts/versionar.mjs",
-    "preparar:publicacao": "node scripts/limpar-residuos-mestre.mjs && node scripts/versionar.mjs && npm test"
+    "preparar:publicacao": "npm run versionar && npm run validar",
+    "limpar:legado": "node scripts/limpar-legado.mjs",
+    "verificar:sql": "node scripts/verificar-sql.mjs"
   },
-  "version": "1.4.25"
+  "version": "1.4.26"
 }

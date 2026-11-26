@@ -1,4 +1,4 @@
-import { normalizarFicha } from './validacao.js?v=1.4.25';
+import { normalizarFicha } from './validacao.js?v=1.4.26';
 
 /** Os módulos de tela só editam seus próprios campos da ficha carregada. */
 export function criarEditorFicha({ jogador, personagem, inventario, quadro }) {

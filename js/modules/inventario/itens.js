@@ -1,5 +1,5 @@
-import { espacoOcupado, inteiroNaoNegativo } from '../../dominio/inventario.js?v=1.4.25';
-import { porId } from '../../utils/dom.js?v=1.4.25';
+import { espacoOcupado, inteiroNaoNegativo } from '../../dominio/inventario.js?v=1.4.26';
+import { porId } from '../../utils/dom.js?v=1.4.26';
 
 export function criarTabelaItens(aoAlterar) {
     let itens = [];

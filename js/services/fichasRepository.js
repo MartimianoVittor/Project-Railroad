@@ -1,4 +1,4 @@
-import { serializarOrdenado } from '../core/serializacao.js?v=1.4.25';
+import { serializarOrdenado } from '../core/serializacao.js?v=1.4.26';
 
 /**
  * Operações da tabela fichas. O Supabase aplica as políticas de acesso do PostgreSQL.

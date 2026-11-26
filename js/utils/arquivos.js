@@ -1,4 +1,4 @@
-import { informar } from '../utils/dialogos.js?v=1.4.25';
+import { informar } from '../utils/dialogos.js?v=1.4.26';
 export function arquivoParaDataURL(arquivo) {
     return new Promise((resolve, reject) => {
         const leitor = new FileReader();

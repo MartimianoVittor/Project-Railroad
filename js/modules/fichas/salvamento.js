@@ -1,5 +1,5 @@
-import { normalizarReferencias, obterImagensStorage } from '../../services/imagensStorage.js?v=1.4.25';
-import { comProcessamento } from '../../utils/processamento.js?v=1.4.25';
+import { normalizarReferencias, obterImagensStorage } from '../../services/imagensStorage.js?v=1.4.26';
+import { comProcessamento } from '../../utils/processamento.js?v=1.4.26';
 
 const ESPERA_LOCAL_MS = 250;
 const ESPERA_NUVEM_MS = 1200;

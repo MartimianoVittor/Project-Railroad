@@ -24,7 +24,7 @@ O Jogador é uma aplicação estática. O navegador carrega HTML, CSS e módulos
 2. `main.js` registra os controles de conta e fichas e monta os módulos de edição. `js/core/editorFicha.js` distribui os dados carregados entre os módulos e reúne o que cada um editou.
 3. `js/modules/fichas.js` guarda a seleção atual. O jogador pode estar conectado enquanto edita uma ficha local. O destino do salvamento depende da ficha aberta.
 4. Uma edição agenda a gravação em `js/modules/fichas/salvamento.js`. A ficha local vai para o IndexedDB. A online ganha primeiro um rascunho no mesmo banco, identificado por usuário e ficha. O envio ao Supabase remove apenas a versão que o servidor confirmou.
-5. Ao abrir ou duplicar outra ficha, o gerenciador aguarda a conclusão da gravação. Se uma sincronização falhar, o rascunho fica disponível para uma nova tentativa (inclusive quando a conexão volta). A gravação online compara `updated_at` antes de atualizar e avisa se outro dispositivo alterou a ficha, sem remover o rascunho local.
+5. Ao abrir ou duplicar outra ficha, o gerenciador aguarda a conclusão da gravação. Se uma sincronização falhar, o rascunho fica disponível para uma nova tentativa (inclusive quando a conexão volta). A gravação online usa a revisão numérica `revisao` confirmada pelas RPCs `salvar_ficha_jogador` e `renomear_ficha_jogador` para impedir sobrescritas concorrentes. Em caso de conflito, o rascunho local é preservado.
 
 ## Dados existentes
 
@@ -40,14 +40,22 @@ A exportação produz `Jogador(Personagem).json` com os nomes da ficha. Ao impor
 
 Na raiz do projeto, rode `python -m http.server 8000` e abra `http://localhost:8000/`. O Live Server também pode servir essa pasta. Os caminhos relativos dos fragmentos, módulos, estilos e imagens permitem publicar o diretório inteiro sob o caminho do repositório no GitHub Pages.
 
-Execute `npm test` com Node.js 22 ou superior. Os testes usam o executor nativo do Node, com o IndexedDB e as chamadas ao Supabase simulados. Para isolar um cenário, execute, por exemplo, `node --test tests/salvamento-fichas.test.mjs`.
+Execute `npm run validar` com Node.js 22 ou superior para conferir recursos, sintaxe e testes. Use `npm.cmd run validar` no PowerShell caso a execução do arquivo `npm.ps1` esteja bloqueada. A execução de `npm test` permanece disponível isoladamente. Os testes usam o executor nativo do Node, com o IndexedDB e as chamadas ao Supabase simulados. Para isolar um cenário, execute, por exemplo, `node --test tests/salvamento-fichas.test.mjs`.
 
 As opções da conexão ficam em `js/config/supabase.js`. O cliente usa a chave pública do projeto. As permissões de leitura e escrita dependem das políticas configuradas no banco.
 
 ## Publicação e compatibilidade
 
-`npm run preparar:publicacao` remove apenas os arquivos órfãos do Mestre, sincroniza os parâmetros `?v=` de todos os scripts e estilos locais usando `package.json.version` e executa a suíte. No GitHub Pages, publique o resultado inteiro. O carregador de fragmentos `js/includes.js` transmite a revisão a cada fragmento HTML. O versionador evita combinar módulos de deploys diferentes no cache do navegador.
+`npm run preparar:publicacao` sincroniza os parâmetros `?v=` de todos os scripts e estilos locais usando `package.json.version` e executa a validação, sem excluir arquivos. Para ver resíduos conhecidos de versões anteriores, execute `npm run limpar:legado` (somente prévia); para remover apenas os arquivos cuja assinatura é idêntica à da versão antiga, use `npm run limpar:legado -- --aplicar`. No GitHub Pages, publique o resultado inteiro. O carregador de fragmentos `js/includes.js` transmite a revisão a cada fragmento HTML. O versionador evita combinar módulos de deploys diferentes no cache do navegador.
 
 As janelas do Jogador utilizam `js/modules/aparencia/visual.js` e `css/janelas-jogador.css` para herdar a mesma textura, borda e paleta de leitura da ficha. Não use `js/modules/personalizacaoMestre.js` nem `css/janelas-personalizadas.css` aqui; pertencem ao projeto Mestre.
 
 Os dados continuam no formato de ficha v3. Importações externas são validadas em `js/core/validacao.js` antes da normalização. O PostgreSQL deve permitir atualização de `fichas.updated_at` e manter RLS; consulte `docs/SEGURANCA_SUPABASE.md`.
+
+## Dependências do banco de dados não incluídas no ZIP
+
+A migração `supabase/013_integridade_fichas.sql` não acompanha este pacote. Os testes que verificam seu texto são **ignorados com justificativa explícita** quando o arquivo está ausente; esse resultado não comprova que as RPCs nem as políticas RLS estão corretas no servidor. `npm run verificar:sql` falha deliberadamente se a migração não estiver presente. Recupere a versão oficial da migração e verifique sua aplicação no projeto Supabase antes de homologar recursos online. Nunca recrie a migração a partir de expressões regulares de testes.
+
+## Recursos e compatibilidade
+
+A versão 1.4.26 restaura `css/layout.css` do histórico Git. Os retratos decorativos de reserva são WebP, mantendo o desenho anterior e reduzindo o download; caminhos PNG legados em fichas são convertidos em tempo de restauração. `js/mobile.js` foi substituído pela navegação unificada `js/navegacao.js`; `js/core/ficha.js` e `css/identidade-railroad.css` eram módulos desconectados da inicialização. O script `verificar-recursos.mjs` verifica os grafos de carregamento e referências locais para detectar regressões.

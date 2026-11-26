@@ -61,3 +61,14 @@ versão do mestre e campanhas em desenvolvimento confira o repositório "http://
 ### 🌄 RAILROAD
 
 **Prepare seu cavalo, carregue seu revólver.**
+
+## Desenvolvimento e validação
+
+**Aplicativo:** Railroad Jogador v1.4.26. Abra a pasta com Live Server ou execute `python -m http.server 8000` na raiz.
+
+- `npm run validar` — verifica referências locais, sintaxe dos módulos e testes de regressão. No PowerShell restrito: `npm.cmd run validar`.
+- `npm run preparar:publicacao` — atualiza versões de cache dos arquivos locais e executa a validação, sem fazer exclusões.
+- `npm run limpar:legado` — apenas lista arquivos conhecidos que sobraram após extrair um ZIP sobre uma versão antiga. Para remover **somente** resíduos com hashes idênticos aos originais, use `npm run limpar:legado -- --aplicar`.
+- `npm run verificar:sql` — exige a migração SQL 013 oficial; avisa se ela não foi fornecida.
+
+A migração Supabase 013 não está no arquivo recebido. A versão local permanece testável, mas as garantias de segurança das operações de nuvem exigem verificar as migrações e políticas reais do banco. Consulte `docs/ARQUITETURA.md` e `docs/SEGURANCA_SUPABASE.md`.

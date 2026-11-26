@@ -1,4 +1,4 @@
-import { solicitar } from '../../utils/dialogos.js?v=1.4.25';
+import { solicitar } from '../../utils/dialogos.js?v=1.4.26';
 export function iniciarDesenho({
     canvas, ctx, obterModo, obterPosicaoNoQuadro, criarElementoTexto, selecionarItem, seletorCor, agendarSalvamento,
 }) {

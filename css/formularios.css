@@ -129,11 +129,11 @@
 }
 
 #jogador .label-retrato {
-    background-image: url('../assets/imgs/imagemJogadorPlaceholder.png');
+    background-image: url('../assets/imgs/imagemJogadorPlaceholder.webp');
 }
 
 #personagem .label-retrato {
-    background-image: url('../assets/imgs/imagemPersonagemPlaceholder.png');
+    background-image: url('../assets/imgs/imagemPersonagemPlaceholder.webp');
 }
 
 #jogador .circulo-interno, #personagem .circulo-interno {
@@ -154,7 +154,7 @@
     display: block;
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: url('../assets/imgs/imagemPersonagemPlaceholder.png') center / 100% 100% no-repeat;
+    background: url('../assets/imgs/imagemPersonagemPlaceholder.webp') center / 100% 100% no-repeat;
     overflow: hidden;
 }
 
@@ -182,7 +182,7 @@
 }
 
 /* Não duplicar o cartaz dentro da área reservada à fotografia. */
-#personagem .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.png"] {
+#personagem .imagem-exibida[src="assets/imgs/imagemPersonagemPlaceholder.webp"] {
     opacity: 0;
 }
 

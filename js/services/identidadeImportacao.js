@@ -1,6 +1,6 @@
-import { serializarOrdenado } from '../core/serializacao.js?v=1.4.25';
-import { normalizarFicha } from '../core/validacao.js?v=1.4.25';
-import { localDoItem } from '../dominio/inventario.js?v=1.4.25';
+import { serializarOrdenado } from '../core/serializacao.js?v=1.4.26';
+import { normalizarFicha } from '../core/validacao.js?v=1.4.26';
+import { localDoItem } from '../dominio/inventario.js?v=1.4.26';
 
 function idPersistente(ficha) {
     const id = ficha.railroadId;
