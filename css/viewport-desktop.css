@@ -1,0 +1,152 @@
+/* Wrappers dos includes persistem depois do carregamento dinâmico.
+   Sem display:contents, as alturas percentuais das páginas não têm referência. */
+#area-fichas > .fragmento-pagina {
+    display: contents;
+}
+
+/*
+ * Railroad Jogador — enquadramento das fichas no desktop.
+ *
+ * A página inteira não deve rolar. Conteúdo adicional (textos extensos,
+ * inventário longo e janelas baixas) continua acessível na coluna correspondente.
+ * No mobile, a rolagem vertical natural é mantida por css/cartoes-colunas.css.
+ *
+ * Isolar estas regras evita misturar o comportamento do Quadro com o layout mobile.
+ */
+@media (min-width: 769px) {
+    html,
+    body {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
+    body {
+        height: 100dvh;
+        max-height: 100dvh;
+    }
+
+    #area-fichas {
+        height: 100dvh;
+        min-height: 0;
+        max-height: 100dvh;
+        overflow: hidden;
+    }
+
+    #jogador,
+    #personagem,
+    #inventario,
+    #quadro-mobile {
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
+        overflow: hidden;
+    }
+
+    /* As colunas nunca aumentam a altura do documento. O conteúdo permanece
+       alcançável com a roda, teclado ou toque apenas quando excede o cartão. */
+    #jogador > .fragmento-coluna > .col,
+    #personagem > .col,
+    #inventario > .col {
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        scrollbar-gutter: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--rr-leitura-borda, #805c3e) transparent;
+    }
+
+    #jogador > .fragmento-coluna > .col::-webkit-scrollbar,
+    #personagem > .col::-webkit-scrollbar,
+    #inventario > .col::-webkit-scrollbar {
+        display: block;
+        width: 7px;
+    }
+
+    #jogador > .fragmento-coluna > .col::-webkit-scrollbar-thumb,
+    #personagem > .col::-webkit-scrollbar-thumb,
+    #inventario > .col::-webkit-scrollbar-thumb {
+        background: var(--rr-leitura-borda, #805c3e);
+        border-radius: 8px;
+    }
+
+    /* A coluna de traços possui uma regra legada mais específica que torna
+       overflow:visible; precisa ser explicitamente contida também. */
+    #personagem > .col.double {
+        min-height: 0;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+    }
+
+    #inventario.ativa > .col {
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
+        overflow-y: auto;
+    }
+
+    /* O mesmo Quadro é transferido entre desktop e mobile pelo navegador.
+       Seu bitmap não pode determinar as dimensões do cartão no desktop. */
+    #jogador > .painel-quadro-jogador {
+        min-height: 0;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+    }
+
+    #jogador .painel-quadro-jogador > .fragmento-quadro > .col {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 0%;
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
+        overflow: hidden;
+    }
+
+    #jogador .painel-quadro-jogador .barra-ferramentas,
+    #jogador .painel-quadro-jogador .dica-quadro {
+        flex-shrink: 0;
+    }
+
+    #jogador .painel-quadro-jogador .area-canvas {
+        flex: 1 1 0%;
+        height: auto;
+        min-height: 0;
+        min-width: 0;
+        max-height: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    #jogador .painel-quadro-jogador #quadro-rpg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+}
+
+/* Quando as colunas viram duas linhas, cada linha recebe parte da altura útil;
+   nenhuma delas pode impor um mínimo que empurre a segunda para fora da tela. */
+@media (min-width: 769px) and (max-width: 1160px) {
+    #personagem.ativa,
+    #inventario.ativa {
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 769px) and (max-width: 960px) {
+    #jogador.ativa {
+        grid-template-rows: minmax(0, .9fr) minmax(0, 1.1fr);
+    }
+}

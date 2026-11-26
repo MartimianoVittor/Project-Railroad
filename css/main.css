@@ -30,3 +30,6 @@
 
 @import url("./ajustes-019.css?v=1.4.26");
 @import url("./dialogos-railroad.css?v=1.4.26");
+
+/* Confinamento das páginas ao viewport no desktop (após ajustes de temas). */
+@import url("./viewport-desktop.css?v=1.4.26");
